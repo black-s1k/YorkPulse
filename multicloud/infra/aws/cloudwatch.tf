@@ -31,7 +31,8 @@
 # can be added without changing any alarm configuration.
 # -----------------------------------------------------------------------------
 resource "aws_sns_topic" "alerts" {
-  name = "${var.project}-${var.environment}-alerts" # → "yorkpulse-prod-alerts"
+  name              = "${var.project}-${var.environment}-alerts" # → "yorkpulse-prod-alerts"
+  kms_master_key_id = "alias/aws/sns" # AWS-managed key — encrypts at rest with no CMK cost
 
   tags = {
     Project     = var.project

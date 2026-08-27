@@ -32,6 +32,9 @@ resource "aws_lb" "main" {
     aws_subnet.public_b.id
   ]
 
+  drop_invalid_header_fields = true # Reject malformed headers at the edge — free, no functional tradeoff
+  enable_deletion_protection = true # Require explicit disable before terraform/console can delete this ALB
+
   # Enable access logging to S3 for ALB request logs (optional — enable if needed for forensics)
   # access_logs { bucket = "..." enabled = true } — left disabled to avoid S3 cost
 
