@@ -401,7 +401,19 @@ async def resend_otp(
     # relay for email-bombing regardless of how many source IPs are used.
     # This costs real users nothing: the frontend never calls resend before
     # signup/login already ran.
-    if not await redis_service.get(f"otp_pending:{request.email.lower()}"):
+    try:
+        pending = await redis_service.get(f"otp_pending:{request.email.lower()}")
+    except Exception:
+        # Redis unavailable — fail SAFE (reject), not open. This check exists
+        # to stop resend-otp being an open email-relay; treating an outage as
+        # "assume pending" would reopen exactly that hole.
+        logger.error("RESEND-OTP: Redis unavailable, cannot verify pending session: email=%s ip=%s", request.email, real_ip)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Temporarily unavailable. Please try again in a moment.",
+        )
+
+    if not pending:
         logger.warning("RESEND-OTP WITH NO PENDING SESSION: email=%s ip=%s", request.email, real_ip)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
