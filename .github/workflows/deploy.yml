@@ -288,7 +288,11 @@ jobs:
   deploy-frontend:
     name: Deploy Frontend to Vercel
     runs-on: ubuntu-latest
-    needs: deploy-backend
+    # api.yorkpulse.com now points at CloudFront/Lambda (DNS cutover done
+    # 2026-08-26) — gate on the Lambda deploy, not the Render one, since
+    # Render no longer serves production traffic. Render is kept running
+    # as a rollback safety net but shouldn't block the frontend deploy.
+    needs: deploy-backend-lambda
 
     steps:
       - name: Checkout code
