@@ -280,6 +280,7 @@ jobs:
       # --build-env bakes NEXT_PUBLIC_API_URL into the Next.js build at deploy time.
       # Vercel inlines NEXT_PUBLIC_* vars during `next build` — must be provided here.
       - name: Deploy to Vercel
+        working-directory: frontend
         run: |
           vercel deploy --prod \
             --token=${{ secrets.VERCEL_TOKEN }} \
@@ -295,9 +296,7 @@ jobs:
       - name: Smoke test frontend URL
         run: |
           curl --retry 5 --retry-delay 10 --fail \
-            https://YOUR_VERCEL_FRONTEND_URL
-          # TODO: Replace YOUR_VERCEL_FRONTEND_URL with your actual Vercel URL
-          # e.g. https://yorkpulse.vercel.app  or  https://yorkpulse.com
+            https://www.yorkpulse.com
 
   # ---------------------------------------------------------------------------
   # PRESERVED FOR INFRASTRUCTURE RESTORE — Azure Container Apps deploy steps
