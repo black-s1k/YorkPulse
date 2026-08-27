@@ -52,6 +52,12 @@ env/
 # Docker
 .docker/
 
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.tfstate.lock.info
+
 # One-off scripts with credentials (never commit)
 backend/send_broadcast.py
 

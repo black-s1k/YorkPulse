@@ -1,6 +1,5 @@
 """Supabase Auth service for OTP verification."""
 
-import asyncio
 import logging
 import secrets
 import string
@@ -39,6 +38,9 @@ def _make_otp_attempts_key(email: str) -> str:
 def _make_otp_lockout_key(email: str) -> str:
     return f"otp_lockout:{email.lower()}"
 
+def _make_otp_pending_key(email: str) -> str:
+    return f"otp_pending:{email.lower()}"
+
 
 class SupabaseAuthService:
     """Service for handling Supabase Auth OTP operations."""
@@ -74,6 +76,41 @@ class SupabaseAuthService:
         except Exception as e:
             logger.warning("Redis OTP store failed, using in-memory fallback: %s", e)
             _otps_fallback[email.lower()] = otp
+
+    async def _mark_otp_pending(self, email: str) -> None:
+        """
+        Record that a real OTP was just sent for this email, so resend-otp
+        can require this marker before it's allowed to trigger another send.
+        Without this, resend-otp has no DB lookup and no existing-user check
+        at all — it's an open relay: any string shaped like a York email
+        triggers a real Gmail send on the first call. Gating it behind "a
+        signup/login already ran for this email" costs real users nothing
+        (the frontend never calls resend before signup/login) and forces an
+        attacker back through the fully rate-limited signup/login path.
+        """
+        from app.services.redis import redis_service
+        try:
+            await redis_service.set(_make_otp_pending_key(email), "1", expire_seconds=OTP_TTL_SECONDS)
+        except Exception as e:
+            logger.warning("Failed to set otp_pending marker for %s: %s", email, e)
+
+    async def _check_daily_email_budget(self) -> bool:
+        """
+        Hard ceiling on real emails actually sent (not requests attempted)
+        sitewide, over a rolling ~24h period. This is the true backstop: it
+        protects the mailbox's send quota directly, so it can't be starved
+        by any combination of rate-limit evasion upstream (IP rotation,
+        fresh fake emails each request) — those affect how many requests get
+        this far, not how low this ceiling is. Returns False once exhausted.
+        """
+        from app.services.redis import redis_service
+        try:
+            count = await redis_service.incr("otp_emails_sent_today")
+            if count == 1:
+                await redis_service.expire("otp_emails_sent_today", 86400)
+            return count <= settings.otp_daily_email_budget
+        except Exception:
+            return True  # Redis unavailable — fail open, upstream limits still apply
 
     async def _is_otp_locked_out(self, email: str) -> bool:
         """Return True if the email is currently locked out due to too many failed attempts."""
@@ -162,19 +199,30 @@ class SupabaseAuthService:
         if email.lower() in self._TEST_ACCOUNTS:
             otp = self._TEST_ACCOUNTS[email.lower()]
             await self._store_otp(email, otp)
+            await self._mark_otp_pending(email)
             return True, "Verification code sent to your email"
 
         # Dev mode — only active when the server itself has DEBUG=true.
         if settings.debug and force_dev_mode:
             otp = self._make_otp()
             await self._store_otp(email, otp)
+            await self._mark_otp_pending(email)
             return True, f"[DEV MODE] Your verification code is: {otp}"
+
+        # Circuit breaker on the mailbox's real daily send quota — checked
+        # once here since every real-send path below funnels through it.
+        if not await self._check_daily_email_budget():
+            logger.critical("OTP EMAIL DAILY BUDGET EXHAUSTED — refusing further sends until it resets")
+            return False, "We're experiencing unusually high volume right now. Please try again in a few hours."
 
         if email_service.is_configured():
             otp = self._make_otp()
             await self._store_otp(email, otp)
-            # Send email in the background so the API responds immediately.
-            asyncio.create_task(_send_email_background(email, otp))
+            await self._mark_otp_pending(email)
+            # Awaited (not fire-and-forget): on Lambda, the execution environment
+            # can freeze the instant this function returns, so a detached
+            # asyncio.create_task() here has no guarantee of completing.
+            await _send_email_background(email, otp)
             return True, "Verification code sent to your email"
 
         # Fallback to Supabase magic link
@@ -183,6 +231,7 @@ class SupabaseAuthService:
                 "email": email,
                 "options": {"should_create_user": True},
             })
+            await self._mark_otp_pending(email)
             return True, "Verification code sent to your email"
         except AuthApiError as e:
             return False, str(e.message)

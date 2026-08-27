@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { OTPInput } from "@/components/ui/otp-input";
+import { HoneypotField } from "@/components/ui/honeypot-field";
 import { useToast } from "@/hooks/use-toast";
 import { useSignup, useVerifyOTP, useResendOTP } from "@/hooks/useAuth";
 
@@ -207,6 +208,7 @@ function SignupPageInner() {
   const [otp, setOtp] = useState("");
   const [emailError, setEmailError] = useState("");
   const [cooldown, setCooldown] = useState(0);
+  const [hp, setHp] = useState("");
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -254,7 +256,7 @@ function SignupPageInner() {
     setStep("otp");
     setCooldown(60);
 
-    signupMutation.mutate({ email }, {
+    signupMutation.mutate({ email, hp }, {
       onError: (error) => {
         // Revert if the request actually failed
         setStep("email");
@@ -305,7 +307,7 @@ function SignupPageInner() {
     if (cooldown > 0) return;
 
     try {
-      await resendOTPMutation.mutateAsync({ email });
+      await resendOTPMutation.mutateAsync({ email, hp });
       setCooldown(60);
       setOtp("");
       toast({
@@ -366,6 +368,7 @@ function SignupPageInner() {
           </div>
 
           <form onSubmit={handleEmailSubmit} className="space-y-4">
+            <HoneypotField value={hp} onChange={setHp} />
             <div className="space-y-2">
               <Label htmlFor="email">York Email</Label>
               <div className="relative">

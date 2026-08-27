@@ -38,6 +38,17 @@ AUTH_ENDPOINTS = {
     "/api/v1/auth/admin-login",
 }
 
+# Endpoints that trigger an outbound email (Gmail SMTP) or Supabase Auth
+# call — the scarce, externally-limited resources. These get the tighter
+# global ceiling. The remainder of AUTH_ENDPOINTS (OTP verification, admin
+# password login) don't send email but still hit the DB/JWT signing, so they
+# get a separate, higher global ceiling instead of being unlimited.
+OTP_SEND_ENDPOINTS = {
+    "/api/v1/auth/signup",
+    "/api/v1/auth/login",
+    "/api/v1/auth/resend-otp",
+}
+
 # Health check is always exempt — ALB probes should never be rate-limited.
 EXEMPT_ENDPOINTS = {"/api/v1/health"}
 
@@ -153,6 +164,36 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
 
         # Dual-key limit on auth endpoints
         if path in AUTH_ENDPOINTS:
+            # Dynamic auto-block: an IP that has repeatedly tripped auth rate
+            # limits gets hard-blocked for a cooldown. Single Redis GET, no
+            # further processing — the cheapest possible rejection for an
+            # attacker IP still hammering us after being throttled.
+            try:
+                if await redis_service.get(f"auto_block:{real_ip}"):
+                    return Response(
+                        content='{"detail": "Too many requests. Please wait before trying again."}',
+                        status_code=429,
+                        media_type="application/json",
+                        headers={"Retry-After": str(settings.auto_block_duration_seconds), **_cors_headers(request)},
+                    )
+            except Exception:
+                pass  # Redis unavailable — fall through to the checks below
+
+            # Sitewide aggregate ceiling — checked before the per-IP/per-email
+            # checks because it's what actually stops a botnet. Rotating
+            # through thousands of source IPs (or a fresh fake email per
+            # request) never raises this counter, since it has no identity
+            # dimension at all.
+            if await self._check_global_limit(path):
+                logger.warning("GLOBAL AUTH RATE LIMIT EXCEEDED: path=%s ip=%s", path, real_ip)
+                await self._record_violation(real_ip)
+                return Response(
+                    content='{"detail": "Too many requests right now. Please try again shortly."}',
+                    status_code=429,
+                    media_type="application/json",
+                    headers={"Retry-After": str(settings.rate_limit_auth_window_seconds), **_cors_headers(request)},
+                )
+
             email = await _get_email_from_body(request)
             blocked, reason = await self._check_auth_limit(real_ip, path, email)
             if blocked:
@@ -160,6 +201,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     "AUTH RATE LIMIT EXCEEDED: ip=%s email=%s path=%s reason=%s",
                     real_ip, email or "unknown", path, reason,
                 )
+                await self._record_violation(real_ip)
                 return Response(
                     content='{"detail": "Too many requests. Please wait before trying again."}',
                     status_code=429,
@@ -248,6 +290,62 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             _ip_request_counts[ip] = times
             blocked = len(times) > ip_limit
             return blocked, "ip_fallback"
+
+    async def _check_global_limit(self, path: str) -> bool:
+        """
+        Sitewide aggregate ceiling(s) with no per-IP or per-email dimension —
+        the actual defence against a distributed botnet, since per-IP/per-
+        email limits are trivially bypassed by rotating source IPs or
+        generating a fresh fake email each request. Returns True if this
+        request should be blocked.
+
+        OTP-send endpoints check two windows (burst + hourly): a lone short
+        window lets an attacker sustain just-under-threshold traffic
+        indefinitely and still exhaust the mailbox's daily send quota in
+        minutes. The hourly tier is what actually catches that.
+        """
+        if path in OTP_SEND_ENDPOINTS:
+            tiers = [
+                ("otp_burst", settings.rate_limit_global_otp_burst_requests, settings.rate_limit_global_otp_burst_window_seconds),
+                ("otp_hourly", settings.rate_limit_global_otp_hourly_requests, settings.rate_limit_global_otp_hourly_window_seconds),
+            ]
+        else:
+            tiers = [
+                ("auth", settings.rate_limit_global_auth_requests, settings.rate_limit_global_auth_window_seconds),
+            ]
+
+        try:
+            for bucket, limit, window in tiers:
+                key = f"global_rate:{bucket}:{window}"
+                count = await redis_service.incr(key)
+                if count == 1:
+                    await redis_service.expire(key, window)
+                if count > limit:
+                    return True
+            return False
+        except Exception:
+            return False  # Redis unavailable — fail open, rely on per-IP/email checks
+
+    async def _record_violation(self, ip: str) -> None:
+        """
+        Track repeated rate-limit violations per IP. Once an IP trips
+        auth_violation_threshold limits within the violation window, it gets
+        auto-blocked for auto_block_duration_seconds — each burner IP in a
+        botnet only gets a handful of tries before it's benched, instead of
+        being able to retry indefinitely at just-under-the-limit rates.
+        """
+        try:
+            key = f"auth_violations:{ip}"
+            count = await redis_service.incr(key)
+            if count == 1:
+                await redis_service.expire(key, settings.auth_violation_window_seconds)
+            if count >= settings.auth_violation_threshold:
+                await redis_service.set(
+                    f"auto_block:{ip}", "1", expire_seconds=settings.auto_block_duration_seconds
+                )
+                logger.warning("AUTO-BLOCKED IP: ip=%s violations=%d", ip, count)
+        except Exception:
+            pass  # Redis unavailable — no auto-block this round, not fatal
 
     def _get_identifier(self, request: Request, real_ip: str) -> str:
         user_id = getattr(request.state, "user_id", None)

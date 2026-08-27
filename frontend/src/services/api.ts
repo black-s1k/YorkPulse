@@ -244,11 +244,13 @@ class ApiClient {
 
   // Auth endpoints
   auth = {
-    signup: (email: string) =>
-      this.post<SignupResponse>("/auth/signup", { email }),
+    // `hp` is a honeypot value from a hidden form field — real users never
+    // fill it in, so it's always "" for them. Passed through untouched.
+    signup: (email: string, hp?: string) =>
+      this.post<SignupResponse>("/auth/signup", { email, hp }),
 
-    login: (email: string) =>
-      this.post<SignupResponse>("/auth/login", { email }),
+    login: (email: string, hp?: string) =>
+      this.post<SignupResponse>("/auth/login", { email, hp }),
 
     adminLogin: (email: string, password: string) =>
       this.post<VerifyEmailResponse>("/auth/admin-login", { email, password }),
@@ -259,8 +261,8 @@ class ApiClient {
     verifyOTP: (email: string, code: string) =>
       this.post<VerifyEmailResponse>("/auth/verify-otp", { email, code }),
 
-    resendOTP: (email: string) =>
-      this.post<{ success: boolean; message: string }>("/auth/resend-otp", { email }),
+    resendOTP: (email: string, hp?: string) =>
+      this.post<{ success: boolean; message: string }>("/auth/resend-otp", { email, hp }),
 
     verifyName: (name: string) =>
       this.post<{ name_verified: boolean; requires_id_upload: boolean; message: string }>("/auth/verify-name", { name }),

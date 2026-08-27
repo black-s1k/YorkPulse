@@ -24,15 +24,15 @@ export function useUser() {
 
 export function useLogin() {
   return useMutation({
-    mutationFn: ({ email }: { email: string }) =>
-      api.auth.login(email),
+    mutationFn: ({ email, hp }: { email: string; hp?: string }) =>
+      api.auth.login(email, hp),
   });
 }
 
 export function useSignup() {
   return useMutation({
-    mutationFn: ({ email }: { email: string }) =>
-      api.auth.signup(email),
+    mutationFn: ({ email, hp }: { email: string; hp?: string }) =>
+      api.auth.signup(email, hp),
   });
 }
 
@@ -61,8 +61,8 @@ export function useVerifyOTP() {
 
 export function useResendOTP() {
   return useMutation({
-    mutationFn: ({ email }: { email: string }) =>
-      api.auth.resendOTP(email),
+    mutationFn: ({ email, hp }: { email: string; hp?: string }) =>
+      api.auth.resendOTP(email, hp),
   });
 }
 

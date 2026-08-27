@@ -1,11 +1,15 @@
 # .github/workflows/deploy.yml
-# Full CI/CD pipeline for YorkPulse multi-cloud deployment.
+# Full CI/CD pipeline for YorkPulse deployment.
 # Triggered on push to main when backend, frontend, or infra files change.
 #
 # Three jobs run in sequence:
 #   1. security-scan  — SAST + dependency audit + container CVE scan + IaC misconfig check
-#   2. deploy-backend — Build + push to ECR → force ECS redeploy → smoke test
-#   3. deploy-frontend — Build + push to ACR → update Azure Container App → smoke test
+#   2. deploy-backend — Trigger Render deploy hook → smoke test
+#   3. deploy-frontend — Deploy to Vercel via CLI → smoke test
+#
+# NOTE: AWS ECS and Azure Container Apps deploy steps are preserved below,
+# commented out with "# Preserved for infrastructure restore". See multicloud/RESTORE.md
+# to switch back to the multi-cloud stack.
 
 name: Deploy YorkPulse
 
@@ -22,7 +26,7 @@ on:
 
 # Prevent multiple deploys from running simultaneously.
 # cancel-in-progress: false means a queued deploy waits rather than being killed —
-# safer than cancelling a deploy that's halfway through an ECS rollout.
+# safer than cancelling a deploy that's halfway through a rollout.
 concurrency:
   group: production
   cancel-in-progress: false
@@ -30,7 +34,7 @@ concurrency:
 jobs:
   # ---------------------------------------------------------------------------
   # Job 1: Security Scan
-  # Runs SAST (Bandit), dependency audit (Safety), container CVE scan (Trivy),
+  # Runs SAST (Bandit), dependency audit (pip-audit), container CVE scan (Trivy),
   # and Terraform misconfiguration check (Checkov) — all non-blocking (exit-zero)
   # so the pipeline reports issues without stopping a deploy for low-severity findings.
   # ---------------------------------------------------------------------------
@@ -64,11 +68,11 @@ jobs:
           pip-audit -r backend/requirements.txt --no-deps || true
 
       # Docker Buildx: needed for --platform linux/amd64 cross-platform builds
-      # on GitHub's ubuntu-latest runners (which are x86_64, same as ECS Fargate).
+      # on GitHub's ubuntu-latest runners (which are x86_64).
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Build the backend image locally for scanning — don't push to ECR yet.
+      # Build the backend image locally for scanning — don't push anywhere.
       # This is a dry-run build to catch Dockerfile issues and give Trivy an image to scan.
       - name: Build backend image for scanning
         run: |
@@ -99,141 +103,275 @@ jobs:
           soft_fail: true
 
   # ---------------------------------------------------------------------------
-  # Job 2: Deploy Backend (AWS)
-  # Builds the FastAPI image, pushes to ECR with two tags (:latest + :<sha>),
-  # forces an ECS rolling redeploy, waits for stabilization, then smoke tests.
+  # Job 2: Deploy Backend (Render)
+  # Triggers the Render deploy hook, waits for the service to come up,
+  # then smoke tests the /health endpoint.
   # Runs only after security-scan passes.
+  #
+  # Required GitHub secret: RENDER_DEPLOY_HOOK_URL
+  #   Get it from: Render dashboard → your service → Settings → Deploy Hook
   # ---------------------------------------------------------------------------
   deploy-backend:
-    name: Deploy Backend to AWS ECS
+    name: Deploy Backend to Render
+    runs-on: ubuntu-latest
+    needs: security-scan
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Trigger Render deploy by POSTing to the deploy hook URL.
+      # Render will pull the latest code from the connected GitHub repo and redeploy.
+      # The response contains a deployId which we can use to poll status if needed.
+      - name: Trigger Render deploy
+        run: |
+          curl --fail -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+
+      # Poll the health endpoint until the new deploy is live.
+      # --retry 10 --retry-delay 15 = up to 2.5 minutes of retries (Render cold starts can be slow).
+      # --retry-connrefused = keep retrying even if the connection is refused (service restarting).
+      # --fail = non-zero exit on 4xx/5xx once the service is up.
+      - name: Smoke test backend health endpoint
+        run: |
+          curl --retry 10 --retry-delay 15 --retry-connrefused --fail \
+            https://YOUR_RENDER_BACKEND_URL/api/v1/health
+          # TODO: Replace YOUR_RENDER_BACKEND_URL with your actual Render service URL
+          # e.g. https://yorkpulse-backend.onrender.com
+
+  # ---------------------------------------------------------------------------
+  # Job 2b: Deploy Backend (AWS Lambda) — new free-tier AWS backend, see yorku.md
+  #
+  # Runs alongside the Render job during the migration window (both deploy
+  # independently after security-scan passes). Render still serves live traffic
+  # until DNS is cut over to CloudFront — this job keeps the Lambda in sync with
+  # every push so it's ready to go, and gets removed once Render is decommissioned.
+  #
+  # Required GitHub secret: AWS_ROLE_ARN
+  #   arn:aws:iam::062677866920:role/yorkpulse-github-actions-deploy-role
+  #   (OIDC role, no stored credentials — scoped to this repo's main branch,
+  #   ecr push on yorkpulse-backend-lambda only, lambda:UpdateFunctionCode on
+  #   only the two YorkPulse functions)
+  # ---------------------------------------------------------------------------
+  deploy-backend-lambda:
+    name: Deploy Backend to AWS Lambda
     runs-on: ubuntu-latest
     needs: security-scan
     permissions:
-      id-token: write   # required for OIDC token exchange with AWS
+      id-token: write # required for OIDC token exchange with AWS
       contents: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Authenticate to AWS using OIDC — no stored access keys.
-      # The IAM role (AWS_ROLE_ARN) trusts GitHub's OIDC provider and allows
-      # this specific repo/branch to assume it. Zero long-lived credentials.
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-1
 
-      # Exchange the AWS credentials for a temporary ECR login token (valid 12h).
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Build for linux/amd64 (ECS Fargate is x86_64 — critical when building on
-      # any ARM runner or Apple Silicon dev machine). Tag with both :latest for
-      # convenience and :<sha> for immutable rollback capability.
-      - name: Build and push backend image to ECR
+      # provenance/sbom disabled: Lambda's image validation rejects the extra
+      # OCI attestation manifest that buildx attaches by default.
+      - name: Build and push Lambda image to ECR
         run: |
           docker buildx build \
-            --platform linux/amd64 \
-            -t 062677866920.dkr.ecr.us-east-1.amazonaws.com/yorkpulse-backend:latest \
-            -t 062677866920.dkr.ecr.us-east-1.amazonaws.com/yorkpulse-backend:${{ github.sha }} \
+            --platform linux/arm64 \
+            --provenance=false \
+            --sbom=false \
+            -f backend/Dockerfile.lambda \
+            -t 062677866920.dkr.ecr.us-east-1.amazonaws.com/yorkpulse-backend-lambda:${{ github.sha }} \
             --push \
             ./backend
 
-      # Tell ECS to start a new deployment using the latest task definition.
-      # ECS will pull the new :latest image and perform a rolling replace
-      # (old tasks stay up until new tasks pass health checks).
-      - name: Force ECS redeploy
+      - name: Run DB migrations
         run: |
-          aws ecs update-service \
-            --cluster yorkpulse-prod-cluster \
-            --service yorkpulse-prod-backend \
-            --force-new-deployment \
-            --region us-east-1
+          pip install -r backend/requirements.txt --quiet
+          cd backend && alembic upgrade head
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      # Block until ECS reports the service as stable (all desired tasks running
-      # and passing ALB health checks). Times out after ~10 minutes by default.
-      - name: Wait for ECS service to stabilize
+      - name: Update Lambda function code
         run: |
-          aws ecs wait services-stable \
-            --cluster yorkpulse-prod-cluster \
-            --services yorkpulse-prod-backend \
-            --region us-east-1
+          IMAGE_URI=062677866920.dkr.ecr.us-east-1.amazonaws.com/yorkpulse-backend-lambda:${{ github.sha }}
+          aws lambda update-function-code --function-name yorkpulse-backend --image-uri "$IMAGE_URI"
+          aws lambda update-function-code --function-name yorkpulse-quest-cleanup --image-uri "$IMAGE_URI"
+          aws lambda wait function-updated --function-name yorkpulse-backend
+          aws lambda wait function-updated --function-name yorkpulse-quest-cleanup
 
-      # Hit the /health endpoint through the ALB to confirm the new container
-      # is live and responding. --retry 5 --retry-delay 10 = up to 50s of retries
-      # to give the ALB time to register the new target. --fail = non-zero exit on 4xx/5xx.
+      # Smoke test through CloudFront (the real traffic path) — origin is an
+      # API Gateway HTTP API, not a Lambda Function URL. CloudFront OAC/SigV4
+      # signing for Function URLs doesn't support POST/PUT/PATCH bodies without
+      # the client pre-computing a payload hash, so the origin was switched to
+      # API Gateway (invoked via a normal authenticated service-principal
+      # permission) with a shared-secret header (X-Origin-Verify, checked in
+      # app/handler.py) for origin protection instead. See yorku.md.
       - name: Smoke test backend health endpoint
         run: |
-          curl --retry 5 --retry-delay 10 --fail \
-            http://yorkpulse-prod-alb-399906510.us-east-1.elb.amazonaws.com/api/v1/health
+          curl --retry 10 --retry-delay 15 --retry-connrefused --fail \
+            https://d37rho1vxqudj6.cloudfront.net/api/v1/health
 
   # ---------------------------------------------------------------------------
-  # Job 3: Deploy Frontend (Azure)
-  # Builds the Next.js SSR image, pushes to ACR with two tags (:latest + :<sha>),
-  # updates the Azure Container App to use the new image, then smoke tests.
+  # PRESERVED FOR INFRASTRUCTURE RESTORE — AWS ECS deploy steps
+  # Uncomment this entire job (and comment out / remove the Render job above)
+  # to restore backend deployment to AWS ECS Fargate.
+  # See multicloud/RESTORE.md for full restore procedure.
+  # ---------------------------------------------------------------------------
+  # deploy-backend-aws:
+  #   name: Deploy Backend to AWS ECS
+  #   runs-on: ubuntu-latest
+  #   needs: security-scan
+  #   permissions:
+  #     id-token: write   # required for OIDC token exchange with AWS
+  #     contents: read
+  #
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Configure AWS credentials (OIDC)
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+  #         aws-region: us-east-1
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Login to Amazon ECR
+  #       uses: aws-actions/amazon-ecr-login@v2
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Build and push backend image to ECR
+  #       run: |
+  #         docker buildx build \
+  #           --platform linux/amd64 \
+  #           -t 062677866920.dkr.ecr.us-east-1.amazonaws.com/yorkpulse-backend:latest \
+  #           -t 062677866920.dkr.ecr.us-east-1.amazonaws.com/yorkpulse-backend:${{ github.sha }} \
+  #           --push \
+  #           ./backend
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Force ECS redeploy
+  #       run: |
+  #         aws ecs update-service \
+  #           --cluster yorkpulse-prod-cluster \
+  #           --service yorkpulse-prod-backend \
+  #           --force-new-deployment \
+  #           --region us-east-1
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Wait for ECS service to stabilize
+  #       run: |
+  #         aws ecs wait services-stable \
+  #           --cluster yorkpulse-prod-cluster \
+  #           --services yorkpulse-prod-backend \
+  #           --region us-east-1
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Smoke test backend health endpoint
+  #       run: |
+  #         curl --retry 5 --retry-delay 10 --fail \
+  #           http://yorkpulse-prod-alb-399906510.us-east-1.elb.amazonaws.com/api/v1/health
+
+  # ---------------------------------------------------------------------------
+  # Job 3: Deploy Frontend (Vercel)
+  # Uses the Vercel CLI to deploy the Next.js frontend to production.
   # Runs only after deploy-backend succeeds — ensures the API is live first.
+  #
+  # Required GitHub secrets:
+  #   VERCEL_TOKEN        — from Vercel dashboard → Account Settings → Tokens
+  #   VERCEL_ORG_ID       — from .vercel/project.json after `vercel link`
+  #   VERCEL_PROJECT_ID   — from .vercel/project.json after `vercel link`
   # ---------------------------------------------------------------------------
   deploy-frontend:
-    name: Deploy Frontend to Azure Container Apps
+    name: Deploy Frontend to Vercel
     runs-on: ubuntu-latest
     needs: deploy-backend
-    permissions:
-      id-token: write   # required for Azure federated credential exchange
-      contents: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Authenticate to Azure using a Service Principal.
-      # AZURE_CREDENTIALS is a single secret containing the full SP JSON:
-      # {"clientId":"...","clientSecret":"...","tenantId":"...","subscriptionId":"..."}
-      # Storing as one secret avoids inline JSON construction and OIDC confusion
-      # (individual params in azure/login@v1 trigger OIDC mode, not SP+secret mode).
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Install the Vercel CLI globally so we can run `vercel --prod`.
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
 
-      # Exchange the Azure credentials for an ACR push token.
-      # ACR tokens expire after 3 hours — this step always fetches a fresh one.
-      - name: Login to Azure Container Registry
+      # Deploy to Vercel production using the CLI token.
+      # --prod = promote to production (not a preview deploy).
+      # --build-env bakes NEXT_PUBLIC_API_URL into the Next.js build at deploy time.
+      # Vercel inlines NEXT_PUBLIC_* vars during `next build` — must be provided here.
+      - name: Deploy to Vercel
         run: |
-          az acr login --name yorkpulseacr
+          vercel deploy --prod \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --build-env NEXT_PUBLIC_API_URL=https://api.yorkpulse.com \
+            --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      # Build for linux/amd64 (Azure Container Apps runs on Linux x86_64).
-      # Tag with :latest + :<sha> for the same rollback capability as ECR.
-      # --build-arg bakes NEXT_PUBLIC_API_URL into the image at build time —
-      # required for Next.js client-side code (runtime env vars don't reach the browser).
-      - name: Build and push frontend image to ACR
-        run: |
-          docker buildx build \
-            --platform linux/amd64 \
-            --build-arg NEXT_PUBLIC_API_URL=https://api.yorkpulse.com \
-            -t yorkpulseacr.azurecr.io/yorkpulse-frontend:latest \
-            -t yorkpulseacr.azurecr.io/yorkpulse-frontend:${{ github.sha }} \
-            --push \
-            ./frontend
-
-      # Tell Azure Container Apps to pull the new image by its exact SHA tag.
-      # Using :latest here would NOT trigger a new revision — Container Apps
-      # only creates a new revision when the image reference changes. The SHA
-      # tag is unique per build so each push gets a distinct revision.
-      # Container Apps performs a rolling update — old replica stays up until
-      # the new replica passes its health probe.
-      - name: Update Azure Container App
-        run: |
-          az containerapp update \
-            --name yorkpulse-frontend \
-            --resource-group yorkpulse-prod \
-            --image yorkpulseacr.azurecr.io/yorkpulse-frontend:${{ github.sha }}
-
-      # Hit the Container App URL to confirm the new frontend is serving.
+      # Hit the Vercel frontend to confirm the new deploy is live.
       # --retry 5 --retry-delay 10 = up to 50s of retries to account for
-      # Azure's cold-start / DNS propagation after the replica swap.
+      # Vercel's propagation time after promotion to production.
       - name: Smoke test frontend URL
         run: |
           curl --retry 5 --retry-delay 10 --fail \
-            https://yorkpulse-frontend.wonderfulplant-691f2e03.canadacentral.azurecontainerapps.io
+            https://YOUR_VERCEL_FRONTEND_URL
+          # TODO: Replace YOUR_VERCEL_FRONTEND_URL with your actual Vercel URL
+          # e.g. https://yorkpulse.vercel.app  or  https://yorkpulse.com
+
+  # ---------------------------------------------------------------------------
+  # PRESERVED FOR INFRASTRUCTURE RESTORE — Azure Container Apps deploy steps
+  # Uncomment this entire job (and comment out / remove the Vercel job above)
+  # to restore frontend deployment to Azure Container Apps.
+  # See multicloud/RESTORE.md for full restore procedure.
+  # ---------------------------------------------------------------------------
+  # deploy-frontend-azure:
+  #   name: Deploy Frontend to Azure Container Apps
+  #   runs-on: ubuntu-latest
+  #   needs: deploy-backend-aws   # NOTE: also restore deploy-backend-aws above
+  #   permissions:
+  #     id-token: write   # required for Azure federated credential exchange
+  #     contents: read
+  #
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Login to Azure
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Login to Azure Container Registry
+  #       run: |
+  #         az acr login --name yorkpulseacr
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Build and push frontend image to ACR
+  #       run: |
+  #         docker buildx build \
+  #           --platform linux/amd64 \
+  #           --build-arg NEXT_PUBLIC_API_URL=https://api.yorkpulse.com \
+  #           -t yorkpulseacr.azurecr.io/yorkpulse-frontend:latest \
+  #           -t yorkpulseacr.azurecr.io/yorkpulse-frontend:${{ github.sha }} \
+  #           --push \
+  #           ./frontend
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Update Azure Container App
+  #       run: |
+  #         az containerapp update \
+  #           --name yorkpulse-frontend \
+  #           --resource-group yorkpulse-prod \
+  #           --image yorkpulseacr.azurecr.io/yorkpulse-frontend:${{ github.sha }}
+  #
+  #     # Preserved for infrastructure restore
+  #     - name: Smoke test frontend URL
+  #       run: |
+  #         curl --retry 5 --retry-delay 10 --fail \
+  #           https://yorkpulse-frontend.wonderfulplant-691f2e03.canadacentral.azurecontainerapps.io

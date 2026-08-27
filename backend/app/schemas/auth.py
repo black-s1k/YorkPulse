@@ -28,6 +28,7 @@ class SignupRequest(BaseModel):
 
     email: EmailStr
     dev_mode: bool = False  # If True, use local OTP instead of email
+    hp: str = ""  # Honeypot — hidden form field; real users never fill it in
 
     @field_validator("email")
     @classmethod
@@ -74,6 +75,7 @@ class ResendOTPRequest(BaseModel):
 
     email: EmailStr
     dev_mode: bool = False  # If True, generate local OTP
+    hp: str = ""  # Honeypot — hidden form field; real users never fill it in
 
     @field_validator("email")
     @classmethod
@@ -97,6 +99,7 @@ class LoginRequest(BaseModel):
 
     email: EmailStr
     dev_mode: bool = False  # If True, use local OTP instead of email
+    hp: str = ""  # Honeypot — hidden form field; real users never fill it in
 
     @field_validator("email")
     @classmethod

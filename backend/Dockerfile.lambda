@@ -1,0 +1,32 @@
+# =============================================================================
+# YorkPulse Backend — Lambda container image
+# =============================================================================
+# Separate from Dockerfile (which builds the Render/ECS image). Lambda packaging
+# needs its own base image and a different runtime entry point (Mangum handler,
+# not uvicorn), and container-image packaging avoids the 250MB unzipped limit
+# that a plain zip deployment would hit — google-generativeai transitively pulls
+# in google-api-python-client (~100MB) that a zip can't absorb without surgery
+# on a working AI feature. A container image has up to 10GB of headroom instead.
+#
+# AWS's own Lambda base image (Amazon Linux, glibc) is used instead of
+# python:3.12-slim so pip installs the exact same manylinux wheels (asyncpg,
+# cryptography, grpcio) that already work in the ECS image — no separate
+# compatibility surface to maintain.
+#
+# No `alembic upgrade head` here, unlike Dockerfile — migrations run once per
+# deploy from CI (see .github/workflows/deploy.yml), not on every Lambda cold
+# start. Running migrations inside the handler would add DB round-trip latency
+# to cold starts and risks concurrent Alembic runs racing each other when
+# multiple execution environments cold-start under simultaneous load.
+# =============================================================================
+FROM public.ecr.aws/lambda/python:3.12-arm64
+
+COPY requirements.txt ${LAMBDA_TASK_ROOT}/requirements.txt
+RUN pip install --no-cache-dir -r ${LAMBDA_TASK_ROOT}/requirements.txt
+
+COPY app/ ${LAMBDA_TASK_ROOT}/app/
+
+# Default handler — the HTTP Lambda. The quest-cleanup Lambda overrides this
+# CMD to ["app.cleanup_handler.handler"] at function-creation time (same image,
+# two functions, two entry points — see infra provisioning commands).
+CMD ["app.handler.handler"]

@@ -11,7 +11,7 @@ class RedisService:
     """Service for Redis operations."""
 
     def __init__(self):
-        self.redis_url = settings.redis_url
+        self.redis_url = settings.upstash_redis_url
         self._client: redis.Redis | None = None
 
     async def get_client(self) -> redis.Redis:

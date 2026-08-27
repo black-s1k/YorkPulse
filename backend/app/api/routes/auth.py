@@ -97,6 +97,16 @@ async def signup(
     real_ip = getattr(http_request.state, "real_ip", http_request.client.host if http_request.client else "unknown")
     logger.info("SIGNUP attempt: email=%s ip=%s", request.email, real_ip)
 
+    # Honeypot: a hidden field real users never see or fill in. Simple
+    # scripted bots that blindly fill every form field (including hidden
+    # ones) trip this. Return an identical-looking success response so
+    # detection isn't revealed, but skip the DB writes and OTP email
+    # entirely — costs us nothing and doesn't leak an oracle for telling
+    # real accounts from fake ones.
+    if request.hp:
+        logger.warning("SIGNUP HONEYPOT TRIPPED: ip=%s", real_ip)
+        return SignupResponse(message="Verification code sent to your email", email=request.email)
+
     # Check if user already exists and is verified
     result = await db.execute(select(User).where(User.email == request.email))
     existing_user = result.scalar_one_or_none()
@@ -197,6 +207,10 @@ async def login(
     """
     real_ip = getattr(http_request.state, "real_ip", http_request.client.host if http_request.client else "unknown")
     logger.info("LOGIN attempt: email=%s ip=%s", request.email, real_ip)
+
+    if request.hp:
+        logger.warning("LOGIN HONEYPOT TRIPPED: ip=%s", real_ip)
+        return SignupResponse(message="Verification code sent to your email", email=request.email)
 
     result = await db.execute(select(User).where(User.email == request.email))
     user = result.scalar_one_or_none()
@@ -345,6 +359,7 @@ async def verify_otp(
 @router.post("/resend-otp", response_model=OTPResponse)
 async def resend_otp(
     request: ResendOTPRequest,
+    http_request: Request,
 ):
     """
     Resend OTP verification code.
@@ -352,6 +367,26 @@ async def resend_otp(
     Rate limited to prevent abuse - client should enforce 60s cooldown.
     If dev_mode=True, generates a local OTP instead of sending email.
     """
+    real_ip = getattr(http_request.state, "real_ip", http_request.client.host if http_request.client else "unknown")
+
+    if request.hp:
+        logger.warning("RESEND-OTP HONEYPOT TRIPPED: ip=%s", real_ip)
+        return OTPResponse(success=True, message="Verification code resent")
+
+    # Require an actual pending verification (set when signup/login sent the
+    # first code) before allowing a resend. Without this, resend-otp has no
+    # DB lookup and no existing-user check at all — any string shaped like a
+    # York email triggers a real send on the first call, making it an open
+    # relay for email-bombing regardless of how many source IPs are used.
+    # This costs real users nothing: the frontend never calls resend before
+    # signup/login already ran.
+    if not await redis_service.get(f"otp_pending:{request.email.lower()}"):
+        logger.warning("RESEND-OTP WITH NO PENDING SESSION: email=%s ip=%s", request.email, real_ip)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No pending verification for this email. Please start over.",
+        )
+
     await _check_otp_send_rate_limit(request.email)
 
     success, message = await supabase_auth_service.resend_otp(

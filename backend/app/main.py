@@ -1,4 +1,3 @@
-import asyncio
 import logging
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
@@ -12,65 +11,22 @@ logger = logging.getLogger(__name__)
 from app.core.middleware import RateLimitMiddleware, TimingMiddleware
 from app.api.routes import admin_personas, auth, buddy, courses, dashboard, feedback, gigs, health, map, marketplace, messaging, push_notifications, reports, residences, reviews, transactions, vault
 from app.services.redis import redis_service
-from app.core.database import async_session_maker
-
-
-async def run_quest_cleanup_task():
-    """Background task to periodically clean up expired quests."""
-    from app.services.quest_cleanup import cleanup_quests
-
-    while True:
-        try:
-            # Run cleanup every hour
-            await asyncio.sleep(3600)  # 1 hour
-
-            async with async_session_maker() as db:
-                result = await cleanup_quests(db)
-                logger.info("Quest cleanup completed: %s", result)
-        except asyncio.CancelledError:
-            break
-        except Exception as e:
-            logger.error("Quest cleanup error: %s", e)
-            # Wait a bit before retrying on error
-            await asyncio.sleep(60)
-
-
-# Store the background task reference
-cleanup_task: asyncio.Task | None = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    global cleanup_task
-
     # Startup
     logger.info("Starting %s...", settings.app_name)
 
-    # Run initial cleanup on startup (disabled for faster startup)
-    # try:
-    #     from app.services.quest_cleanup import cleanup_quests
-    #     async with async_session_maker() as db:
-    #         result = await cleanup_quests(db)
-    #         print(f"Initial quest cleanup: {result}")
-    # except Exception as e:
-    #     print(f"Initial cleanup failed: {e}")
-
-    # Start background cleanup task
-    cleanup_task = asyncio.create_task(run_quest_cleanup_task())
+    # NOTE: periodic quest cleanup used to run as an in-process asyncio loop here.
+    # It now runs as a separate scheduled Lambda (app/cleanup_handler.py) invoked
+    # hourly by EventBridge, since a long-lived in-process loop cannot survive
+    # Lambda freezing the execution environment between invocations.
 
     yield
 
     # Shutdown
     logger.info("Shutting down %s...", settings.app_name)
-
-    # Cancel background task
-    if cleanup_task:
-        cleanup_task.cancel()
-        try:
-            await cleanup_task
-        except asyncio.CancelledError:
-            pass
-
     await redis_service.close()
 
 

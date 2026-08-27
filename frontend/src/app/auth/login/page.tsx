@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { OTPInput } from "@/components/ui/otp-input";
+import { HoneypotField } from "@/components/ui/honeypot-field";
 import { useToast } from "@/hooks/use-toast";
 import { useLogin, useVerifyOTP, useResendOTP } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/auth";
@@ -26,6 +27,7 @@ export default function LoginPage() {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [cooldown, setCooldown] = useState(0);
+  const [hp, setHp] = useState("");
 
   const router = useRouter();
   const { toast } = useToast();
@@ -70,7 +72,7 @@ export default function LoginPage() {
     }
 
     try {
-      await loginMutation.mutateAsync({ email });
+      await loginMutation.mutateAsync({ email, hp });
       setStep("otp");
       setCooldown(60);
     } catch (error: any) {
@@ -143,7 +145,7 @@ export default function LoginPage() {
     if (cooldown > 0) return;
 
     try {
-      await resendOTPMutation.mutateAsync({ email });
+      await resendOTPMutation.mutateAsync({ email, hp });
       setCooldown(60);
       setOtp("");
       toast({
@@ -191,6 +193,7 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleEmailSubmit} className="space-y-4">
+            <HoneypotField value={hp} onChange={setHp} />
             <div className="space-y-2">
               <Label htmlFor="email">York Email</Label>
               <div className="relative">
