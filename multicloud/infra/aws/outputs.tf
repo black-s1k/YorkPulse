@@ -62,17 +62,6 @@ output "vpc_id" {
 }
 
 # -----------------------------------------------------------------------------
-# ElastiCache endpoint — the hostname to use in the REDIS_URL secret.
-# After apply: fill /yorkpulse/prod/redis-url with:
-#   rediss://:<redis-auth-token>@<this-endpoint>:6379
-# Note "rediss://" (double-s) = TLS-enabled connection (transit_encryption_enabled = true)
-# -----------------------------------------------------------------------------
-output "elasticache_endpoint" {
-  description = "ElastiCache Redis primary endpoint — use to construct the REDIS_URL secret"
-  value       = aws_elasticache_replication_group.redis.primary_endpoint_address
-}
-
-# -----------------------------------------------------------------------------
 # GitHub Actions IAM role ARN — configure this in GitHub repo settings.
 # GitHub Actions → Settings → Secrets and Variables → Actions → New secret:
 #   AWS_ROLE_ARN = <this value>

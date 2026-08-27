@@ -180,18 +180,6 @@ resource "aws_iam_role_policy" "ecs_task_permissions" {
           # Log group ARN for the ECS service — defined in cloudwatch.tf
           "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/ecs/${var.project}-backend:*"
         ]
-      },
-      {
-        # Allow the container to authenticate to ElastiCache Redis using IAM.
-        # This is the AWS SDK auth method — the auth token is also stored in
-        # Secrets Manager as a belt-and-suspenders approach.
-        Sid    = "ConnectElastiCache"
-        Effect = "Allow"
-        Action = ["elasticache:Connect"]
-        Resource = [
-          # Scoped to the specific ElastiCache cluster created in elasticache.tf
-          "arn:aws:elasticache:${var.aws_region}:${data.aws_caller_identity.current.account_id}:cluster:${var.project}-${var.environment}-redis"
-        ]
       }
     ]
   })
