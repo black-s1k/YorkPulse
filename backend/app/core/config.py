@@ -116,6 +116,16 @@ class Settings(BaseSettings):
     auth_violation_window_seconds: int = 600   # 10 minutes
     auto_block_duration_seconds: int = 900     # 15 minutes
 
+    # Admin-login lockout: a single GLOBAL (no per-IP dimension) count of
+    # WRONG password attempts against /admin-login. Rotating source IPs
+    # gets an attacker nothing here, unlike the per-IP/per-email limits
+    # above. Exceeding this sets a PERMANENT block (no Redis TTL) — a
+    # deliberate departure from the timed cooldowns elsewhere, since
+    # repeated guesses against one known admin password is treated as an
+    # active attack, not routine abuse. Clear manually via
+    # `redis-cli DEL admin_login:failures` once resolved.
+    admin_login_max_failed_attempts: int = 5
+
 
 @lru_cache
 def get_settings() -> Settings:

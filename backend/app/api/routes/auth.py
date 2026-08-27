@@ -263,10 +263,31 @@ async def admin_login(
     real_ip = getattr(http_request.state, "real_ip", http_request.client.host if http_request.client else "unknown")
     logger.info("ADMIN LOGIN attempt: email=%s ip=%s", request.email, real_ip)
 
+    # Global (not per-IP) wrong-password lockout — checked before anything
+    # else. No Redis TTL is ever set on this key, so it stays tripped until
+    # someone manually clears it; Redis being unavailable fails OPEN here
+    # (consistent with the rest of the rate limiting) rather than locking
+    # out admin login entirely on an unrelated Redis blip.
+    try:
+        failures = await redis_service.get("admin_login:failures")
+    except Exception:
+        failures = None
+    if failures and int(failures) >= settings.admin_login_max_failed_attempts:
+        logger.warning("ADMIN LOGIN: locked out (too many failed attempts), ip=%s", real_ip)
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account locked due to repeated failed attempts.",
+        )
+
     if request.email.lower() not in [e.lower() for e in ADMIN_EMAILS]:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorised.")
 
     if not settings.admin_password or request.password != settings.admin_password:
+        try:
+            new_count = await redis_service.incr("admin_login:failures")
+            logger.warning("ADMIN LOGIN: wrong password, ip=%s, failures=%d", real_ip, new_count)
+        except Exception:
+            logger.warning("ADMIN LOGIN: wrong password, ip=%s (failure count unavailable)", real_ip)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password.")
 
     result = await db.execute(select(User).where(User.email == request.email))
