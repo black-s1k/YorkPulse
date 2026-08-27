@@ -136,6 +136,20 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      # QEMU: registers arm64 emulation so this x86_64 runner can execute an
+      # arm64 build. setup-buildx-action alone only gets you a builder that
+      # supports --push; it doesn't add cross-arch emulation by itself.
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      # The default "docker" buildx driver can't --push directly — needs the
+      # docker-container driver this action creates. (security-scan's build
+      # uses the same action for its own separate runner/job.)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       # provenance/sbom disabled: Lambda's image validation rejects the extra
       # OCI attestation manifest that buildx attaches by default.
       - name: Build and push Lambda image to ECR
