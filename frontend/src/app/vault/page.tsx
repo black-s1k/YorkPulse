@@ -57,18 +57,18 @@ function PostCard({ post }: { post: VaultPost }) {
       whileHover={{ scale: 1.01 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="rounded-xl bg-white border border-gray-100 shadow-sm hover:border-[#E31837]/30 hover:shadow-md transition-all duration-200 overflow-hidden">
+      <div className="rounded-xl bg-white border border-gray-100 shadow-sm hover:border-primary/30 hover:shadow-md transition-all duration-200 overflow-hidden">
         <Link href={`/vault/${post.id}`}>
           <div className="p-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
                 {/* Author & Time */}
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-[#E31837]/10 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
                     {post.is_anonymous ? (
-                      <Shield className="w-3 h-3 text-[#E31837]" />
+                      <Shield className="w-3 h-3 text-primary" />
                     ) : (
-                      <User className="w-3 h-3 text-[#E31837]" />
+                      <User className="w-3 h-3 text-primary" />
                     )}
                   </div>
                   <span className="text-sm text-gray-500">
@@ -167,8 +167,8 @@ export default function VaultPage() {
     return (
       <div className="px-4 py-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-[#E31837]/10 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-[#E31837]" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Shield className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h1 className="text-xl font-bold">The Vault</h1>
@@ -176,15 +176,15 @@ export default function VaultPage() {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-20 h-20 rounded-full bg-[#E31837]/10 flex items-center justify-center mb-6">
-            <Shield className="w-10 h-10 text-[#E31837]" />
+          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+            <Shield className="w-10 h-10 text-primary" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to access The Vault</h2>
           <p className="text-gray-400 mb-6 max-w-md">
             Join anonymous discussions with verified York University students.
           </p>
           <Link href="/auth/login">
-            <Button className="bg-[#E31837] hover:bg-[#C41230]">
+            <Button className="bg-primary hover:bg-york-red-dark">
               Sign In to Continue
             </Button>
           </Link>
@@ -198,8 +198,8 @@ export default function VaultPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#E31837]/10 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-[#E31837]" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Shield className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h1 className="text-xl font-bold">The Vault</h1>
@@ -209,7 +209,7 @@ export default function VaultPage() {
         <Button
           onClick={() => openCreateModal("vault")}
           size="sm"
-          className="bg-[#E31837] hover:bg-[#C41230]"
+          className="bg-primary hover:bg-york-red-dark"
         >
           <Plus className="w-4 h-4 mr-1" />
           Post
@@ -249,7 +249,7 @@ export default function VaultPage() {
               <Button
                 onClick={() => openCreateModal("vault")}
                 variant="link"
-                className="text-[#E31837]"
+                className="text-primary"
               >
                 Be the first to post
               </Button>

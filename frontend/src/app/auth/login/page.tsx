@@ -223,7 +223,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-[#E31837] hover:bg-[#C41230]"
+              className="w-full bg-primary hover:bg-york-red-dark"
               disabled={loginMutation.isPending || !!emailError}
             >
               {loginMutation.isPending ? (
@@ -251,7 +251,7 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-gray-500">
             New to YorkPulse?{" "}
-            <Link href="/auth/signup" className="text-[#E31837] hover:underline font-medium">
+            <Link href="/auth/signup" className="text-primary hover:underline font-medium">
               Create an account
             </Link>
           </p>
@@ -294,14 +294,14 @@ export default function LoginPage() {
           </Button>
 
           <div className="text-center space-y-2">
-            <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center mb-4">
-              <Mail className="w-8 h-8 text-[#E31837]" />
+            <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Mail className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Check your email</h1>
             <p className="text-gray-500">
               We sent a verification code to
             </p>
-            <p className="text-[#E31837] font-medium">{email}</p>
+            <p className="text-primary font-medium">{email}</p>
           </div>
 
           <form onSubmit={handleOTPSubmit} className="space-y-6">
@@ -317,7 +317,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-[#E31837] hover:bg-[#C41230]"
+              className="w-full bg-primary hover:bg-york-red-dark"
               disabled={verifyOTPMutation.isPending || otp.length !== 6}
             >
               {verifyOTPMutation.isPending ? (
@@ -344,7 +344,7 @@ export default function LoginPage() {
               size="sm"
               onClick={handleResend}
               disabled={cooldown > 0 || resendOTPMutation.isPending}
-              className="text-[#E31837] hover:text-[#C41230] hover:bg-[#E31837]/5"
+              className="text-primary hover:text-york-red-dark hover:bg-primary/5"
             >
               {resendOTPMutation.isPending ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -373,11 +373,11 @@ export default function LoginPage() {
           </Button>
 
           <div className="text-center space-y-2">
-            <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center mb-4">
-              <Lock className="w-8 h-8 text-[#E31837]" />
+            <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Lock className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Admin login</h1>
-            <p className="text-[#E31837] font-medium">{email}</p>
+            <p className="text-primary font-medium">{email}</p>
           </div>
 
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
@@ -395,7 +395,7 @@ export default function LoginPage() {
             </div>
             <Button
               type="submit"
-              className="w-full bg-[#E31837] hover:bg-[#C41230]"
+              className="w-full bg-primary hover:bg-york-red-dark"
               disabled={passwordLoading || !password}
             >
               {passwordLoading ? (

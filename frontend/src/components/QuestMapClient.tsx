@@ -96,7 +96,7 @@ function RecenterControl() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleRecenter}
-          className="w-10 h-10 rounded-full bg-[#E31837] flex items-center justify-center shadow-md shadow-red-200 border border-white/30"
+          className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-md shadow-red-200 border border-white/30"
           title="Recenter to York Campus"
         >
           <Navigation className="w-5 h-5 text-white" />
@@ -348,16 +348,16 @@ function StatsOverlay({
         {/* Live indicator */}
         <div className="flex items-center gap-2 mb-3">
           <div className="relative">
-            <div className="w-2 h-2 rounded-full bg-[#E31837]" />
-            <div className="absolute inset-0 w-2 h-2 rounded-full bg-[#E31837] animate-ping" />
+            <div className="w-2 h-2 rounded-full bg-primary" />
+            <div className="absolute inset-0 w-2 h-2 rounded-full bg-primary animate-ping" />
           </div>
-          <span className="text-xs text-[#E31837] font-medium">LIVE</span>
+          <span className="text-xs text-primary font-medium">LIVE</span>
         </div>
 
         {/* Quest count */}
         <div className="mb-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-[#E31837]">
+            <span className="text-3xl font-bold text-primary">
               {quests.length}
             </span>
             <span className="text-sm text-gray-500">active quests</span>
@@ -399,18 +399,18 @@ function StatsOverlay({
           )}
         >
           <div className="flex items-center gap-2">
-            <Building2 className={showBuildings ? "w-4 h-4 text-[#E31837]" : "w-4 h-4 text-gray-500"} />
-            <span className={showBuildings ? "text-[#E31837]" : "text-gray-500"}>
+            <Building2 className={showBuildings ? "w-4 h-4 text-primary" : "w-4 h-4 text-gray-500"} />
+            <span className={showBuildings ? "text-primary" : "text-gray-500"}>
               Buildings
             </span>
             {buildingsLoading ? (
-              <Loader2 className="w-3 h-3 text-[#E31837] animate-spin" />
+              <Loader2 className="w-3 h-3 text-primary animate-spin" />
             ) : (
               <span className="text-xs text-gray-400">({buildingCount})</span>
             )}
           </div>
           {showBuildings ? (
-            <Eye className="w-4 h-4 text-[#E31837]" />
+            <Eye className="w-4 h-4 text-primary" />
           ) : (
             <EyeOff className="w-4 h-4 text-gray-400" />
           )}
@@ -520,7 +520,7 @@ function MobileQuestSheet({
             <div className="flex items-center gap-3">
               <Avatar className="w-10 h-10 border-2 border-white/20">
                 <AvatarImage src={quest.host.avatar_url || undefined} />
-                <AvatarFallback className="bg-[#E31837] text-white">
+                <AvatarFallback className="bg-primary text-white">
                   {quest.host.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -540,7 +540,7 @@ function MobileQuestSheet({
           {/* Action button */}
           <Button
             onClick={() => onViewDetails(quest.id)}
-            className="w-full h-12 bg-[#E31837] hover:bg-[#C41230] text-white font-semibold rounded-xl"
+            className="w-full h-12 bg-primary hover:bg-york-red-dark text-white font-semibold rounded-xl"
           >
             View Quest Details
           </Button>
@@ -598,14 +598,14 @@ function QuestPopupContent({
       {/* Host & spots */}
       <div className="flex items-center justify-between mb-3 pb-3 border-b border-zinc-200">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-[#E31837] flex items-center justify-center text-white text-xs font-medium">
+          <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-xs font-medium">
             {quest.host.name.charAt(0).toUpperCase()}
           </div>
           <span className="text-xs text-gray-500">{quest.host.name}</span>
         </div>
         <div className="flex items-center gap-1 text-xs">
           <Users className="w-3 h-3 text-gray-400" />
-          <span className={spotsLeft > 0 ? "text-[#E31837]" : "text-red-500"}>
+          <span className={spotsLeft > 0 ? "text-primary" : "text-red-500"}>
             {spotsLeft > 0 ? `${spotsLeft} spots` : "Full"}
           </span>
         </div>
@@ -614,7 +614,7 @@ function QuestPopupContent({
       {/* Action button */}
       <button
         onClick={onViewDetails}
-        className="w-full py-2 rounded-lg text-white text-sm font-medium transition-all bg-[#E31837] hover:bg-[#C41230]"
+        className="w-full py-2 rounded-lg text-white text-sm font-medium transition-all bg-primary hover:bg-york-red-dark"
       >
         View Quest
       </button>

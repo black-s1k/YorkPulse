@@ -33,11 +33,11 @@ import { LocationPickerWrapper } from "@/components/LocationPickerWrapper";
 import type { QuestCategory, VibeLevel, PersonaUser } from "@/types";
 
 const categories: { value: QuestCategory; label: string; icon: typeof Dumbbell; color: string }[] = [
-  { value: "gym", label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-400 border-red-500/30" },
-  { value: "food", label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-  { value: "study", label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-  { value: "game", label: "Game", icon: Gamepad2, color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-  { value: "commute", label: "Commute", icon: Car, color: "bg-green-500/20 text-green-400 border-green-500/30" },
+  { value: "gym", label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-700 border-red-500/30" },
+  { value: "food", label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-700 border-orange-500/30" },
+  { value: "study", label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-700 border-blue-500/30" },
+  { value: "game", label: "Game", icon: Gamepad2, color: "bg-purple-500/20 text-purple-700 border-purple-500/30" },
+  { value: "commute", label: "Commute", icon: Car, color: "bg-green-500/20 text-green-700 border-green-500/30" },
   { value: "custom", label: "Custom", icon: Plus, color: "bg-zinc-500/20 text-gray-500 border-zinc-500/30" },
 ];
 
@@ -374,7 +374,7 @@ export function CreateQuestModal() {
                       className={cn(
                         "px-3 py-1.5 rounded-full text-sm border transition-all",
                         selectedTimeOption === option.label
-                          ? "bg-green-500/20 text-green-400 border-green-500/30"
+                          ? "bg-green-500/20 text-green-700 border-green-500/30"
                           : "bg-white/5 text-gray-500 border-gray-200 hover:bg-white/10"
                       )}
                     >
@@ -428,7 +428,7 @@ export function CreateQuestModal() {
                       className={cn(
                         "px-3 py-2 rounded-full text-sm border transition-all flex items-center gap-1.5",
                         vibeLevel === level.value
-                          ? "bg-green-500/20 text-green-400 border-green-500/30"
+                          ? "bg-green-500/20 text-green-700 border-green-500/30"
                           : "bg-white/5 text-gray-500 border-gray-200 hover:bg-white/10"
                       )}
                     >
@@ -480,7 +480,7 @@ export function CreateQuestModal() {
                     <button
                       type="button"
                       onClick={() => setMaxParticipants(11)}
-                      className="text-xs text-green-400 hover:text-green-300 transition-colors"
+                      className="text-xs text-green-700 hover:text-green-800 transition-colors"
                     >
                       Need more than 10?
                     </button>

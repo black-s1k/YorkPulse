@@ -59,7 +59,7 @@ export default function CreateGigPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-yellow-500/10 flex items-center justify-center mb-6">
-            <GraduationCap className="w-10 h-10 text-yellow-400" />
+            <GraduationCap className="w-10 h-10 text-yellow-800" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to post a gig</h2>
           <p className="text-gray-400 mb-6 max-w-md">

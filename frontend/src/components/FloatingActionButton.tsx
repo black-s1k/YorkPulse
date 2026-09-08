@@ -48,10 +48,10 @@ export function FloatingActionButton() {
         aria-label={config.label}
       >
         {/* Glow effect */}
-        <div className="absolute inset-0 rounded-full bg-[#E31837] blur-lg opacity-30 group-hover:opacity-50 transition-opacity" />
+        <div className="absolute inset-0 rounded-full bg-primary blur-lg opacity-30 group-hover:opacity-50 transition-opacity" />
 
         {/* Button */}
-        <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-[#E31837] hover:bg-[#C41230] shadow-lg shadow-red-300/40 border border-white/20">
+        <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-primary hover:bg-york-red-dark shadow-lg shadow-red-300/40 border border-white/20">
           <Plus className="w-6 h-6 text-white" />
         </div>
 
@@ -59,7 +59,7 @@ export function FloatingActionButton() {
         <motion.span
           initial={{ opacity: 0, x: 10 }}
           whileHover={{ opacity: 1, x: 0 }}
-          className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-white backdrop-blur-sm text-white text-sm font-medium whitespace-nowrap border border-gray-100 pointer-events-none"
+          className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-white backdrop-blur-sm text-gray-700 text-sm font-medium whitespace-nowrap border border-gray-100 shadow-sm pointer-events-none"
         >
           {config.label}
         </motion.span>

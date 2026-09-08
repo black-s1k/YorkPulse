@@ -199,8 +199,8 @@ export default function SetupProfilePage() {
             className="space-y-6"
           >
             <div className="text-center space-y-2">
-              <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center">
-                <User className="w-8 h-8 text-[#E31837]" />
+              <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                <User className="w-8 h-8 text-primary" />
               </div>
               <h1 className="text-2xl font-bold">What is your name?</h1>
               <p className="text-gray-500">
@@ -222,7 +222,7 @@ export default function SetupProfilePage() {
 
               <Button
                 type="submit"
-                className="w-full bg-[#E31837] hover:bg-[#C41230]"
+                className="w-full bg-primary hover:bg-york-red-dark"
                 disabled={verifyNameMutation.isPending}
               >
                 {verifyNameMutation.isPending ? (
@@ -259,8 +259,8 @@ export default function SetupProfilePage() {
             className="space-y-6"
           >
             <div className="text-center space-y-2">
-              <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center">
-                <Camera className="w-8 h-8 text-[#E31837]" />
+              <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                <Camera className="w-8 h-8 text-primary" />
               </div>
               <h1 className="text-2xl font-bold">Verify your identity</h1>
               <p className="text-gray-500">
@@ -273,8 +273,8 @@ export default function SetupProfilePage() {
               className={cn(
                 "border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors",
                 isUploading
-                  ? "border-[#E31837]/30 bg-[#E31837]/10"
-                  : "border-gray-200 hover:border-[#E31837]/30 hover:bg-gray-50"
+                  ? "border-primary/30 bg-primary/10"
+                  : "border-gray-200 hover:border-primary/30 hover:bg-gray-50"
               )}
             >
               <input
@@ -288,7 +288,7 @@ export default function SetupProfilePage() {
 
               {isUploading ? (
                 <div className="space-y-2">
-                  <Loader2 className="w-8 h-8 mx-auto text-[#E31837] animate-spin" />
+                  <Loader2 className="w-8 h-8 mx-auto text-primary animate-spin" />
                   <p className="text-sm text-gray-500">Uploading...</p>
                 </div>
               ) : (
@@ -327,8 +327,8 @@ export default function SetupProfilePage() {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-6 text-center"
           >
-            <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-[#E31837] animate-spin" />
+            <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+              <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
             <div className="space-y-2">
               <h1 className="text-2xl font-bold">Verifying your ID...</h1>
@@ -347,7 +347,7 @@ export default function SetupProfilePage() {
             className="space-y-6 text-center"
           >
             <div className="w-16 h-16 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-green-400" />
+              <CheckCircle className="w-8 h-8 text-green-700" />
             </div>
             <div className="space-y-2">
               <h1 className="text-2xl font-bold">Name Verified!</h1>
@@ -367,7 +367,7 @@ export default function SetupProfilePage() {
             className="space-y-6 text-center"
           >
             <div className="w-16 h-16 mx-auto rounded-full bg-blue-500/20 flex items-center justify-center">
-              <AlertCircle className="w-8 h-8 text-blue-400" />
+              <AlertCircle className="w-8 h-8 text-blue-700" />
             </div>
             <div className="space-y-2">
               <h1 className="text-2xl font-bold">Stay in the loop</h1>
@@ -382,7 +382,7 @@ export default function SetupProfilePage() {
                   setStep("success");
                   setTimeout(() => router.push("/auth/complete-profile"), 1500);
                 }}
-                className="bg-[#E31837] hover:bg-[#C41230]"
+                className="bg-primary hover:bg-york-red-dark"
               >
                 Enable Notifications
               </Button>

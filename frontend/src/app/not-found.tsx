@@ -7,7 +7,7 @@ export default function NotFound() {
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="text-center space-y-6 max-w-md">
         <div className="w-16 h-16 mx-auto rounded-full bg-purple-500/20 flex items-center justify-center">
-          <SearchX className="w-8 h-8 text-purple-400" />
+          <SearchX className="w-8 h-8 text-purple-700" />
         </div>
         <div className="space-y-2">
           <h2 className="text-2xl font-bold">Page not found</h2>

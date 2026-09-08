@@ -81,9 +81,9 @@ export function ChatMessage({
       {/* Avatar */}
       {showAvatar && (
         <Link href={`/profile/${authorId}`} className="flex-shrink-0">
-          <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-[#E31837]/30 transition-all">
+          <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all">
             <AvatarImage src={authorAvatarUrl || undefined} />
-            <AvatarFallback className="text-xs bg-[#E31837]/10 text-[#E31837]">
+            <AvatarFallback className="text-xs bg-primary/10 text-primary">
               {authorName?.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -104,7 +104,7 @@ export function ChatMessage({
             href={`/profile/${authorId}`}
             className={cn(
               "text-sm font-medium hover:underline cursor-pointer",
-              isOwn ? "text-[#00ff88]" : "text-gray-700"
+              isOwn ? "text-primary" : "text-gray-700"
             )}
           >
             {authorName}
@@ -127,12 +127,12 @@ export function ChatMessage({
           <button
             onClick={() => onScrollToMessage?.(replyTo.id)}
             className={cn(
-              "mb-2 px-2 py-1.5 rounded-lg border-l-2 border-[#E31837]/30 bg-gray-50 text-xs w-full",
+              "mb-2 px-2 py-1.5 rounded-lg border-l-2 border-primary/30 bg-gray-50 text-xs w-full",
               "hover:bg-white/10 transition-colors cursor-pointer",
               isOwn ? "text-right" : "text-left"
             )}
           >
-            <p className="text-[#E31837] font-medium mb-0.5">{replyAuthorName}</p>
+            <p className="text-primary font-medium mb-0.5">{replyAuthorName}</p>
             <p className="text-gray-500 line-clamp-1">
               {replyTo.image_url && !replyContent ? "Photo" : replyContent || "Message"}
             </p>

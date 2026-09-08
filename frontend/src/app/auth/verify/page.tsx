@@ -80,8 +80,8 @@ function VerifyContent() {
     >
       {status === "loading" && (
         <>
-          <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 text-[#E31837] animate-spin" />
+          <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">Verifying your email...</h1>
@@ -93,7 +93,7 @@ function VerifyContent() {
       {status === "success" && (
         <>
           <div className="w-16 h-16 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
-            <CheckCircle className="w-8 h-8 text-green-400" />
+            <CheckCircle className="w-8 h-8 text-green-700" />
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">Email verified!</h1>
@@ -107,7 +107,7 @@ function VerifyContent() {
       {status === "notify" && (
         <>
           <div className="w-16 h-16 mx-auto rounded-full bg-blue-500/20 flex items-center justify-center">
-            <Bell className="w-8 h-8 text-blue-400" />
+            <Bell className="w-8 h-8 text-blue-700" />
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">Stay in the loop</h1>
@@ -122,7 +122,7 @@ function VerifyContent() {
                 setStatus("success");
                 setTimeout(() => router.push("/"), 1000);
               }}
-              className="bg-[#E31837] hover:bg-[#C41230]"
+              className="bg-primary hover:bg-york-red-dark"
             >
               <Bell className="w-4 h-4 mr-2" />
               Enable Notifications
@@ -154,7 +154,7 @@ function VerifyContent() {
           <div className="flex gap-3 justify-center">
             <Button
               onClick={handleRetry}
-              className="bg-[#E31837] hover:bg-[#C41230]"
+              className="bg-primary hover:bg-york-red-dark"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Retry
@@ -172,7 +172,7 @@ function VerifyContent() {
       {status === "error" && (
         <>
           <div className="w-16 h-16 mx-auto rounded-full bg-red-500/20 flex items-center justify-center">
-            <XCircle className="w-8 h-8 text-red-400" />
+            <XCircle className="w-8 h-8 text-red-700" />
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">Verification failed</h1>
@@ -183,7 +183,7 @@ function VerifyContent() {
           <div className="flex gap-3 justify-center">
             <Button
               onClick={handleRetry}
-              className="bg-[#E31837] hover:bg-[#C41230]"
+              className="bg-primary hover:bg-york-red-dark"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Retry
@@ -206,7 +206,7 @@ export default function VerifyPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 text-[#E31837] animate-spin" />
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
       }
     >

@@ -366,15 +366,15 @@ export default function CoursesPage() {
                   className={cn(
                     "p-3 rounded-lg cursor-pointer transition-colors",
                     "bg-white hover:bg-gray-50 border border-gray-100 shadow-sm",
-                    isCourseMember(course.id) && "border-[#E31837]/30"
+                    isCourseMember(course.id) && "border-primary/30"
                   )}
                 >
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm text-[#E31837]">{course.code}</span>
+                        <span className="font-mono text-sm text-primary">{course.code}</span>
                         {isCourseMember(course.id) && (
-                          <Badge variant="secondary" className="bg-[#E31837]/20 text-[#E31837] text-xs">
+                          <Badge variant="secondary" className="bg-primary/20 text-primary text-xs">
                             Joined
                           </Badge>
                         )}
@@ -397,7 +397,7 @@ export default function CoursesPage() {
       {!searchQuery && popularCourses.length > 0 && (
         <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm">
           <h3 className="text-sm font-medium text-gray-500 mb-3 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-[#E31837]" />
+            <TrendingUp className="w-4 h-4 text-primary" />
             Popular Courses
           </h3>
           <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
@@ -409,17 +409,17 @@ export default function CoursesPage() {
                 className={cn(
                   "flex-shrink-0 w-40 p-3 rounded-xl cursor-pointer border transition-colors",
                   isCourseMember(course.id)
-                    ? "bg-[#E31837]/5 border-[#E31837]/30"
+                    ? "bg-primary/5 border-primary/30"
                     : "bg-white hover:bg-gray-50 border-gray-200"
                 )}
               >
-                <p className="font-mono text-sm text-[#E31837] font-bold truncate">{course.code}</p>
+                <p className="font-mono text-sm text-primary font-bold truncate">{course.code}</p>
                 <p className="text-xs text-gray-500 mt-1 truncate">{course.name}</p>
                 <div className="flex items-center gap-1 mt-2 text-gray-400">
                   <Users className="w-3 h-3" />
                   <span className="text-xs">{getPopularDisplayCount(idx, course.id)}</span>
                   {isCourseMember(course.id) && (
-                    <span className="ml-auto text-[10px] text-[#E31837]">Joined</span>
+                    <span className="ml-auto text-[10px] text-primary">Joined</span>
                   )}
                 </div>
               </motion.div>
@@ -442,9 +442,9 @@ export default function CoursesPage() {
                   setSelectedCourse(membership.course);
                   setViewMode("chat");
                 }}
-                className="relative px-3 py-2 rounded-lg bg-[#E31837]/10 border border-[#E31837]/30 cursor-pointer"
+                className="relative px-3 py-2 rounded-lg bg-primary/10 border border-primary/30 cursor-pointer"
               >
-                <span className="font-mono text-sm text-[#E31837]">{membership.course.code}</span>
+                <span className="font-mono text-sm text-primary">{membership.course.code}</span>
                 {membership.unread_count > 0 && (
                   <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center px-1 text-[10px] font-bold text-white bg-red-500 rounded-full">
                     {membership.unread_count > 99 ? "99+" : membership.unread_count}
@@ -547,10 +547,10 @@ export default function CoursesPage() {
                                           className={cn(
                                             "px-3 py-1.5 rounded-lg text-xs font-mono transition-colors",
                                             "bg-white hover:bg-white/10 border border-gray-100",
-                                            isCourseMember(course.id) && "border-[#E31837]/50 bg-[#E31837]/10"
+                                            isCourseMember(course.id) && "border-primary/50 bg-primary/10"
                                           )}
                                         >
-                                          <span className="text-[#E31837]">{course.code}</span>
+                                          <span className="text-primary">{course.code}</span>
                                           <span className="ml-2 text-gray-400">{course.member_count}</span>
                                         </motion.button>
                                       ))}
@@ -602,7 +602,7 @@ export default function CoursesPage() {
         </Button>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[#E31837]">{selectedCourse?.code}</span>
+            <span className="font-mono text-primary">{selectedCourse?.code}</span>
             {showParticipants ? (
               <>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
@@ -622,7 +622,7 @@ export default function CoursesPage() {
         <Button
           variant="ghost"
           size="sm"
-          className="text-red-400 hover:text-red-300"
+          className="text-red-700 hover:text-red-800"
           onClick={() => selectedCourse && leaveCourseMutation.mutate(selectedCourse.id)}
         >
           <LogOut className="w-4 h-4" />
@@ -659,7 +659,7 @@ export default function CoursesPage() {
                 className={cn(
                   "w-full px-2 py-1.5 rounded flex items-center gap-2 text-sm transition-colors",
                   showParticipants
-                    ? "bg-[#E31837]/20 text-[#E31837]"
+                    ? "bg-primary/20 text-primary"
                     : "hover:bg-gray-50 text-gray-500"
                 )}
               >
@@ -674,7 +674,7 @@ export default function CoursesPage() {
                   className={cn(
                     "w-full px-2 py-1.5 rounded flex items-center gap-2 text-sm transition-colors",
                     selectedChannel?.id === channel.id
-                      ? "bg-[#E31837]/20 text-[#E31837]"
+                      ? "bg-primary/20 text-primary"
                       : "hover:bg-gray-50 text-gray-500"
                   )}
                 >
@@ -732,7 +732,7 @@ export default function CoursesPage() {
                       >
                         <Avatar className="w-10 h-10 flex-shrink-0">
                           <AvatarImage src={p.avatar_url ?? undefined} />
-                          <AvatarFallback className="text-xs bg-[#E31837]/10 text-[#E31837]">
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
                             {p.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
@@ -789,8 +789,8 @@ export default function CoursesPage() {
                 {/* Welcome Banner */}
                 <div className="max-w-lg mx-auto">
                   <div className="text-center mb-6">
-                    <div className="w-16 h-16 mx-auto rounded-2xl bg-[#E31837]/10 border border-[#E31837]/20 flex items-center justify-center mb-4">
-                      <GraduationCap className="w-8 h-8 text-[#E31837]" />
+                    <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                      <GraduationCap className="w-8 h-8 text-primary" />
                     </div>
                     <h2 className="text-xl font-bold text-white mb-1">
                       Welcome to {selectedCourse?.code}
@@ -804,7 +804,7 @@ export default function CoursesPage() {
                     <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm">
                       <div className="flex items-start gap-3">
                         <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                          <Hash className="w-4 h-4 text-purple-400" />
+                          <Hash className="w-4 h-4 text-purple-700" />
                         </div>
                         <div>
                           <p className="font-medium text-sm text-white">General Channel</p>
@@ -819,14 +819,14 @@ export default function CoursesPage() {
                     {/* Professor Channel Voting */}
                     <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm">
                       <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-[#E31837]/20 flex items-center justify-center flex-shrink-0">
-                          <Vote className="w-4 h-4 text-[#E31837]" />
+                        <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                          <Vote className="w-4 h-4 text-primary" />
                         </div>
                         <div>
                           <p className="font-medium text-sm text-white">Professor Channels</p>
                           <p className="text-xs text-gray-500 mt-1">
                             Want a dedicated channel for your professor's section? Use the
-                            <span className="text-[#E31837] font-medium"> "Request Prof Channel" </span>
+                            <span className="text-primary font-medium"> "Request Prof Channel" </span>
                             button. When <span className="text-white font-medium">5 students</span> vote
                             for the same professor, a channel is automatically created!
                           </p>
@@ -838,15 +838,15 @@ export default function CoursesPage() {
                     <div className="p-4 rounded-xl bg-yellow-500/5 border border-yellow-500/20">
                       <div className="flex items-start gap-3">
                         <div className="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center flex-shrink-0">
-                          <svg className="w-4 h-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-4 h-4 text-yellow-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </div>
                         <div>
-                          <p className="font-medium text-sm text-yellow-400">Auto-Cleanup</p>
+                          <p className="font-medium text-sm text-yellow-800">Auto-Cleanup</p>
                           <p className="text-xs text-gray-500 mt-1">
                             Professor section channels are automatically archived after
-                            <span className="text-yellow-400 font-medium"> 6 months </span>
+                            <span className="text-yellow-800 font-medium"> 6 months </span>
                             to keep things fresh each semester. The general channel stays forever.
                           </p>
                         </div>
@@ -1020,11 +1020,11 @@ export default function CoursesPage() {
       {/* Tab Switcher */}
       {viewMode === "browse" && (
         <div className="flex gap-1 p-1 mb-5 bg-white border border-gray-100 shadow-sm rounded-xl w-fit">
-          <button className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors bg-cyan-500/20 text-cyan-300">
+          <button className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors bg-cyan-500/20 text-cyan-700">
             Courses
           </button>
           <Link href="/residences">
-            <button className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors text-gray-500 hover:text-zinc-200">
+            <button className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors text-gray-500 hover:text-gray-900">
               Residence
             </button>
           </Link>
@@ -1039,7 +1039,7 @@ export default function CoursesPage() {
           then select a course to join its chat.{" "}
           <span className="text-gray-700">Can&apos;t find your course?</span> Use the search bar above to look it up
           by name or course code. If it&apos;s still missing,{" "}
-          <Link href="/#send-feedback" className="text-blue-400 underline underline-offset-2 hover:text-blue-300 transition-colors">
+          <Link href="/#send-feedback" className="text-blue-700 underline underline-offset-2 hover:text-blue-800 transition-colors">
             report it here
           </Link>
           .
@@ -1064,7 +1064,7 @@ export default function CoursesPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <GraduationCap className="w-5 h-5 text-[#E31837]" />
+              <GraduationCap className="w-5 h-5 text-primary" />
               Join Course
             </DialogTitle>
             <DialogDescription>
@@ -1077,7 +1077,7 @@ export default function CoursesPage() {
               <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-mono text-lg text-[#E31837] font-bold">
+                    <p className="font-mono text-lg text-primary font-bold">
                       {previewCourse.code}
                     </p>
                     <p className="text-sm text-gray-700 mt-1">
@@ -1117,7 +1117,7 @@ export default function CoursesPage() {
             <Button
               onClick={handleJoinCourse}
               disabled={joinCourseMutation.isPending}
-              className="bg-[#E31837] hover:bg-[#E31837]/90 text-black"
+              className="bg-primary hover:bg-primary/90 text-black"
             >
               {joinCourseMutation.isPending ? (
                 <>

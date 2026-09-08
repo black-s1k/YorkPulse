@@ -26,7 +26,7 @@ export function QuestMapWrapper({ quests, className }: QuestMapWrapperProps) {
   if (!MapComponent) {
     return (
       <div className={cn("w-full h-full bg-white rounded-xl flex items-center justify-center", className)}>
-        <Loader2 className="w-8 h-8 animate-spin text-green-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-green-700" />
       </div>
     );
   }

@@ -176,7 +176,7 @@ export function LocationPicker({ value, onChange, className }: LocationPickerPro
           className="w-full justify-between bg-white border-gray-100 hover:bg-white/10 hover:border-purple-500/30"
         >
           <span className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-purple-400" />
+            <MapPin className="w-4 h-4 text-purple-700" />
             <span className="text-gray-700">Quick Locations</span>
           </span>
           <div className="flex items-center gap-2">
@@ -247,7 +247,7 @@ export function LocationPicker({ value, onChange, className }: LocationPickerPro
             className="absolute bottom-3 left-3 right-3 backdrop-blur-xl bg-black/60 border border-gray-100 rounded-xl px-4 py-2.5 text-center"
           >
             <p className="text-sm text-gray-700">
-              <span className="text-purple-400">Tap</span> on the map to drop a pin
+              <span className="text-purple-700">Tap</span> on the map to drop a pin
             </p>
           </motion.div>
         )}

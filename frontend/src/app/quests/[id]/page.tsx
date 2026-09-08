@@ -63,11 +63,11 @@ import { cn } from "@/lib/utils";
 import type { QuestCategory, VibeLevel, ParticipantStatus, QuestMessage } from "@/types";
 
 const categoryConfig: Record<QuestCategory, { label: string; icon: typeof Dumbbell; color: string }> = {
-  gym: { label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-400" },
-  food: { label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-400" },
-  study: { label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-400" },
-  game: { label: "Game", icon: Gamepad2, color: "bg-purple-500/20 text-purple-400" },
-  commute: { label: "Commute", icon: Car, color: "bg-green-500/20 text-green-400" },
+  gym: { label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-700" },
+  food: { label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-700" },
+  study: { label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-700" },
+  game: { label: "Game", icon: Gamepad2, color: "bg-purple-500/20 text-purple-700" },
+  commute: { label: "Commute", icon: Car, color: "bg-green-500/20 text-green-700" },
   custom: { label: "Custom", icon: Sparkles, color: "bg-zinc-500/20 text-gray-500" },
 };
 
@@ -99,7 +99,7 @@ export default function QuestDetailPage() {
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-            <Users className="w-5 h-5 text-green-400" />
+            <Users className="w-5 h-5 text-green-700" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Side Quests</h1>
@@ -108,7 +108,7 @@ export default function QuestDetailPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6">
-            <Users className="w-10 h-10 text-green-400" />
+            <Users className="w-10 h-10 text-green-700" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to view this quest</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -391,9 +391,9 @@ export default function QuestDetailPage() {
               variant="secondary"
               className={cn(
                 "text-xs",
-                quest.status === "open" && "bg-green-500/20 text-green-400",
-                quest.status === "in_progress" && "bg-blue-500/20 text-blue-400",
-                quest.status === "full" && "bg-yellow-500/20 text-yellow-400",
+                quest.status === "open" && "bg-green-500/20 text-green-700",
+                quest.status === "in_progress" && "bg-blue-500/20 text-blue-700",
+                quest.status === "full" && "bg-yellow-500/20 text-yellow-800",
                 quest.status === "completed" && "bg-zinc-500/20 text-gray-500"
               )}
             >
@@ -424,7 +424,7 @@ export default function QuestDetailPage() {
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleDelete} className="text-red-400">
+                <DropdownMenuItem onClick={handleDelete} className="text-red-700">
                   <Trash2 className="w-4 h-4 mr-2" />
                   Cancel quest
                 </DropdownMenuItem>
@@ -444,7 +444,7 @@ export default function QuestDetailPage() {
         {/* Location with Map */}
         <div className="mb-4">
           <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
-            <MapPin className="w-5 h-5 text-green-400" />
+            <MapPin className="w-5 h-5 text-green-700" />
             <span>{quest.location}</span>
           </div>
           {quest.latitude && quest.longitude && (
@@ -460,23 +460,23 @@ export default function QuestDetailPage() {
         {/* Meta */}
         <div className="space-y-3 text-sm text-gray-500">
           <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-green-400" />
+            <Calendar className="w-5 h-5 text-green-700" />
             <span>{formatTime(quest.start_time)}</span>
           </div>
           {quest.end_time && (
             <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-green-400" />
+              <Clock className="w-5 h-5 text-green-700" />
               <span>Until {formatTime(quest.end_time)}</span>
             </div>
           )}
           <div className="flex items-center gap-3">
-            <Zap className="w-5 h-5 text-green-400" />
+            <Zap className="w-5 h-5 text-green-700" />
             <span>{vibeInfo.emoji} {quest.vibe_level === "custom" && quest.custom_vibe_level
               ? quest.custom_vibe_level
               : vibeInfo.label} vibe</span>
           </div>
           <div className="flex items-center gap-3">
-            <Users className="w-5 h-5 text-green-400" />
+            <Users className="w-5 h-5 text-green-700" />
             <span>
               {quest.current_participants}/{quest.max_participants} participants
             </span>
@@ -529,7 +529,7 @@ export default function QuestDetailPage() {
           <Link href={`/profile/${quest.host.id}`} className="flex items-center gap-3 flex-1 hover:opacity-80 transition-opacity">
             <Avatar className="w-12 h-12">
               <AvatarImage src={quest.host.avatar_url || undefined} />
-              <AvatarFallback className="bg-green-500/20 text-green-400">
+              <AvatarFallback className="bg-green-500/20 text-green-700">
                 {quest.host.name
                   .split(" ")
                   .map((n) => n[0])
@@ -539,7 +539,7 @@ export default function QuestDetailPage() {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <p className="font-medium hover:text-purple-400 transition-colors">{quest.host.name}</p>
+              <p className="font-medium hover:text-purple-700 transition-colors">{quest.host.name}</p>
             </div>
           </Link>
           {isAuthenticated && !isHost && (
@@ -565,7 +565,7 @@ export default function QuestDetailPage() {
       {/* Participants */}
       <div className="space-y-4">
         <h2 className="font-semibold flex items-center gap-2">
-          <Users className="w-5 h-5 text-green-400" />
+          <Users className="w-5 h-5 text-green-700" />
           Participants ({acceptedParticipants.length + 1})
         </h2>
 
@@ -574,12 +574,12 @@ export default function QuestDetailPage() {
           <div className="p-3 rounded-lg bg-white border border-gray-100 shadow-sm flex items-center gap-3 hover:border-gray-300 transition-colors">
             <Avatar className="w-8 h-8">
               <AvatarImage src={quest.host.avatar_url || undefined} />
-              <AvatarFallback className="text-xs bg-green-500/20 text-green-400">
+              <AvatarFallback className="text-xs bg-green-500/20 text-green-700">
                 {quest.host.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <span className="flex-1 text-sm hover:text-purple-400 transition-colors">{quest.host.name}</span>
-            <Badge variant="secondary" className="bg-green-500/20 text-green-400 text-xs">
+            <span className="flex-1 text-sm hover:text-purple-700 transition-colors">{quest.host.name}</span>
+            <Badge variant="secondary" className="bg-green-500/20 text-green-700 text-xs">
               Host
             </Badge>
           </div>
@@ -601,7 +601,7 @@ export default function QuestDetailPage() {
                       {p.user.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="flex-1 text-sm hover:text-purple-400 transition-colors">{p.user.name}</span>
+                  <span className="flex-1 text-sm hover:text-purple-700 transition-colors">{p.user.name}</span>
                 </Link>
                 <span className="text-xs text-gray-400">
                   Joined {timeAgo(p.created_at)}
@@ -610,7 +610,7 @@ export default function QuestDetailPage() {
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                    className="h-8 w-8 text-red-700 hover:text-red-800 hover:bg-red-500/20"
                     onClick={() => handleRemoveParticipant(p.user.id)}
                     disabled={removeMutation.isPending}
                   >
@@ -625,7 +625,7 @@ export default function QuestDetailPage() {
         {/* Pending Requests (Host only) */}
         {isHost && pendingParticipants.length > 0 && (
           <>
-            <h3 className="font-semibold text-yellow-400 mt-6 flex items-center gap-2">
+            <h3 className="font-semibold text-yellow-800 mt-6 flex items-center gap-2">
               <Clock className="w-5 h-5" />
               Pending Requests ({pendingParticipants.length})
             </h3>
@@ -637,7 +637,7 @@ export default function QuestDetailPage() {
                 >
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={p.user.avatar_url || undefined} />
-                    <AvatarFallback className="text-xs bg-yellow-500/20 text-yellow-400">
+                    <AvatarFallback className="text-xs bg-yellow-500/20 text-yellow-800">
                       {p.user.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
@@ -651,7 +651,7 @@ export default function QuestDetailPage() {
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-green-400 hover:text-green-300 hover:bg-green-500/20"
+                      className="h-8 w-8 text-green-700 hover:text-green-800 hover:bg-green-500/20"
                       onClick={() => handleParticipantAction(p.id, "accept")}
                       disabled={approveMutation.isPending}
                     >
@@ -660,7 +660,7 @@ export default function QuestDetailPage() {
                     <Button
                       size="icon"
                       variant="ghost"
-                      className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-500/20"
+                      className="h-8 w-8 text-red-700 hover:text-red-800 hover:bg-red-500/20"
                       onClick={() => handleParticipantAction(p.id, "reject")}
                       disabled={approveMutation.isPending}
                     >
@@ -687,10 +687,10 @@ export default function QuestDetailPage() {
             className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
           >
             <div className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-green-400" />
+              <MessageCircle className="w-5 h-5 text-green-700" />
               <span className="font-semibold">Group Chat</span>
               {allMessages.length > 0 && (
-                <Badge variant="secondary" className="bg-green-500/20 text-green-400 text-xs">
+                <Badge variant="secondary" className="bg-green-500/20 text-green-700 text-xs">
                   {allMessages.length}
                 </Badge>
               )}
@@ -765,7 +765,7 @@ export default function QuestDetailPage() {
                             <p className="text-xs text-gray-500 mb-0.5">
                               {message.sender.name}
                               {message.sender.id === quest?.host.id && (
-                                <span className="ml-1 text-green-400">(Host)</span>
+                                <span className="ml-1 text-green-700">(Host)</span>
                               )}
                             </p>
                           )}
@@ -816,9 +816,9 @@ export default function QuestDetailPage() {
                 {/* Reply Preview */}
                 {replyTo && (
                   <div className="mb-2 flex items-center gap-2 px-3 py-2 bg-green-500/10 border border-green-500/20 rounded-lg">
-                    <Reply className="w-4 h-4 text-green-400 shrink-0" />
+                    <Reply className="w-4 h-4 text-green-700 shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs text-green-400">Replying to {replyTo.senderName}</p>
+                      <p className="text-xs text-green-700">Replying to {replyTo.senderName}</p>
                       <p className="text-xs text-gray-500 truncate">{replyTo.content}</p>
                     </div>
                     <button

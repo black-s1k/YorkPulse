@@ -183,11 +183,11 @@ export function ChatInput({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="flex items-center gap-2 px-3 py-2 bg-[#E31837]/10 border border-[#E31837]/20 rounded-lg"
+            className="flex items-center gap-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg"
           >
-            <div className="w-1 h-8 bg-[#E31837] rounded-full" />
+            <div className="w-1 h-8 bg-primary rounded-full" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-[#E31837] font-medium">Replying to {replyTo.authorName}</p>
+              <p className="text-xs text-primary font-medium">Replying to {replyTo.authorName}</p>
               <p className="text-xs text-gray-500 truncate">
                 {replyTo.content || "Photo"}
               </p>
@@ -253,7 +253,7 @@ export function ChatInput({
           size="icon"
           onClick={() => fileInputRef.current?.click()}
           disabled={isDisabled}
-          className="flex-shrink-0 text-gray-500 hover:text-zinc-200"
+          className="flex-shrink-0 text-gray-500 hover:text-gray-900"
         >
           <ImagePlus className="w-5 h-5" />
         </Button>
@@ -277,7 +277,7 @@ export function ChatInput({
           className={cn(
             "flex-shrink-0 transition-all",
             canSend
-              ? "bg-[#00ff88] hover:bg-[#00ff88]/80 text-black"
+              ? "bg-primary hover:bg-york-red-dark text-white"
               : "bg-gray-100 text-gray-400"
           )}
         >

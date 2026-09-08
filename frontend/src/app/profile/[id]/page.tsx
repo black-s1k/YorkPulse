@@ -226,7 +226,7 @@ export default function PublicProfilePage() {
           <div className="relative shrink-0">
             <Avatar className="w-20 h-20">
               <AvatarImage src={profile.avatar_url || undefined} />
-              <AvatarFallback className="text-2xl bg-red-50 text-[#E31837]">
+              <AvatarFallback className="text-2xl bg-red-50 text-primary">
                 {profile.name
                   ?.split(" ")
                   .map((n) => n[0])
@@ -241,7 +241,7 @@ export default function PublicProfilePage() {
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <h1 className="text-xl font-bold">{profile.name}</h1>
               {profile.name_verified && (
-                <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+                <Badge variant="secondary" className="bg-green-500/20 text-green-700">
                   <Shield className="w-3 h-3 mr-1" />
                   Verified
                 </Badge>
@@ -292,7 +292,7 @@ export default function PublicProfilePage() {
         <div className="mt-6 flex gap-3">
           <Button
             onClick={handleStartConversation}
-            className="flex-1 bg-[#E31837] hover:bg-[#C41230]"
+            className="flex-1 bg-primary hover:bg-york-red-dark"
             disabled={startConversationMutation.isPending}
           >
             {startConversationMutation.isPending ? (
@@ -307,7 +307,7 @@ export default function PublicProfilePage() {
           {isAuthenticated && (
             <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-400 hover:bg-red-500/10">
+                <Button variant="ghost" size="icon" className="text-gray-400 hover:text-red-700 hover:bg-red-500/10">
                   <Flag className="w-4 h-4" />
                 </Button>
               </DialogTrigger>

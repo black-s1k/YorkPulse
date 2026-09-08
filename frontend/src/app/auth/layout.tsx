@@ -10,7 +10,7 @@ export default function AuthLayout({
       {/* Auth Header */}
       <header className="p-4">
         <Link href="/" className="flex items-center gap-2 w-fit">
-          <div className="w-8 h-8 rounded-lg bg-[#E31837] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <span className="text-white font-bold text-sm">YP</span>
           </div>
           <span className="font-semibold text-lg text-gray-900">YorkPulse</span>

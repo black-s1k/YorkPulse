@@ -164,7 +164,7 @@ function JoinYorkPulseCard() {
 
       {/* Card text — right padding keeps text clear of cat */}
       <div className="flex items-center gap-3 p-3 pr-[112px]">
-        <div className="w-10 h-10 rounded-lg bg-[#E31837] flex items-center justify-center flex-shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
           <span className="text-white font-bold text-sm">YP</span>
         </div>
         <div>
@@ -356,8 +356,8 @@ function SignupPageInner() {
                 key={feature.title}
                 className="flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-100 shadow-sm"
               >
-                <div className="w-10 h-10 rounded-lg bg-[#E31837]/10 flex items-center justify-center">
-                  <feature.icon className="w-5 h-5 text-[#E31837]" />
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <feature.icon className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <p className="font-medium text-sm">{feature.title}</p>
@@ -388,7 +388,7 @@ function SignupPageInner() {
                 />
               </div>
               {emailError ? (
-                <p className="text-xs text-red-400">{emailError}</p>
+                <p className="text-xs text-red-700">{emailError}</p>
               ) : (
                 <p className="text-xs text-gray-400">
                   We&apos;ll send you a 6-digit verification code
@@ -398,7 +398,7 @@ function SignupPageInner() {
 
             <Button
               type="submit"
-              className="w-full bg-[#E31837] hover:bg-[#C41230]"
+              className="w-full bg-primary hover:bg-york-red-dark"
               disabled={signupMutation.isPending || !!emailError}
             >
               {signupMutation.isPending ? (
@@ -417,7 +417,7 @@ function SignupPageInner() {
 
           <p className="text-center text-sm text-gray-500">
             Already have an account?{" "}
-            <Link href="/auth/login" className="text-[#E31837] hover:underline">
+            <Link href="/auth/login" className="text-primary hover:underline">
               Sign in
             </Link>
           </p>
@@ -471,14 +471,14 @@ function SignupPageInner() {
           </Button>
 
           <div className="text-center space-y-2">
-            <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center mb-4">
-              <Mail className="w-8 h-8 text-[#E31837]" />
+            <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Mail className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-2xl font-bold">Verify your email</h1>
             <p className="text-gray-500">
               We sent a verification code to
             </p>
-            <p className="text-[#E31837] font-medium">{email}</p>
+            <p className="text-primary font-medium">{email}</p>
           </div>
 
           <form onSubmit={handleOTPSubmit} className="space-y-6">
@@ -494,7 +494,7 @@ function SignupPageInner() {
 
             <Button
               type="submit"
-              className="w-full bg-[#E31837] hover:bg-[#C41230]"
+              className="w-full bg-primary hover:bg-york-red-dark"
               disabled={verifyOTPMutation.isPending || otp.length !== 6}
             >
               {verifyOTPMutation.isPending ? (
@@ -521,7 +521,7 @@ function SignupPageInner() {
               size="sm"
               onClick={handleResend}
               disabled={cooldown > 0 || resendOTPMutation.isPending}
-              className="text-[#E31837] hover:text-[#E31837]"
+              className="text-primary hover:text-primary"
             >
               {resendOTPMutation.isPending ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />

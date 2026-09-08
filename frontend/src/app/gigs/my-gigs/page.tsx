@@ -86,17 +86,17 @@ function GigCard({ gig }: { gig: Gig }) {
               variant="secondary"
               className={cn(
                 "text-xs",
-                isOffering ? "bg-green-500/20 text-green-400" : "bg-orange-500/20 text-orange-400"
+                isOffering ? "bg-green-500/20 text-green-700" : "bg-orange-500/20 text-orange-700"
               )}
             >
-              {cat.emoji} {cat.label}
+              <cat.icon />{cat.label}
             </Badge>
             <Badge
               variant="secondary"
               className={cn(
                 "text-xs",
-                gig.status === "active" && "bg-green-500/20 text-green-400",
-                gig.status === "in_progress" && "bg-blue-500/20 text-blue-400",
+                gig.status === "active" && "bg-green-500/20 text-green-700",
+                gig.status === "in_progress" && "bg-blue-500/20 text-blue-700",
                 gig.status === "completed" && "bg-zinc-500/20 text-gray-500"
               )}
             >
@@ -105,7 +105,7 @@ function GigCard({ gig }: { gig: Gig }) {
           </div>
           <span className={cn(
             "font-semibold text-sm",
-            isOffering ? "text-green-400" : "text-orange-400"
+            isOffering ? "text-green-700" : "text-orange-700"
           )}>
             {formatPrice(gig)}
           </span>
@@ -145,7 +145,7 @@ function ResponseCard({ response }: { response: GigResponse }) {
       <div className="flex items-start justify-between mb-3">
         <div>
           <p className="text-xs text-gray-400 mb-1">Responded to</p>
-          <Link href={`/gigs/${response.gig_id}`} className="font-medium hover:text-purple-400 transition-colors">
+          <Link href={`/gigs/${response.gig_id}`} className="font-medium hover:text-purple-700 transition-colors">
             View Gig →
           </Link>
         </div>
@@ -153,9 +153,9 @@ function ResponseCard({ response }: { response: GigResponse }) {
           variant="secondary"
           className={cn(
             "text-xs",
-            response.status === "pending" && "bg-yellow-500/20 text-yellow-400",
-            response.status === "accepted" && "bg-green-500/20 text-green-400",
-            response.status === "rejected" && "bg-red-500/20 text-red-400",
+            response.status === "pending" && "bg-yellow-500/20 text-yellow-800",
+            response.status === "accepted" && "bg-green-500/20 text-green-700",
+            response.status === "rejected" && "bg-red-500/20 text-red-700",
             response.status === "completed" && "bg-zinc-500/20 text-gray-500"
           )}
         >
@@ -168,7 +168,7 @@ function ResponseCard({ response }: { response: GigResponse }) {
       )}
 
       {response.proposed_price && (
-        <p className="text-sm text-green-400 mb-2">
+        <p className="text-sm text-green-700 mb-2">
           Proposed: ${response.proposed_price}
         </p>
       )}
@@ -199,7 +199,7 @@ export default function MyGigsPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-yellow-500/10 flex items-center justify-center mb-6">
-            <GraduationCap className="w-10 h-10 text-yellow-400" />
+            <GraduationCap className="w-10 h-10 text-yellow-800" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to view your gigs</h2>
           <p className="text-gray-400 mb-6 max-w-md">

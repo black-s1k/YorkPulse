@@ -33,11 +33,11 @@ import { LocationPickerWrapper } from "@/components/LocationPickerWrapper";
 import type { QuestCategory, VibeLevel } from "@/types";
 
 const categories: { value: QuestCategory; label: string; icon: typeof Dumbbell; color: string }[] = [
-  { value: "gym", label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-400 border-red-500/30" },
-  { value: "food", label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-  { value: "study", label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
-  { value: "game", label: "Game", icon: Gamepad2, color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
-  { value: "commute", label: "Commute", icon: Car, color: "bg-green-500/20 text-green-400 border-green-500/30" },
+  { value: "gym", label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-700 border-red-500/30" },
+  { value: "food", label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-700 border-orange-500/30" },
+  { value: "study", label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-700 border-blue-500/30" },
+  { value: "game", label: "Game", icon: Gamepad2, color: "bg-purple-500/20 text-purple-700 border-purple-500/30" },
+  { value: "commute", label: "Commute", icon: Car, color: "bg-green-500/20 text-green-700 border-green-500/30" },
   { value: "custom", label: "Custom", icon: Plus, color: "bg-zinc-500/20 text-gray-500 border-zinc-500/30" },
 ];
 
@@ -65,7 +65,7 @@ export default function EditQuestPage() {
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-            <Users className="w-5 h-5 text-green-400" />
+            <Users className="w-5 h-5 text-green-700" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Edit Quest</h1>
@@ -74,7 +74,7 @@ export default function EditQuestPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mb-6">
-            <Users className="w-10 h-10 text-green-400" />
+            <Users className="w-10 h-10 text-green-700" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to edit quests</h2>
           <p className="text-gray-400 mb-6 max-w-md">

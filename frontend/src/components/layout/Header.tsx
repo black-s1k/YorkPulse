@@ -55,13 +55,13 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#E31837] shadow-md">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-primary shadow-md">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5" onClick={closeMobileMenu}>
             <div className="w-8 h-8 rounded-md bg-white flex items-center justify-center">
-              <span className="text-[#E31837] font-bold text-sm leading-none">YP</span>
+              <span className="text-primary font-bold text-sm leading-none">YP</span>
             </div>
             <span className="font-semibold text-lg text-white hidden sm:block tracking-tight">
               YorkPulse
@@ -99,7 +99,7 @@ export function Header() {
                   <DropdownMenuTrigger asChild>
                     <Button
                       size="sm"
-                      className="hidden sm:flex gap-2 bg-white text-[#E31837] hover:bg-white/90 font-semibold shadow-none"
+                      className="hidden sm:flex gap-2 bg-white text-primary hover:bg-white/90 font-semibold shadow-none"
                     >
                       <Plus className="w-4 h-4" />
                       Create
@@ -175,7 +175,7 @@ export function Header() {
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-white text-[#E31837] hover:bg-white/90 font-semibold shadow-none"
+                  className="bg-white text-primary hover:bg-white/90 font-semibold shadow-none"
                   asChild
                 >
                   <Link href="/auth/signup">Get Started</Link>
@@ -203,7 +203,7 @@ export function Header() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
-          className="md:hidden bg-[#C41230] border-t border-white/20"
+          className="md:hidden bg-york-red-dark border-t border-white/20"
         >
           <nav className="container mx-auto px-4 py-3 flex flex-col gap-0.5">
             {navItems.map((item) => {

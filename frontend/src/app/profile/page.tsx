@@ -131,8 +131,8 @@ export default function ProfilePage() {
     return (
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-[#E31837]/10 flex items-center justify-center">
-            <User className="w-5 h-5 text-[#E31837]" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <User className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Profile</h1>
@@ -140,15 +140,15 @@ export default function ProfilePage() {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-20 h-20 rounded-full bg-[#E31837]/10 flex items-center justify-center mb-6">
-            <User className="w-10 h-10 text-[#E31837]" />
+          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+            <User className="w-10 h-10 text-primary" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to view your profile</h2>
           <p className="text-gray-400 mb-6 max-w-md">
             Manage your account and view your activity on YorkPulse.
           </p>
           <Link href="/auth/login">
-            <Button className="bg-[#E31837] hover:bg-[#C41230]">
+            <Button className="bg-primary hover:bg-york-red-dark">
               Sign In to Continue
             </Button>
           </Link>
@@ -316,7 +316,7 @@ export default function ProfilePage() {
       <div className="container mx-auto px-4 py-6 text-center">
         <User className="w-12 h-12 mx-auto text-gray-700 mb-4" />
         <p className="text-gray-400">Sign in to view your profile</p>
-        <Button variant="link" asChild className="text-[#E31837]">
+        <Button variant="link" asChild className="text-primary">
           <Link href="/auth/login">Sign In</Link>
         </Button>
       </div>
@@ -350,7 +350,7 @@ export default function ProfilePage() {
           <div className="relative group">
             <Avatar className="w-20 h-20">
               <AvatarImage src={user?.avatar_url || undefined} />
-              <AvatarFallback className="text-2xl bg-[#E31837]/10 text-[#E31837]">
+              <AvatarFallback className="text-2xl bg-primary/10 text-primary">
                 {user?.name
                   ?.split(" ")
                   .map((n) => n[0])
@@ -384,7 +384,7 @@ export default function ProfilePage() {
                   <DropdownMenuItem
                     onClick={handleRemoveAvatar}
                     disabled={isRemovingAvatar}
-                    className="text-red-400 focus:text-red-400"
+                    className="text-red-700 focus:text-red-700"
                   >
                     {isRemovingAvatar ? (
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -416,7 +416,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <h1 className="text-xl font-bold">{user?.name}</h1>
               {user?.name_verified && (
-                <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+                <Badge variant="secondary" className="bg-green-500/20 text-green-700">
                   <Shield className="w-3 h-3 mr-1" />
                   Verified
                 </Badge>
@@ -465,7 +465,7 @@ export default function ProfilePage() {
 
             <div className="space-y-2">
               <Label htmlFor="program">
-                Program <span className="text-red-400">*</span>
+                Program <span className="text-red-700">*</span>
               </Label>
               <Input
                 id="program"
@@ -481,7 +481,7 @@ export default function ProfilePage() {
                 ))}
               </datalist>
               <div className="flex justify-between text-xs">
-                <span className={cn(programError && program.length > 0 ? "text-red-400" : "text-gray-400")}>
+                <span className={cn(programError && program.length > 0 ? "text-red-700" : "text-gray-400")}>
                   {programError && program.length > 0 ? programError : `Min ${MIN_PROGRAM_LENGTH} characters`}
                 </span>
                 <span className="text-gray-400">{program.trim().length} chars</span>
@@ -490,7 +490,7 @@ export default function ProfilePage() {
 
             <div className="space-y-2">
               <Label htmlFor="bio">
-                Bio <span className="text-red-400">*</span>
+                Bio <span className="text-red-700">*</span>
               </Label>
               <Textarea
                 id="bio"
@@ -500,7 +500,7 @@ export default function ProfilePage() {
                 className={cn("min-h-[100px]", bioError && bio.length > 0 && "border-red-500 focus-visible:ring-red-500")}
               />
               <div className="flex justify-between text-xs">
-                <span className={cn(bioError && bio.length > 0 ? "text-red-400" : "text-gray-400")}>
+                <span className={cn(bioError && bio.length > 0 ? "text-red-700" : "text-gray-400")}>
                   {bioError && bio.length > 0 ? bioError : `Min ${MIN_BIO_LENGTH} characters`}
                 </span>
                 <span className="text-gray-400">{bio.trim().length} chars</span>
@@ -523,7 +523,7 @@ export default function ProfilePage() {
               </Button>
               <Button
                 onClick={handleSave}
-                className="bg-[#E31837] hover:bg-[#C41230]"
+                className="bg-primary hover:bg-york-red-dark"
                 disabled={updateProfileMutation.isPending || !isFormValid}
               >
                 {updateProfileMutation.isPending ? (
@@ -559,7 +559,7 @@ export default function ProfilePage() {
           <p className="text-xs text-gray-400">Listings</p>
         </div>
         <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm text-center">
-          <Users className="w-5 h-5 mx-auto mb-2 text-green-400" />
+          <Users className="w-5 h-5 mx-auto mb-2 text-green-700" />
           <p className="text-2xl font-bold">{quests.length}</p>
           <p className="text-xs text-gray-400">Quests</p>
         </div>
@@ -616,7 +616,7 @@ export default function ProfilePage() {
                 <div className="p-3 rounded-lg bg-white border border-gray-100 shadow-sm hover:border-gray-300 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center">
-                      <Users className="w-5 h-5 text-green-400" />
+                      <Users className="w-5 h-5 text-green-700" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{quest.activity}</p>
@@ -627,7 +627,7 @@ export default function ProfilePage() {
                     <Badge
                       variant="secondary"
                       className={cn(
-                        quest.status === "open" && "bg-green-500/20 text-green-400"
+                        quest.status === "open" && "bg-green-500/20 text-green-700"
                       )}
                     >
                       {quest.status}

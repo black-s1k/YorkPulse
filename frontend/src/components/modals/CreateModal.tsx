@@ -246,9 +246,9 @@ const handleVaultImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) =>
   const getIcon = () => {
     switch (createModalType) {
       case "vault":
-        return <Shield className="w-5 h-5 text-[#E31837]" />;
+        return <Shield className="w-5 h-5 text-primary" />;
       case "marketplace":
-        return <ShoppingBag className="w-5 h-5 text-red-400" />;
+        return <ShoppingBag className="w-5 h-5 text-red-700" />;
       default:
         return null;
     }
@@ -357,7 +357,7 @@ const handleVaultImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) =>
                     // Use <label> so tapping directly triggers the file picker —
                     // programmatic .click() is blocked on iOS Safari.
                     <label
-                      className={`w-20 h-20 rounded-lg border-2 border-dashed border-gray-200 hover:border-[#E31837]/50 transition-colors flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-[#E31837] ${isUploadingVaultImage ? "pointer-events-none" : "cursor-pointer"}`}
+                      className={`w-20 h-20 rounded-lg border-2 border-dashed border-gray-200 hover:border-primary/50 transition-colors flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-primary ${isUploadingVaultImage ? "pointer-events-none" : "cursor-pointer"}`}
                     >
                       {isUploadingVaultImage ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -452,7 +452,7 @@ const handleVaultImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) =>
                   ))}
                   {images.length < 5 && (
                     <label
-                      className={`w-20 h-20 rounded-lg border-2 border-dashed border-gray-200 hover:border-red-500/50 transition-colors flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-red-400 ${isUploadingImage ? "pointer-events-none" : "cursor-pointer"}`}
+                      className={`w-20 h-20 rounded-lg border-2 border-dashed border-gray-200 hover:border-red-500/50 transition-colors flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-red-700 ${isUploadingImage ? "pointer-events-none" : "cursor-pointer"}`}
                     >
                       {isUploadingImage ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -484,7 +484,7 @@ const handleVaultImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) =>
             </Button>
             <Button
               type="submit"
-              className={createModalType === "marketplace" ? "bg-red-600 hover:bg-red-700" : "bg-[#E31837] hover:bg-[#C41230]"}
+              className={createModalType === "marketplace" ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-york-red-dark"}
               disabled={isLoading}
             >
               {isLoading ? (

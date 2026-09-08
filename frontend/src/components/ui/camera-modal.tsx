@@ -271,7 +271,7 @@ export function CameraModal({ open, onClose, onCapture }: CameraModalProps) {
             <div className="absolute inset-0 flex items-center justify-center bg-white p-4">
               <div className="text-center">
                 <Camera className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-red-400 text-sm">{error}</p>
+                <p className="text-red-700 text-sm">{error}</p>
                 <Button
                   variant="outline"
                   size="sm"

@@ -130,8 +130,8 @@ export default function CompleteProfilePage() {
     >
       {/* Header */}
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center">
-          <Sparkles className="w-8 h-8 text-[#E31837]" />
+        <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+          <Sparkles className="w-8 h-8 text-primary" />
         </div>
         <h1 className="text-2xl font-bold">Complete Your Profile</h1>
         <p className="text-gray-500">
@@ -144,8 +144,8 @@ export default function CompleteProfilePage() {
         {/* Program */}
         <div className="space-y-2">
           <Label htmlFor="program" className="flex items-center gap-2">
-            <GraduationCap className="w-4 h-4 text-[#E31837]" />
-            Program <span className="text-red-400">*</span>
+            <GraduationCap className="w-4 h-4 text-primary" />
+            Program <span className="text-red-700">*</span>
           </Label>
           <Input
             id="program"
@@ -164,7 +164,7 @@ export default function CompleteProfilePage() {
             ))}
           </datalist>
           <div className="flex justify-between text-xs">
-            <span className={cn(programError ? "text-red-400" : "text-gray-400")}>
+            <span className={cn(programError ? "text-red-700" : "text-gray-400")}>
               {programError || `Min ${MIN_PROGRAM_LENGTH} characters`}
             </span>
             <span className="text-gray-400">{program.trim().length} chars</span>
@@ -174,8 +174,8 @@ export default function CompleteProfilePage() {
         {/* Bio */}
         <div className="space-y-2">
           <Label htmlFor="bio" className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-[#E31837]" />
-            Bio <span className="text-red-400">*</span>
+            <FileText className="w-4 h-4 text-primary" />
+            Bio <span className="text-red-700">*</span>
           </Label>
           <Textarea
             id="bio"
@@ -188,7 +188,7 @@ export default function CompleteProfilePage() {
             )}
           />
           <div className="flex justify-between text-xs">
-            <span className={cn(bioError ? "text-red-400" : "text-gray-400")}>
+            <span className={cn(bioError ? "text-red-700" : "text-gray-400")}>
               {bioError || `Min ${MIN_BIO_LENGTH} characters`}
             </span>
             <span className="text-gray-400">{bio.trim().length} chars</span>
@@ -213,7 +213,7 @@ export default function CompleteProfilePage() {
         {/* Submit */}
         <Button
           type="submit"
-          className="w-full bg-[#E31837] hover:bg-[#C41230]"
+          className="w-full bg-primary hover:bg-york-red-dark"
           disabled={updateProfileMutation.isPending || !isFormValid}
         >
           {updateProfileMutation.isPending ? (

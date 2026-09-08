@@ -4,7 +4,7 @@ export default function TermsPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <div className="mb-8">
-        <Link href="/" className="text-sm text-purple-400 hover:underline">← Back to YorkPulse</Link>
+        <Link href="/" className="text-sm text-purple-700 hover:underline">← Back to YorkPulse</Link>
       </div>
 
       <h1 className="text-3xl font-bold mb-2">Terms of Service</h1>
@@ -67,13 +67,13 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">10. Contact</h2>
-          <p>For questions about these terms, contact us at <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-400 hover:underline">yorkpulse.app@gmail.com</a>.</p>
+          <p>For questions about these terms, contact us at <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-700 hover:underline">yorkpulse.app@gmail.com</a>.</p>
         </section>
 
       </div>
 
       <div className="mt-12 pt-8 border-t border-gray-200 text-sm text-gray-400">
-        <Link href="/privacy" className="text-purple-400 hover:underline">Privacy Policy</Link>
+        <Link href="/privacy" className="text-purple-700 hover:underline">Privacy Policy</Link>
       </div>
     </div>
   );

@@ -162,7 +162,7 @@ function ListingCard({
               <h3 className="font-medium line-clamp-1">{listing.title}</h3>
             </div>
 
-            <p className="text-lg font-bold text-red-400 mb-2">
+            <p className="text-lg font-bold text-red-700 mb-2">
               ${Number(listing.price).toFixed(2)}
             </p>
 
@@ -188,7 +188,7 @@ function ListingCard({
             e.stopPropagation();
             onDelete(listing.id);
           }}
-          className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors text-sm"
+          className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-red-500/10 text-red-700 hover:bg-red-500/20 transition-colors text-sm"
         >
           <Trash2 className="w-4 h-4" />
           Delete
@@ -269,7 +269,7 @@ export default function MarketplacePage() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
-            <ShoppingBag className="w-5 h-5 text-red-400" />
+            <ShoppingBag className="w-5 h-5 text-red-700" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Marketplace</h1>
@@ -280,7 +280,7 @@ export default function MarketplacePage() {
         {/* Login prompt */}
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center mb-6">
-            <ShoppingBag className="w-10 h-10 text-red-400" />
+            <ShoppingBag className="w-10 h-10 text-red-700" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to access Marketplace</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -302,7 +302,7 @@ export default function MarketplacePage() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
-            <ShoppingBag className="w-5 h-5 text-red-400" />
+            <ShoppingBag className="w-5 h-5 text-red-700" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Marketplace</h1>
@@ -409,7 +409,7 @@ export default function MarketplacePage() {
             <Button
               onClick={() => openCreateModal("marketplace")}
               variant="link"
-              className="text-red-400"
+              className="text-red-700"
             >
               Create the first listing
             </Button>

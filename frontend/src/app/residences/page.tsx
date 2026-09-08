@@ -249,7 +249,7 @@ export default function ResidencesPage() {
                     "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
                     joined ? "bg-purple-500/20" : "bg-white/5"
                   )}>
-                    <Building2 className={cn("w-4 h-4", joined ? "text-purple-400" : "text-gray-500")} />
+                    <Building2 className={cn("w-4 h-4", joined ? "text-purple-700" : "text-gray-500")} />
                   </div>
                   <div>
                     <p className="font-medium text-sm">{residence.name}</p>
@@ -260,7 +260,7 @@ export default function ResidencesPage() {
                   </div>
                 </div>
                 {joined && (
-                  <span className="text-[10px] text-purple-400 font-medium">Joined</span>
+                  <span className="text-[10px] text-purple-700 font-medium">Joined</span>
                 )}
               </motion.div>
             );
@@ -289,7 +289,7 @@ export default function ResidencesPage() {
         </Button>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-purple-400" />
+            <Building2 className="w-4 h-4 text-purple-700" />
             <span className="font-medium text-sm">{selectedResidence?.name}</span>
             {showParticipants && (
               <>
@@ -306,7 +306,7 @@ export default function ResidencesPage() {
         <Button
           variant="ghost"
           size="sm"
-          className={cn(showParticipants ? "text-purple-400" : "text-gray-500")}
+          className={cn(showParticipants ? "text-purple-700" : "text-gray-500")}
           onClick={() => setShowParticipants((v) => !v)}
         >
           <Users className="w-4 h-4" />
@@ -316,7 +316,7 @@ export default function ResidencesPage() {
         <Button
           variant="ghost"
           size="sm"
-          className="text-red-400 hover:text-red-300"
+          className="text-red-700 hover:text-red-800"
           onClick={() => selectedResidence && leaveMutation.mutate(selectedResidence.id)}
         >
           <LogOut className="w-4 h-4" />
@@ -351,7 +351,7 @@ export default function ResidencesPage() {
                     >
                       <Avatar className="w-10 h-10 flex-shrink-0">
                         <AvatarImage src={p.avatar_url ?? undefined} />
-                        <AvatarFallback className="text-xs bg-purple-500/10 text-purple-400">
+                        <AvatarFallback className="text-xs bg-purple-500/10 text-purple-700">
                           {p.name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -384,7 +384,7 @@ export default function ResidencesPage() {
                 <div className="py-8 px-4">
                   <div className="max-w-lg mx-auto text-center">
                     <div className="w-16 h-16 mx-auto rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
-                      <Building2 className="w-8 h-8 text-purple-400" />
+                      <Building2 className="w-8 h-8 text-purple-700" />
                     </div>
                     <h2 className="text-xl font-bold text-white mb-1">{selectedResidence?.name}</h2>
                     <p className="text-gray-500 text-sm mb-6">{selectedResidence?.campus} Campus</p>
@@ -447,7 +447,7 @@ export default function ResidencesPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-purple-500/10 flex items-center justify-center mb-6">
-            <Building2 className="w-10 h-10 text-purple-400" />
+            <Building2 className="w-10 h-10 text-purple-700" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to access Residence Chat</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -472,7 +472,7 @@ export default function ResidencesPage() {
         className="mb-6 flex items-center gap-3"
       >
         <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-          <Building2 className="w-5 h-5 text-purple-400" />
+          <Building2 className="w-5 h-5 text-purple-700" />
         </div>
         <div>
           <h1 className="text-2xl font-bold mb-1">Residence Chat</h1>
@@ -488,11 +488,11 @@ export default function ResidencesPage() {
       {viewMode === "browse" && (
         <div className="flex gap-1 p-1 mb-5 bg-white border border-gray-100 shadow-sm rounded-xl w-fit">
           <Link href="/courses">
-            <button className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors text-gray-500 hover:text-zinc-200">
+            <button className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors text-gray-500 hover:text-gray-900">
               Courses
             </button>
           </Link>
-          <button className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors bg-purple-500/20 text-purple-300">
+          <button className="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors bg-purple-500/20 text-purple-700">
             Residence
           </button>
         </div>
@@ -516,7 +516,7 @@ export default function ResidencesPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-purple-400" />
+              <Building2 className="w-5 h-5 text-purple-700" />
               Join Residence Chat
             </DialogTitle>
             <DialogDescription>

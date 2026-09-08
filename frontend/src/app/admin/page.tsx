@@ -91,13 +91,13 @@ function fmtDateTime(iso: string | null) {
 
 function StatusBadge({ status }: { status: string }) {
   const color: Record<string, string> = {
-    active: "bg-green-500/20 text-green-400",
-    sold: "bg-blue-500/20 text-blue-400",
-    reserved: "bg-yellow-500/20 text-yellow-400",
-    deleted: "bg-red-500/20 text-red-400",
-    hidden: "bg-orange-500/20 text-orange-400",
-    pending: "bg-yellow-500/20 text-yellow-400",
-    resolved: "bg-green-500/20 text-green-400",
+    active: "bg-green-500/20 text-green-700",
+    sold: "bg-blue-500/20 text-blue-700",
+    reserved: "bg-yellow-500/20 text-yellow-800",
+    deleted: "bg-red-500/20 text-red-700",
+    hidden: "bg-orange-500/20 text-orange-700",
+    pending: "bg-yellow-500/20 text-yellow-800",
+    resolved: "bg-green-500/20 text-green-700",
     dismissed: "bg-zinc-500/20 text-gray-500",
   };
   return (
@@ -161,7 +161,7 @@ function DeleteButton({ onDelete, label = "Delete" }: { onDelete: () => Promise<
   }
 
   return (
-    <Button size="sm" variant="ghost" className="text-red-400 hover:text-red-300 hover:bg-red-500/10" onClick={handle} disabled={loading}>
+    <Button size="sm" variant="ghost" className="text-red-700 hover:text-red-800 hover:bg-red-500/10" onClick={handle} disabled={loading}>
       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
     </Button>
   );
@@ -189,7 +189,7 @@ function UserTable({ data, page, loading, search, onSearchChange, onDelete, onPr
           placeholder="Search by name or email…"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-zinc-500"
+          className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-primary/50"
         />
       </div>
       {loading ? (
@@ -222,7 +222,7 @@ function UserTable({ data, page, loading, search, onSearchChange, onDelete, onPr
                   <tr key={u.id} className="border-b border-gray-200/50 hover:bg-gray-100/30">
                     <td className="py-2 pr-4">
                       <span className="font-medium">{u.name}</span>
-                      {u.is_admin && <span className="ml-2 text-xs bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded-full">admin</span>}
+                      {u.is_admin && <span className="ml-2 text-xs bg-purple-500/20 text-purple-700 px-1.5 py-0.5 rounded-full">admin</span>}
                     </td>
                     <td className="py-2 pr-4 text-gray-500">{u.email}</td>
                     {view === "signins" ? (
@@ -397,8 +397,8 @@ function UsersTab() {
                         <td className="py-2 pr-4 text-gray-400 whitespace-nowrap">{fmtDateTime(a.attempted_at)}</td>
                         <td className="py-2">
                           {a.was_blocked
-                            ? <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">blocked</span>
-                            : <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400">sent</span>}
+                            ? <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-700">blocked</span>
+                            : <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-700">sent</span>}
                         </td>
                       </tr>
                     ))}
@@ -585,7 +585,7 @@ function VaultTab() {
                   <td className="py-2 pr-4"><StatusBadge status={p.status} /></td>
                   <td className="py-2 pr-4">
                     {p.flag_count > 0 && (
-                      <span className="flex items-center gap-1 text-orange-400">
+                      <span className="flex items-center gap-1 text-orange-700">
                         <Flag className="w-3 h-3" /> {p.flag_count}
                       </span>
                     )}
@@ -682,7 +682,7 @@ function FeedbackTab() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="text-green-400 hover:text-green-300 hover:bg-green-500/10 text-xs"
+                    className="text-green-700 hover:text-green-800 hover:bg-green-500/10 text-xs"
                     onClick={() => handleResolve(f.id)}
                   >
                     ✓ Resolve
@@ -691,7 +691,7 @@ function FeedbackTab() {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                  className="text-red-700 hover:text-red-800 hover:bg-red-500/10"
                   onClick={() => handleDelete(f.id)}
                 >
                   <Trash2 className="w-4 h-4" />
@@ -815,7 +815,7 @@ function CourseMonitorTab() {
             key={s}
             onClick={() => setSection(s)}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              section === s ? "bg-gray-100 text-white" : "text-gray-400 hover:text-gray-700"
+              section === s ? "bg-gray-100 text-gray-900" : "text-gray-400 hover:text-gray-700"
             }`}
           >
             {s === "courses" ? "Enrollments" : s === "messages" ? "Messages" : "Prof Votes"}
@@ -853,7 +853,7 @@ function CourseMonitorTab() {
                 {overview.top_courses.map((c) => (
                   <tr key={c.id} className="border-b border-gray-200/50 hover:bg-gray-100/30">
                     <td className="py-2 pr-4">
-                      <span className="font-mono text-purple-400 text-xs mr-2">{c.code}</span>
+                      <span className="font-mono text-purple-700 text-xs mr-2">{c.code}</span>
                       <span className="text-gray-700 truncate max-w-[200px] inline-block align-middle">{c.name}</span>
                     </td>
                     <td className="py-2 pr-4 text-gray-400 text-xs">{c.faculty}</td>
@@ -882,7 +882,7 @@ function CourseMonitorTab() {
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="font-medium text-sm">{m.user_name}</span>
                         <span className="text-xs text-gray-400">{m.user_email}</span>
-                        <span className="text-xs bg-gray-100 rounded px-1.5 py-0.5 font-mono text-purple-400">{m.course_code}</span>
+                        <span className="text-xs bg-gray-100 rounded px-1.5 py-0.5 font-mono text-purple-700">{m.course_code}</span>
                         <span className="text-xs text-gray-400">#{m.channel_name}</span>
                         <span className="text-xs text-gray-500 ml-auto">{fmtDate(m.created_at)}</span>
                       </div>
@@ -930,13 +930,13 @@ function CourseMonitorTab() {
                   {votes.votes.map((v, i) => (
                     <tr key={i} className="border-b border-gray-200/50 hover:bg-gray-100/30">
                       <td className="py-2 pr-4">
-                        <span className="font-mono text-purple-400 text-xs mr-2">{v.course_code}</span>
+                        <span className="font-mono text-purple-700 text-xs mr-2">{v.course_code}</span>
                         <span className="text-gray-500 text-xs">{v.course_name}</span>
                       </td>
                       <td className="py-2 pr-4 font-medium">{v.prof_name}</td>
                       <td className="py-2 pr-4 text-gray-500">{v.semester}</td>
                       <td className="py-2 text-right">
-                        <span className={`font-medium ${v.vote_count >= v.threshold ? "text-green-400" : "text-gray-700"}`}>
+                        <span className={`font-medium ${v.vote_count >= v.threshold ? "text-green-700" : "text-gray-700"}`}>
                           {v.vote_count}/{v.threshold}
                         </span>
                       </td>
@@ -1060,7 +1060,7 @@ export default function AdminPage() {
     <div className="container mx-auto px-4 py-6 max-w-5xl">
       <div className="flex items-center gap-3 mb-8">
         <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-          <Shield className="w-5 h-5 text-purple-400" />
+          <Shield className="w-5 h-5 text-purple-700" />
         </div>
         <div>
           <h1 className="text-xl font-bold">Admin Panel</h1>

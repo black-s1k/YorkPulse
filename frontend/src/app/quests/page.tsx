@@ -65,11 +65,11 @@ import { QuestMapWrapper } from "@/components/QuestMapWrapper";
 import type { SideQuest, QuestCategory, QuestStatus, VibeLevel } from "@/types";
 
 const categoryConfig: Record<QuestCategory, { label: string; icon: typeof Dumbbell; color: string }> = {
-  gym: { label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-400" },
-  food: { label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-400" },
-  study: { label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-400" },
-  game: { label: "Game", icon: Gamepad2, color: "bg-purple-500/20 text-purple-400" },
-  commute: { label: "Commute", icon: Car, color: "bg-[#E31837]/10 text-[#E31837]" },
+  gym: { label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-700" },
+  food: { label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-700" },
+  study: { label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-700" },
+  game: { label: "Game", icon: Gamepad2, color: "bg-purple-500/20 text-purple-700" },
+  commute: { label: "Commute", icon: Car, color: "bg-primary/10 text-primary" },
   custom: { label: "Custom", icon: Sparkles, color: "bg-zinc-500/20 text-gray-500" },
 };
 
@@ -82,11 +82,11 @@ const vibeLevelLabels: Record<VibeLevel, { label: string; emoji: string }> = {
 };
 
 const statusLabels: Record<QuestStatus, { label: string; color: string }> = {
-  open: { label: "Open", color: "bg-[#E31837]/10 text-[#E31837]" },
-  in_progress: { label: "In Progress", color: "bg-blue-500/20 text-blue-400" },
-  full: { label: "Full", color: "bg-yellow-500/20 text-yellow-400" },
+  open: { label: "Open", color: "bg-primary/10 text-primary" },
+  in_progress: { label: "In Progress", color: "bg-blue-500/20 text-blue-700" },
+  full: { label: "Full", color: "bg-yellow-500/20 text-yellow-800" },
   completed: { label: "Completed", color: "bg-zinc-500/20 text-gray-500" },
-  cancelled: { label: "Cancelled", color: "bg-red-500/20 text-red-400" },
+  cancelled: { label: "Cancelled", color: "bg-red-500/20 text-red-700" },
 };
 
 function QuestCard({ quest, joinedQuestIds, pendingQuestIds }: { quest: SideQuest; joinedQuestIds: Set<string>; pendingQuestIds: Set<string> }) {
@@ -181,11 +181,11 @@ function QuestCard({ quest, joinedQuestIds, pendingQuestIds }: { quest: SideQues
           {/* Meta Info */}
           <div className="space-y-2 mb-4">
             <div className="flex items-center gap-2 text-sm text-gray-500">
-              <MapPin className="w-4 h-4 text-[#E31837] flex-shrink-0" />
+              <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
               <span className="truncate">{quest.location}</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-500">
-              <Calendar className="w-4 h-4 text-[#E31837] flex-shrink-0" />
+              <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
               <span>{formatTime(quest.start_time)}</span>
             </div>
           </div>
@@ -198,7 +198,7 @@ function QuestCard({ quest, joinedQuestIds, pendingQuestIds }: { quest: SideQues
             <div className="flex items-center gap-2">
               <Avatar className="w-6 h-6">
                 <AvatarImage src={quest.host.avatar_url || undefined} />
-                <AvatarFallback className="text-[10px] bg-[#E31837]/10 text-[#E31837]">
+                <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
                   {quest.host.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
@@ -206,7 +206,7 @@ function QuestCard({ quest, joinedQuestIds, pendingQuestIds }: { quest: SideQues
                 {quest.host.name}
               </span>
               {quest.status === "open" && quest.host.avatar_url && (
-                <CheckCircle className="w-3 h-3 text-[#E31837]" />
+                <CheckCircle className="w-3 h-3 text-primary" />
               )}
             </div>
 
@@ -269,7 +269,7 @@ function QuestCard({ quest, joinedQuestIds, pendingQuestIds }: { quest: SideQues
             </Button>
           ) : quest.status === "open" && spotsAvailable > 0 ? (
             <Button
-              className="w-full mt-3 bg-[#E31837] hover:bg-[#C41230]"
+              className="w-full mt-3 bg-primary hover:bg-york-red-dark"
               size="sm"
               onClick={handleJoin}
               disabled={joinMutation.isPending}
@@ -381,8 +381,8 @@ function QuestChatDialog({
         {/* Header */}
         <DialogHeader className="px-4 py-3 border-b border-gray-200 shrink-0">
           <DialogTitle className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#E31837]/10 flex items-center justify-center">
-              <Icon className="w-5 h-5 text-[#E31837]" />
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Icon className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold truncate">{quest.activity}</p>
@@ -457,7 +457,7 @@ function QuestChatDialog({
                     className={cn(
                       "max-w-[70%] rounded-lg px-3 py-2 relative",
                       isOwnMessage
-                        ? "bg-[#E31837] text-white"
+                        ? "bg-primary text-white"
                         : "bg-gray-100"
                     )}
                   >
@@ -465,14 +465,14 @@ function QuestChatDialog({
                       <p className="text-xs text-gray-500 mb-0.5">
                         {message.sender.name}
                         {message.sender.id === quest.host.id && (
-                          <span className="ml-1 text-[#E31837]">(Host)</span>
+                          <span className="ml-1 text-primary">(Host)</span>
                         )}
                       </p>
                     )}
                     {/* Reply Preview */}
                     {message.reply_to && !message.is_deleted && (
-                      <div className="mb-1.5 px-2 py-1 rounded border-l-2 border-[#E31837]/30 bg-black/20 text-xs">
-                        <p className="text-[#E31837] font-medium">{message.reply_to.sender.name}</p>
+                      <div className="mb-1.5 px-2 py-1 rounded border-l-2 border-primary/30 bg-black/20 text-xs">
+                        <p className="text-primary font-medium">{message.reply_to.sender.name}</p>
                         <p className="text-gray-500 line-clamp-1">{message.reply_to.content}</p>
                       </div>
                     )}
@@ -515,10 +515,10 @@ function QuestChatDialog({
         >
           {/* Reply Preview */}
           {replyTo && (
-            <div className="mb-2 flex items-center gap-2 px-3 py-2 bg-[#E31837]/10 border border-green-500/20 rounded-lg">
-              <Reply className="w-4 h-4 text-[#E31837] shrink-0" />
+            <div className="mb-2 flex items-center gap-2 px-3 py-2 bg-primary/10 border border-green-500/20 rounded-lg">
+              <Reply className="w-4 h-4 text-primary shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-[#E31837]">Replying to {replyTo.senderName}</p>
+                <p className="text-xs text-primary">Replying to {replyTo.senderName}</p>
                 <p className="text-xs text-gray-500 truncate">{replyTo.content}</p>
               </div>
               <button
@@ -541,7 +541,7 @@ function QuestChatDialog({
             <Button
               type="submit"
               size="icon"
-              className="bg-[#E31837] hover:bg-[#C41230]"
+              className="bg-primary hover:bg-york-red-dark"
               disabled={!messageInput.trim() || sendMessageMutation.isPending}
             >
               {sendMessageMutation.isPending ? (
@@ -599,7 +599,7 @@ function QuestSheetItem({
                 : catConfig.label}
             </Badge>
             {isHost && (
-              <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-400 text-xs">
+              <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-800 text-xs">
                 Host
               </Badge>
             )}
@@ -633,7 +633,7 @@ function QuestSheetItem({
                 e.stopPropagation();
                 onOpenChat();
               }}
-              className="p-2 rounded-lg bg-[#E31837]/10 hover:bg-[#E31837]/10 text-[#E31837] transition-colors"
+              className="p-2 rounded-lg bg-primary/10 hover:bg-primary/10 text-primary transition-colors"
               title="Open chat"
             >
               <MessageCircle className="w-4 h-4" />
@@ -719,12 +719,12 @@ function MyQuestsSheet() {
           <Button
             variant="outline"
             size="sm"
-            className="border-green-500/30 hover:bg-[#E31837]/10"
+            className="border-green-500/30 hover:bg-primary/10"
           >
             <FolderOpen className="w-4 h-4 mr-1" />
             My Quests
             {totalQuests > 0 && (
-              <Badge variant="secondary" className="ml-1.5 bg-[#E31837]/10 text-[#E31837] text-xs px-1.5">
+              <Badge variant="secondary" className="ml-1.5 bg-primary/10 text-primary text-xs px-1.5">
                 {totalQuests}
               </Badge>
             )}
@@ -733,7 +733,7 @@ function MyQuestsSheet() {
         <SheetContent className="w-full sm:max-w-md overflow-y-auto">
           <SheetHeader className="mb-4">
             <SheetTitle className="flex items-center gap-2">
-              <FolderOpen className="w-5 h-5 text-[#E31837]" />
+              <FolderOpen className="w-5 h-5 text-primary" />
               My Quests
             </SheetTitle>
             <SheetDescription>
@@ -764,7 +764,7 @@ function MyQuestsSheet() {
               {hostedQuests.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-2">
-                    <Crown className="w-4 h-4 text-yellow-400" />
+                    <Crown className="w-4 h-4 text-yellow-800" />
                     Hosting ({hostedQuests.length})
                   </h3>
                   <div className="space-y-2">
@@ -786,7 +786,7 @@ function MyQuestsSheet() {
               {joinedQuests.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-500 mb-2 flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-[#E31837]" />
+                    <CheckCircle className="w-4 h-4 text-primary" />
                     Joined ({joinedQuests.length})
                   </h3>
                   <div className="space-y-2">
@@ -875,8 +875,8 @@ export default function QuestsPage() {
     return (
       <div className="px-4 py-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-[#E31837]/10 flex items-center justify-center">
-            <Users className="w-5 h-5 text-[#E31837]" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Users className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Side Quests</h1>
@@ -884,15 +884,15 @@ export default function QuestsPage() {
           </div>
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-20 h-20 rounded-full bg-[#E31837]/10 flex items-center justify-center mb-6">
-            <Users className="w-10 h-10 text-[#E31837]" />
+          <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+            <Users className="w-10 h-10 text-primary" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to access Side Quests</h2>
           <p className="text-gray-400 mb-6 max-w-md">
             Find gym partners, study buddies, and more with verified York students.
           </p>
           <Link href="/auth/login">
-            <Button className="bg-[#E31837] hover:bg-[#C41230]">
+            <Button className="bg-primary hover:bg-york-red-dark">
               Sign In to Continue
             </Button>
           </Link>
@@ -906,8 +906,8 @@ export default function QuestsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#E31837]/10 flex items-center justify-center">
-            <Users className="w-5 h-5 text-[#E31837]" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Users className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Side Quests</h1>
@@ -919,7 +919,7 @@ export default function QuestsPage() {
           <Button
             onClick={() => openCreateModal("quest")}
             size="sm"
-            className="bg-[#E31837] hover:bg-[#C41230]"
+            className="bg-primary hover:bg-york-red-dark"
           >
             <Plus className="w-4 h-4 mr-1" />
             Quest
@@ -988,7 +988,7 @@ export default function QuestsPage() {
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-all",
               viewMode === "list"
-                ? "bg-[#E31837]/10 text-[#E31837]"
+                ? "bg-primary/10 text-primary"
                 : "text-gray-500 hover:text-gray-700"
             )}
           >
@@ -1000,7 +1000,7 @@ export default function QuestsPage() {
             className={cn(
               "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm transition-all",
               viewMode === "map"
-                ? "bg-[#E31837]/10 text-[#E31837]"
+                ? "bg-primary/10 text-primary"
                 : "text-gray-500 hover:text-gray-700"
             )}
           >
@@ -1015,7 +1015,7 @@ export default function QuestsPage() {
         <div className="relative h-[calc(100vh-280px)] min-h-[400px] rounded-xl overflow-hidden border border-gray-100">
           {isLoading ? (
             <div className="w-full h-full bg-white flex items-center justify-center">
-              <Loader2 className="w-8 h-8 animate-spin text-[#E31837]" />
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : (
             <QuestMapWrapper quests={quests} className="w-full h-full" />
@@ -1024,7 +1024,7 @@ export default function QuestsPage() {
           {/* Quest count overlay */}
           <div className="absolute top-3 left-3 bg-white shadow-sm rounded-lg px-3 py-1.5 border border-gray-100">
             <p className="text-sm">
-              <span className="text-[#E31837] font-semibold">
+              <span className="text-primary font-semibold">
                 {quests.filter((q) => q.latitude && q.longitude).length}
               </span>
               <span className="text-gray-500"> quests on map</span>
@@ -1044,7 +1044,7 @@ export default function QuestsPage() {
                 <p className="text-gray-500 mb-2">No quests on the map yet</p>
                 <Button
                   onClick={() => openCreateModal("quest")}
-                  className="bg-[#E31837] hover:bg-[#C41230]"
+                  className="bg-primary hover:bg-york-red-dark"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Create Quest
@@ -1072,7 +1072,7 @@ export default function QuestsPage() {
               <p className="text-sm text-gray-500 mb-4">Be the first to start a side quest!</p>
               <Button
                 onClick={() => openCreateModal("quest")}
-                className="bg-[#E31837] hover:bg-[#C41230]"
+                className="bg-primary hover:bg-york-red-dark"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Create Quest

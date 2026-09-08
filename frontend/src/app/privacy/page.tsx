@@ -4,7 +4,7 @@ export default function PrivacyPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <div className="mb-8">
-        <Link href="/" className="text-sm text-purple-400 hover:underline">← Back to YorkPulse</Link>
+        <Link href="/" className="text-sm text-purple-700 hover:underline">← Back to YorkPulse</Link>
       </div>
 
       <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
             <li>Request deletion of your account and associated data</li>
             <li>Withdraw consent at any time by deleting your account</li>
           </ul>
-          <p className="mt-3">To exercise these rights, email us at <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-400 hover:underline">yorkpulse.app@gmail.com</a>.</p>
+          <p className="mt-3">To exercise these rights, email us at <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-700 hover:underline">yorkpulse.app@gmail.com</a>.</p>
         </section>
 
         <section>
@@ -85,13 +85,13 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-white mb-3">10. Contact</h2>
-          <p>Privacy questions or requests: <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-400 hover:underline">yorkpulse.app@gmail.com</a></p>
+          <p>Privacy questions or requests: <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-700 hover:underline">yorkpulse.app@gmail.com</a></p>
         </section>
 
       </div>
 
       <div className="mt-12 pt-8 border-t border-gray-200 text-sm text-gray-400">
-        <Link href="/terms" className="text-purple-400 hover:underline">Terms of Service</Link>
+        <Link href="/terms" className="text-purple-700 hover:underline">Terms of Service</Link>
       </div>
     </div>
   );

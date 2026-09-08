@@ -116,10 +116,10 @@ export function OTPInput({
           className={cn(
             "w-12 h-14 text-center text-2xl font-bold rounded-lg",
             "bg-white/5 border-2 border-gray-200",
-            "focus:outline-none focus:border-[#E31837] focus:ring-2 focus:ring-[#E31837]/20",
+            "focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20",
             "transition-all duration-200",
             "disabled:opacity-50 disabled:cursor-not-allowed",
-            focusedIndex === index && "border-[#E31837] bg-white/10",
+            focusedIndex === index && "border-primary bg-white/10",
             value[index] && "border-white/20 bg-white/10"
           )}
           aria-label={`Digit ${index + 1}`}

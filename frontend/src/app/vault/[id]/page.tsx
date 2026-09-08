@@ -205,7 +205,7 @@ export default function VaultPostPage() {
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-purple-400" />
+            <Shield className="w-5 h-5 text-purple-700" />
           </div>
           <div>
             <h1 className="text-xl font-bold">The Vault</h1>
@@ -214,7 +214,7 @@ export default function VaultPostPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-purple-500/10 flex items-center justify-center mb-6">
-            <Shield className="w-10 h-10 text-purple-400" />
+            <Shield className="w-10 h-10 text-purple-700" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to view this post</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -341,9 +341,9 @@ export default function VaultPostPage() {
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
               {post.is_anonymous ? (
-                <Shield className="w-4 h-4 text-purple-400" />
+                <Shield className="w-4 h-4 text-purple-700" />
               ) : (
-                <User className="w-4 h-4 text-purple-400" />
+                <User className="w-4 h-4 text-purple-700" />
               )}
             </div>
             <div>
@@ -367,7 +367,7 @@ export default function VaultPostPage() {
               {isAuthor && (
                 <DropdownMenuItem
                   onClick={handleDeletePost}
-                  className="text-red-400"
+                  className="text-red-700"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete post
@@ -499,7 +499,7 @@ export default function VaultPostPage() {
                 <div className="flex items-center gap-2 mb-2">
                   {c.is_anonymous ? (
                     <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
-                      <Shield className="w-3 h-3 text-purple-400" />
+                      <Shield className="w-3 h-3 text-purple-700" />
                     </div>
                   ) : (
                     <Avatar className="w-6 h-6">

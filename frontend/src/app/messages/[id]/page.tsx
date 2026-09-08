@@ -59,7 +59,7 @@ export default function ConversationPage() {
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-            <Send className="w-5 h-5 text-blue-400" />
+            <Send className="w-5 h-5 text-blue-700" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Messages</h1>
@@ -68,7 +68,7 @@ export default function ConversationPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center mb-6">
-            <Send className="w-10 h-10 text-blue-400" />
+            <Send className="w-10 h-10 text-blue-700" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to view messages</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -356,8 +356,8 @@ export default function ConversationPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-9rem)] md:h-[calc(100vh-4rem)] flex flex-col overflow-hidden bg-gradient-to-b from-zinc-950 to-zinc-900">
-      {/* Header with glassmorphism */}
+    <div className="h-[calc(100vh-9rem)] md:h-[calc(100vh-4rem)] flex flex-col overflow-hidden bg-gray-50">
+      {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-gray-200 bg-white">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/messages">
@@ -366,9 +366,9 @@ export default function ConversationPage() {
         </Button>
 
         <Link href={`/profile/${otherUser?.id}`}>
-          <Avatar className="w-10 h-10 ring-2 ring-purple-500/30 cursor-pointer hover:ring-purple-500/50 transition-all">
+          <Avatar className="w-10 h-10 ring-2 ring-primary/20 cursor-pointer hover:ring-primary/40 transition-all">
             <AvatarImage src={otherUser?.avatar_url || undefined} />
-            <AvatarFallback className="bg-gradient-to-br from-purple-500/30 to-pink-500/30 text-purple-300 font-semibold">
+            <AvatarFallback className="bg-primary/10 text-primary font-semibold">
               {otherUser?.name
                 .split(" ")
                 .map((n) => n[0])
@@ -384,7 +384,7 @@ export default function ConversationPage() {
             <p className="font-medium truncate">{otherUser?.name || "Unknown"}</p>
           </Link>
           {isPending && !isInitiator && (
-            <p className="text-xs text-yellow-400 flex items-center gap-1">
+            <p className="text-xs text-yellow-800 flex items-center gap-1">
               <Clock className="w-3 h-3" />
               Wants to message you
             </p>
@@ -404,7 +404,7 @@ export default function ConversationPage() {
             <DropdownMenuItem asChild className="hover:bg-gray-100">
               <Link href={`/profile/${otherUser?.id}`}>View Profile</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleBlock} className="text-red-400 hover:bg-red-500/10">
+            <DropdownMenuItem onClick={handleBlock} className="text-red-700 hover:bg-red-500/10">
               <Ban className="w-4 h-4 mr-2" />
               Block User
             </DropdownMenuItem>
@@ -444,15 +444,15 @@ export default function ConversationPage() {
               </div>
             </div>
             <div className="flex justify-end">
-              <div className="max-w-[70%] px-4 py-3 rounded-2xl rounded-br-md bg-purple-600/20">
+              <div className="max-w-[70%] px-4 py-3 rounded-2xl rounded-br-md bg-primary/20">
                 <Skeleton className="w-40 h-4" />
               </div>
             </div>
           </div>
         ) : messages.length === 0 ? (
           <div className="text-center py-12 text-gray-400">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-500/10 flex items-center justify-center">
-              <Send className="w-8 h-8 text-purple-400" />
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+              <Send className="w-8 h-8 text-primary" />
             </div>
             <p className="font-medium">No messages yet</p>
             <p className="text-sm mt-1">
@@ -497,9 +497,9 @@ export default function ConversationPage() {
                       <div className="w-6 flex-shrink-0">
                         {showAvatar && (
                           <Link href={`/profile/${otherUser?.id}`}>
-                            <Avatar className="w-6 h-6 cursor-pointer hover:ring-2 hover:ring-purple-500/50 transition-all">
+                            <Avatar className="w-6 h-6 cursor-pointer hover:ring-2 hover:ring-primary/40 transition-all">
                               <AvatarImage src={otherUser?.avatar_url || undefined} />
-                              <AvatarFallback className="text-[10px] bg-purple-500/20 text-purple-300">
+                              <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
                                 {otherUser?.name?.[0]?.toUpperCase() || "?"}
                               </AvatarFallback>
                             </Avatar>
@@ -510,7 +510,7 @@ export default function ConversationPage() {
                     <div
                       className={cn(
                         "max-w-[70%] relative group",
-                        !isImageOnly && isOwn && "px-4 py-2.5 bg-gradient-to-br from-purple-600 to-purple-700 text-white rounded-2xl rounded-br-md",
+                        !isImageOnly && isOwn && "px-4 py-2.5 bg-primary text-primary-foreground rounded-2xl rounded-br-md",
                         !isImageOnly && !isOwn && "px-4 py-2.5 bg-gray-100 rounded-2xl rounded-bl-md"
                       )}
                     >
@@ -520,11 +520,16 @@ export default function ConversationPage() {
                         <>
                           {/* Reply Preview */}
                           {msg.reply_to && (
-                            <div className="mb-2 px-2 py-1.5 rounded-lg border-l-2 border-purple-500/50 bg-black/20 text-xs">
-                              <p className="text-purple-300 font-medium mb-0.5">
+                            <div
+                              className={cn(
+                                "mb-2 px-2 py-1.5 rounded-lg border-l-2 bg-black/10 text-xs",
+                                isOwn ? "border-white/40" : "border-primary/40"
+                              )}
+                            >
+                              <p className={cn("font-medium mb-0.5", isOwn ? "text-white/90" : "text-primary")}>
                                 {msg.reply_to.sender_id === user?.id ? "You" : otherUser?.name || "Unknown"}
                               </p>
-                              <p className="text-gray-500 line-clamp-1">
+                              <p className={cn("line-clamp-1", isOwn ? "text-white/70" : "text-gray-600")}>
                                 {msg.reply_to.image_url && !msg.reply_to.content ? "Photo" : msg.reply_to.content || "Message"}
                               </p>
                             </div>
@@ -578,13 +583,13 @@ export default function ConversationPage() {
                           <span
                             className={cn(
                               "text-[10px]",
-                              isOwn ? "text-purple-200/70" : "text-gray-400"
+                              isOwn ? "text-primary-foreground/70" : "text-gray-400"
                             )}
                           >
                             {formatTime(msg.created_at)}
                           </span>
                           {isOwn && !msg.is_deleted && (
-                            <span className="text-purple-200/70">
+                            <span className="text-primary-foreground/70">
                               {msg.is_read ? (
                                 <CheckCheck className="w-3.5 h-3.5" />
                               ) : (
@@ -627,13 +632,13 @@ export default function ConversationPage() {
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center">
-              <AlertCircle className="w-4 h-4 text-yellow-400" />
+              <AlertCircle className="w-4 h-4 text-yellow-800" />
             </div>
             <div>
-              <p className="text-sm font-medium text-yellow-200">
+              <p className="text-sm font-medium text-yellow-900">
                 Message Request
               </p>
-              <p className="text-xs text-yellow-200/60">
+              <p className="text-xs text-yellow-700/80">
                 {otherUser?.name} wants to message you
               </p>
             </div>
@@ -656,7 +661,7 @@ export default function ConversationPage() {
             <Button
               onClick={handleDecline}
               variant="outline"
-              className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-white"
+              className="flex-1 border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               disabled={declineMutation.isPending}
             >
               {declineMutation.isPending ? (
@@ -686,8 +691,8 @@ export default function ConversationPage() {
       {isBlocked && (
         <div className="p-4 border-t border-red-500/20 bg-red-500/10">
           <div className="flex items-center justify-center gap-2">
-            <Ban className="w-4 h-4 text-red-400" />
-            <p className="text-sm text-red-300">
+            <Ban className="w-4 h-4 text-red-700" />
+            <p className="text-sm text-red-700">
               This conversation has been blocked
             </p>
           </div>
@@ -702,10 +707,10 @@ export default function ConversationPage() {
         >
           {/* Reply Preview */}
           {replyTo && (
-            <div className="mb-2 flex items-center gap-2 px-3 py-2 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-              <div className="w-1 h-8 bg-purple-500 rounded-full" />
+            <div className="mb-2 flex items-center gap-2 px-3 py-2 bg-primary/5 border border-primary/20 rounded-lg">
+              <div className="w-1 h-8 bg-primary rounded-full" />
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-purple-400 font-medium">Replying to {replyTo.senderName}</p>
+                <p className="text-xs text-primary font-medium">Replying to {replyTo.senderName}</p>
                 <p className="text-xs text-gray-500 truncate">
                   {replyTo.content || "Photo"}
                 </p>
@@ -764,7 +769,7 @@ export default function ConversationPage() {
               variant="ghost"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading || sendMessageMutation.isPending}
-              className="h-11 w-11 rounded-xl text-gray-500 hover:text-zinc-200 hover:bg-gray-100"
+              className="h-11 w-11 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100"
             >
               <ImagePlus className="w-5 h-5" />
             </Button>
@@ -778,7 +783,7 @@ export default function ConversationPage() {
                 onKeyDown={handleKeyDown}
                 onPaste={handlePaste}
                 rows={1}
-                className="w-full resize-none rounded-2xl bg-gray-100 border border-gray-100 px-4 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent transition-all"
+                className="w-full resize-none rounded-2xl bg-gray-100 border border-gray-100 px-4 py-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-transparent transition-all"
                 disabled={isUploading || sendMessageMutation.isPending}
                 style={{ maxHeight: "120px" }}
               />
@@ -789,7 +794,7 @@ export default function ConversationPage() {
               className={cn(
                 "h-11 w-11 rounded-xl transition-all duration-200",
                 (message.trim() || imageFile)
-                  ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 shadow-lg shadow-purple-500/25"
+                  ? "bg-primary hover:bg-york-red-dark text-primary-foreground shadow-lg shadow-red-300/40"
                   : "bg-gray-100 text-gray-400"
               )}
               disabled={(!message.trim() && !imageFile) || isUploading || sendMessageMutation.isPending}

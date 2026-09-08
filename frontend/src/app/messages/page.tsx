@@ -50,11 +50,11 @@ import type { Conversation, SideQuest, QuestCategory } from "@/types";
 
 // Category config for quest icons
 const categoryConfig: Record<QuestCategory, { label: string; icon: typeof Dumbbell; color: string }> = {
-  gym: { label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-400" },
-  food: { label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-400" },
-  study: { label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-400" },
+  gym: { label: "Gym", icon: Dumbbell, color: "bg-red-500/20 text-red-700" },
+  food: { label: "Food", icon: Utensils, color: "bg-orange-500/20 text-orange-700" },
+  study: { label: "Study", icon: BookOpen, color: "bg-blue-500/20 text-blue-700" },
   game: { label: "Game", icon: Gamepad2, color: "bg-violet-100 text-violet-600" },
-  commute: { label: "Commute", icon: Car, color: "bg-green-500/20 text-green-400" },
+  commute: { label: "Commute", icon: Car, color: "bg-green-500/20 text-green-700" },
   custom: { label: "Custom", icon: Sparkles, color: "bg-gray-100 text-gray-500" },
 };
 
@@ -150,7 +150,7 @@ function ConversationCard({ conversation, userId }: { conversation: Conversation
                     {conversation.last_message.sender_id === userId && (
                       <span className="text-gray-400 flex-shrink-0">
                         {conversation.last_message.is_read ? (
-                          <CheckCheck className="w-3.5 h-3.5 text-green-400" />
+                          <CheckCheck className="w-3.5 h-3.5 text-green-700" />
                         ) : (
                           <Check className="w-3.5 h-3.5" />
                         )}
@@ -212,7 +212,7 @@ function RequestCard({ conversation, userId }: { conversation: Conversation; use
                 <span className="font-medium truncate text-yellow-100">
                   {otherUser?.name || "Unknown"}
                 </span>
-                <Badge className="text-[10px] px-1.5 py-0 bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                <Badge className="text-[10px] px-1.5 py-0 bg-yellow-500/20 text-yellow-800 border-yellow-500/30">
                   New Request
                 </Badge>
               </div>
@@ -359,7 +359,7 @@ function QuestChatDialogInMessages({
               </div>
               <div className={cn(
                 "p-1.5 rounded-lg transition-colors",
-                showQuestInfo ? "bg-[#E31837]/10 text-[#E31837]" : "text-gray-400 hover:text-gray-700"
+                showQuestInfo ? "bg-primary/10 text-primary" : "text-gray-400 hover:text-gray-700"
               )}>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -389,7 +389,7 @@ function QuestChatDialogInMessages({
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-green-400 mt-0.5" />
+                  <MapPin className="w-5 h-5 text-green-700 mt-0.5" />
                   <div>
                     <p className="text-sm text-gray-500">Where</p>
                     <p className="text-gray-900 font-medium">{currentQuest.location}</p>
@@ -427,7 +427,7 @@ function QuestChatDialogInMessages({
                   className="flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-100 shadow-sm hover:bg-gray-50 transition-colors group"
                   onClick={() => onClose()}
                 >
-                  <Avatar className="w-10 h-10 ring-2 ring-purple-500/30">
+                  <Avatar className="w-10 h-10 ring-2 ring-blue-500/30">
                     <AvatarImage src={currentQuest.host.avatar_url || undefined} />
                     <AvatarFallback className="bg-violet-100 text-violet-600">
                       {currentQuest.host.name.charAt(0).toUpperCase()}
@@ -490,7 +490,7 @@ function QuestChatDialogInMessages({
 
               {/* View Full Quest Page */}
               <Link href={`/quests/${quest.id}`} onClick={() => onClose()}>
-                <Button variant="ghost" className="w-full text-gray-500 hover:text-white hover:bg-gray-50">
+                <Button variant="ghost" className="w-full text-gray-500 hover:text-gray-900 hover:bg-gray-50">
                   <ExternalLink className="w-4 h-4 mr-2" />
                   View Full Quest Page
                 </Button>
@@ -566,7 +566,7 @@ function QuestChatDialogInMessages({
                       <p className="text-xs text-gray-500 mb-0.5">
                         {message.sender.name}
                         {message.sender.id === quest.host.id && (
-                          <span className="ml-1 text-green-400">(Host)</span>
+                          <span className="ml-1 text-green-700">(Host)</span>
                         )}
                       </p>
                     )}
@@ -617,9 +617,9 @@ function QuestChatDialogInMessages({
           {/* Reply Preview */}
           {replyTo && (
             <div className="mb-2 flex items-center gap-2 px-3 py-2 bg-green-500/10 border border-green-500/20 rounded-lg">
-              <Reply className="w-4 h-4 text-green-400 shrink-0" />
+              <Reply className="w-4 h-4 text-green-700 shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-green-400">Replying to {replyTo.senderName}</p>
+                <p className="text-xs text-green-700">Replying to {replyTo.senderName}</p>
                 <p className="text-xs text-gray-500 truncate">{replyTo.content}</p>
               </div>
               <button
@@ -787,7 +787,7 @@ function QuestChatCardWithUnread({
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs text-gray-500">
-              <Users className={cn("w-3 h-3", isRead ? "text-green-400" : "text-red-400")} />
+              <Users className={cn("w-3 h-3", isRead ? "text-green-700" : "text-red-700")} />
               <span>{currentParticipants} participants</span>
               <span className="text-gray-500">•</span>
               <MapPin className="w-3 h-3" />
@@ -801,7 +801,7 @@ function QuestChatCardWithUnread({
               ? "bg-green-500/20 group-hover:bg-green-500/30"
               : "bg-red-500/20 group-hover:bg-red-500/30"
           )}>
-            <MessageCircle className={cn("w-5 h-5", isRead ? "text-green-400" : "text-red-400")} />
+            <MessageCircle className={cn("w-5 h-5", isRead ? "text-green-700" : "text-red-700")} />
           </div>
         </div>
       </button>
@@ -886,7 +886,7 @@ export default function MessagesPage() {
       <div className="px-4 py-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-            <MessageCircle className="w-5 h-5 text-blue-400" />
+            <MessageCircle className="w-5 h-5 text-blue-700" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Messages</h1>
@@ -895,7 +895,7 @@ export default function MessagesPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-blue-500/10 flex items-center justify-center mb-6">
-            <MessageCircle className="w-10 h-10 text-blue-400" />
+            <MessageCircle className="w-10 h-10 text-blue-700" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to access Messages</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -916,7 +916,7 @@ export default function MessagesPage() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
-          <MessageCircle className="w-5 h-5 text-blue-400" />
+          <MessageCircle className="w-5 h-5 text-blue-700" />
         </div>
         <div>
           <h1 className="text-xl font-bold">Messages</h1>
@@ -927,7 +927,7 @@ export default function MessagesPage() {
       {/* Notification opt-in banner */}
       {!notifBannerDismissed && (
         <div className="mb-4 flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-          <MessageCircle className="w-4 h-4 text-blue-400 shrink-0" />
+          <MessageCircle className="w-4 h-4 text-blue-700 shrink-0" />
           <p className="text-sm text-blue-300 flex-1">
             Enable notifications to get alerted when someone messages you.
           </p>
@@ -959,7 +959,7 @@ export default function MessagesPage() {
         <TabsList className="w-full mb-4 bg-white border border-gray-100 shadow-sm p-1 rounded-xl">
           <TabsTrigger
             value="all"
-            className="flex-1 rounded-lg data-[state=active]:bg-[#E31837]/10 transition-all"
+            className="flex-1 rounded-lg data-[state=active]:bg-primary/10 transition-all"
           >
             All
             {totalUnread > 0 && (
@@ -974,7 +974,7 @@ export default function MessagesPage() {
           </TabsTrigger>
           <TabsTrigger
             value="quests"
-            className="flex-1 rounded-lg data-[state=active]:bg-[#E31837]/10 transition-all relative"
+            className="flex-1 rounded-lg data-[state=active]:bg-primary/10 transition-all relative"
           >
             Quests
             {totalUnreadQuestMessages > 0 && (
@@ -989,7 +989,7 @@ export default function MessagesPage() {
           </TabsTrigger>
           <TabsTrigger
             value="requests"
-            className="flex-1 rounded-lg data-[state=active]:bg-[#E31837]/10 transition-all relative"
+            className="flex-1 rounded-lg data-[state=active]:bg-primary/10 transition-all relative"
           >
             Requests
             {pendingRequests.length > 0 && (
@@ -1017,8 +1017,8 @@ export default function MessagesPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-16"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center border border-gray-100">
-                <Inbox className="w-10 h-10 text-gray-500" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <Inbox className="w-10 h-10 text-blue-700" />
               </div>
               <h3 className="text-lg font-medium mb-2">No conversations yet</h3>
               <p className="text-sm text-gray-400 max-w-xs mx-auto">
@@ -1069,8 +1069,8 @@ export default function MessagesPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-16"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center border border-gray-100">
-                <Users className="w-10 h-10 text-gray-500" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <Users className="w-10 h-10 text-blue-700" />
               </div>
               <h3 className="text-lg font-medium mb-2">No quest chats yet</h3>
               <p className="text-sm text-gray-400 max-w-xs mx-auto">
@@ -1108,8 +1108,8 @@ export default function MessagesPage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center py-16"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 flex items-center justify-center border border-gray-100">
-                <Sparkles className="w-10 h-10 text-gray-500" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <Sparkles className="w-10 h-10 text-blue-700" />
               </div>
               <h3 className="text-lg font-medium mb-2">No pending requests</h3>
               <p className="text-sm text-gray-400 max-w-xs mx-auto">

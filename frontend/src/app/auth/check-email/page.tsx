@@ -19,8 +19,8 @@ function CheckEmailContent() {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6 text-center"
     >
-      <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center">
-        <Mail className="w-8 h-8 text-[#E31837]" />
+      <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+        <Mail className="w-8 h-8 text-primary" />
       </div>
 
       <div className="space-y-2">
@@ -41,7 +41,7 @@ function CheckEmailContent() {
       {/* Dev mode: Direct verification link */}
       {devToken && (
         <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
-          <p className="text-sm text-yellow-400 font-medium mb-2">Development Mode</p>
+          <p className="text-sm text-yellow-800 font-medium mb-2">Development Mode</p>
           <p className="text-xs text-gray-500 mb-3">
             Email sending is not configured. Use the link below to verify:
           </p>
@@ -73,7 +73,7 @@ export default function CheckEmailPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 text-[#E31837] animate-spin" />
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
         </div>
       }
     >

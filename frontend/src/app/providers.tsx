@@ -69,7 +69,7 @@ function PushNotificationPrompt() {
     <div className="fixed bottom-20 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
       <div className="pointer-events-auto w-full max-w-sm bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-4 flex flex-col gap-3">
         <div className="flex items-start gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#E31837]/20 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
             <span className="text-lg">🔔</span>
           </div>
           <div className="flex-1">
@@ -82,7 +82,7 @@ function PushNotificationPrompt() {
         <div className="flex gap-2">
           <button
             onClick={enable}
-            className="flex-1 bg-[#E31837] hover:bg-[#C41230] text-white text-sm font-medium py-2 rounded-lg transition-colors"
+            className="flex-1 bg-primary hover:bg-york-red-dark text-white text-sm font-medium py-2 rounded-lg transition-colors"
           >
             Enable Notifications
           </button>

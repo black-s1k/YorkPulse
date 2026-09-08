@@ -63,7 +63,7 @@ function Avatar({
   const sz = size === "sm" ? "w-8 h-8 text-xs" : "w-10 h-10 text-sm";
   return (
     <div
-      className={`${sz} rounded-full bg-[#E31837] flex items-center justify-center text-white font-semibold flex-shrink-0`}
+      className={`${sz} rounded-full bg-primary flex items-center justify-center text-white font-semibold flex-shrink-0`}
     >
       {initials(name)}
     </div>
@@ -324,7 +324,7 @@ function PostQuestTab({
         <select
           value={selectedPersonaId}
           onChange={(e) => onSelectPersona(e.target.value)}
-          className="w-full h-9 rounded-md border border-gray-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#E31837]/40"
+          className="w-full h-9 rounded-md border border-gray-200 bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40"
         >
           <option value="">— select persona —</option>
           {personas.filter((p) => p.is_active).map((p) => (
@@ -346,8 +346,8 @@ function PostQuestTab({
               onClick={() => setCategory(c.value)}
               className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                 category === c.value
-                  ? "bg-[#E31837] text-white border-[#E31837]"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-[#E31837]/40"
+                  ? "bg-primary text-white border-primary"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-primary/40"
               }`}
             >
               {c.label}
@@ -422,8 +422,8 @@ function PostQuestTab({
               onClick={() => setVibe(v.value)}
               className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                 vibe === v.value
-                  ? "bg-[#E31837] text-white border-[#E31837]"
-                  : "bg-white text-gray-600 border-gray-200 hover:border-[#E31837]/40"
+                  ? "bg-primary text-white border-primary"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-primary/40"
               }`}
             >
               {v.label}
@@ -453,7 +453,7 @@ function PostQuestTab({
               id="approval"
               checked={requiresApproval}
               onChange={(e) => setRequiresApproval(e.target.checked)}
-              className="w-4 h-4 accent-[#E31837]"
+              className="w-4 h-4 accent-primary"
             />
             <label htmlFor="approval" className="text-sm text-gray-600">Manual approval</label>
           </div>
@@ -463,7 +463,7 @@ function PostQuestTab({
       <Button
         onClick={handleSubmit}
         disabled={submitting || !selectedPersonaId || !activity.trim() || !location.trim() || !startTime}
-        className="w-full bg-[#E31837] hover:bg-[#C41230]"
+        className="w-full bg-primary hover:bg-york-red-dark"
       >
         {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Compass className="w-4 h-4 mr-2" />}
         Post Quest
@@ -670,7 +670,7 @@ function DMsTab({ conversations, loading, onRefresh }: {
               <Avatar name={selectedConv.persona_name} size="sm" />
               <div>
                 <p className="text-sm font-medium text-gray-900">
-                  Replying as <span className="text-[#E31837]">{selectedConv.persona_name}</span>
+                  Replying as <span className="text-primary">{selectedConv.persona_name}</span>
                 </p>
                 <p className="text-xs text-gray-500">to {selectedConv.other_user_name}</p>
               </div>
@@ -693,7 +693,7 @@ function DMsTab({ conversations, loading, onRefresh }: {
                     <div
                       className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm ${
                         isPersona
-                          ? "bg-[#E31837] text-white rounded-br-sm"
+                          ? "bg-primary text-white rounded-br-sm"
                           : "bg-gray-100 text-gray-900 rounded-bl-sm"
                       }`}
                     >
@@ -726,7 +726,7 @@ function DMsTab({ conversations, loading, onRefresh }: {
               <Button
                 onClick={sendReply}
                 disabled={sending || !reply.trim()}
-                className="bg-[#E31837] hover:bg-[#C41230] self-end"
+                className="bg-primary hover:bg-york-red-dark self-end"
                 size="sm"
               >
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
@@ -824,8 +824,8 @@ export default function AdminReplyPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-[#E31837]/10 flex items-center justify-center">
-          <Compass className="w-5 h-5 text-[#E31837]" />
+        <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+          <Compass className="w-5 h-5 text-primary" />
         </div>
         <div>
           <h1 className="text-xl font-bold text-gray-900">Persona Control</h1>
@@ -847,7 +847,7 @@ export default function AdminReplyPage() {
             <Inbox className="w-3.5 h-3.5" />
             Requests
             {pendingRequests.length > 0 && (
-              <Badge className="ml-1 bg-[#E31837] text-white text-[10px] px-1.5 py-0 h-4">
+              <Badge className="ml-1 bg-primary text-white text-[10px] px-1.5 py-0 h-4">
                 {pendingRequests.length}
               </Badge>
             )}

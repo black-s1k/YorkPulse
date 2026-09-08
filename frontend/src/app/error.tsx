@@ -19,7 +19,7 @@ export default function Error({
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="text-center space-y-6 max-w-md">
         <div className="w-16 h-16 mx-auto rounded-full bg-red-500/20 flex items-center justify-center">
-          <AlertTriangle className="w-8 h-8 text-red-400" />
+          <AlertTriangle className="w-8 h-8 text-red-700" />
         </div>
         <div className="space-y-2">
           <h2 className="text-2xl font-bold">Something went wrong</h2>

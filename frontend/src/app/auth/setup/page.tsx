@@ -64,8 +64,8 @@ export default function SetupPage() {
       className="space-y-6"
     >
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 mx-auto rounded-full bg-[#E31837]/10 flex items-center justify-center mb-4">
-          <User className="w-8 h-8 text-[#E31837]" />
+        <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
+          <User className="w-8 h-8 text-primary" />
         </div>
         <h1 className="text-2xl font-bold">What's your name?</h1>
         <p className="text-gray-500">
@@ -87,7 +87,7 @@ export default function SetupPage() {
 
         <Button
           type="submit"
-          className="w-full bg-[#E31837] hover:bg-[#C41230]"
+          className="w-full bg-primary hover:bg-york-red-dark"
           disabled={!name.trim() || updateProfileMutation.isPending}
         >
           {updateProfileMutation.isPending ? (

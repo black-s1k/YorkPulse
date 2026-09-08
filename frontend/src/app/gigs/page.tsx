@@ -101,14 +101,15 @@ function GigCard({ gig }: { gig: Gig }) {
             variant="secondary"
             className={cn(
               "text-xs",
-              isOffering ? "bg-green-500/20 text-green-400" : "bg-orange-500/20 text-orange-400"
+              isOffering ? "bg-green-500/20 text-green-700" : "bg-orange-500/20 text-orange-700"
             )}
           >
-            {cat.emoji} {cat.label}
+            <cat.icon />
+            {cat.label}
           </Badge>
           <span className={cn(
             "font-semibold text-sm",
-            isOffering ? "text-green-400" : "text-orange-400"
+            isOffering ? "text-green-700" : "text-orange-700"
           )}>
             {formatPrice(gig)}
           </span>
@@ -192,7 +193,7 @@ export default function GigsPage() {
       <div className="px-4 py-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
-            <GraduationCap className="w-5 h-5 text-yellow-400" />
+            <GraduationCap className="w-5 h-5 text-yellow-800" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Quick Gigs</h1>
@@ -201,7 +202,7 @@ export default function GigsPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-yellow-500/10 flex items-center justify-center mb-6">
-            <GraduationCap className="w-10 h-10 text-yellow-400" />
+            <GraduationCap className="w-10 h-10 text-yellow-800" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to access Quick Gigs</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -223,7 +224,7 @@ export default function GigsPage() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
-            <GraduationCap className="w-5 h-5 text-yellow-400" />
+            <GraduationCap className="w-5 h-5 text-yellow-800" />
           </div>
           <div>
             <h1 className="text-xl font-bold">Quick Gigs</h1>
@@ -356,10 +357,10 @@ export default function GigsPage() {
       {/* Active Filters */}
       {location && (
         <div className="flex gap-2 mb-4 flex-wrap">
-          <Badge variant="secondary" className="gap-1 bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+          <Badge variant="secondary" className="gap-1 bg-yellow-500/20 text-yellow-800 border-yellow-500/30">
             <MapPin className="w-3 h-3" />
             {locationLabels[location]}
-            <button onClick={() => setLocation(undefined)} className="ml-1 hover:text-white">
+            <button onClick={() => setLocation(undefined)} className="ml-1 hover:text-yellow-950">
               ×
             </button>
           </Badge>

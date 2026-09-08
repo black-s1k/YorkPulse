@@ -116,7 +116,7 @@ export default function GigDetailPage() {
         </div>
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="w-20 h-20 rounded-full bg-yellow-500/10 flex items-center justify-center mb-6">
-            <GraduationCap className="w-10 h-10 text-yellow-400" />
+            <GraduationCap className="w-10 h-10 text-yellow-800" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Sign in to view this gig</h2>
           <p className="text-gray-400 mb-6 max-w-md">
@@ -300,21 +300,21 @@ export default function GigDetailPage() {
                 variant="secondary"
                 className={cn(
                   "text-sm",
-                  isOffering ? "bg-green-500/20 text-green-400" : "bg-orange-500/20 text-orange-400"
+                  isOffering ? "bg-green-500/20 text-green-700" : "bg-orange-500/20 text-orange-700"
                 )}
               >
                 {isOffering ? "Offering" : "Need Help"}
               </Badge>
               <Badge variant="outline" className="text-sm border-gray-200">
-                {cat.emoji} {cat.label}
+                <cat.icon />{cat.label}
               </Badge>
             </div>
             <Badge
               variant="secondary"
               className={cn(
                 "text-xs",
-                gig.status === "active" && "bg-green-500/20 text-green-400",
-                gig.status === "in_progress" && "bg-blue-500/20 text-blue-400",
+                gig.status === "active" && "bg-green-500/20 text-green-700",
+                gig.status === "in_progress" && "bg-blue-500/20 text-blue-700",
                 gig.status === "completed" && "bg-zinc-500/20 text-gray-500"
               )}
             >
@@ -336,7 +336,7 @@ export default function GigDetailPage() {
                     Mark as Complete
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={handleDelete} className="text-red-400">
+                <DropdownMenuItem onClick={handleDelete} className="text-red-700">
                   <Trash2 className="w-4 h-4 mr-2" />
                   Delete Gig
                 </DropdownMenuItem>
@@ -350,7 +350,7 @@ export default function GigDetailPage() {
           <h1 className="text-2xl font-bold">{gig.title}</h1>
           <span className={cn(
             "text-xl font-bold",
-            isOffering ? "text-green-400" : "text-orange-400"
+            isOffering ? "text-green-700" : "text-orange-700"
           )}>
             {formatPrice(gig)}
           </span>
@@ -363,7 +363,7 @@ export default function GigDetailPage() {
         <div className="space-y-2 text-sm text-gray-500 mb-4">
           {gig.location && (
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-green-400" />
+              <MapPin className="w-4 h-4 text-green-700" />
               <span>{locationLabels[gig.location]}</span>
               {gig.location_details && (
                 <span className="text-gray-400">- {gig.location_details}</span>
@@ -372,7 +372,7 @@ export default function GigDetailPage() {
           )}
           {gig.deadline && (
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-orange-400" />
+              <Calendar className="w-4 h-4 text-orange-700" />
               <span>Deadline: {new Date(gig.deadline).toLocaleDateString()}</span>
             </div>
           )}
@@ -522,9 +522,9 @@ export default function GigDetailPage() {
                   variant="secondary"
                   className={cn(
                     "text-xs",
-                    response.status === "pending" && "bg-yellow-500/20 text-yellow-400",
-                    response.status === "accepted" && "bg-green-500/20 text-green-400",
-                    response.status === "rejected" && "bg-red-500/20 text-red-400"
+                    response.status === "pending" && "bg-yellow-500/20 text-yellow-800",
+                    response.status === "accepted" && "bg-green-500/20 text-green-700",
+                    response.status === "rejected" && "bg-red-500/20 text-red-700"
                   )}
                 >
                   {response.status}
@@ -536,7 +536,7 @@ export default function GigDetailPage() {
               )}
 
               {response.proposed_price && (
-                <p className="text-sm text-green-400 mb-3">
+                <p className="text-sm text-green-700 mb-3">
                   Proposed: ${response.proposed_price}
                 </p>
               )}
