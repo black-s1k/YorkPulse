@@ -8,7 +8,7 @@ export default function TermsPage() {
       </div>
 
       <h1 className="text-3xl font-bold mb-2">Terms of Service</h1>
-      <p className="text-gray-400 text-sm mb-10">Last updated: March 2026</p>
+      <p className="text-gray-400 text-sm mb-10">Last updated: September 2026</p>
 
       <div className="space-y-8 text-gray-700 leading-relaxed">
 
@@ -43,6 +43,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">5. The Vault (Anonymous Forum)</h2>
           <p>While posts in The Vault may appear anonymous to other users, YorkPulse retains the ability to identify users in cases of serious misconduct, threats of harm, or legal requirements. Anonymity is a feature, not a shield for harmful behaviour.</p>
+          <p className="mt-3">If you&apos;ve opted into the optional activity-tracking categories described in our <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>, that applies to Vault usage the same as every other feature. It does not change the anonymity Vault posts have from other users — only platform administrators can identify you, and only under the circumstances above.</p>
         </section>
 
         <section>

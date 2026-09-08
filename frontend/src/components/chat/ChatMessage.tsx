@@ -165,7 +165,9 @@ export function ChatMessage({
         {message && (
           <p
             className={cn(
-              "text-sm text-gray-700 whitespace-pre-wrap break-words",
+              // rr-mask: session-replay recording (see lib/activityTracker.ts)
+              // must never capture message content, sent or displayed.
+              "text-sm text-gray-700 whitespace-pre-wrap break-words rr-mask",
               isOwn && "text-right"
             )}
           >

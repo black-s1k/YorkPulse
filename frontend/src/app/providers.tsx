@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
+import { ActivityTracker } from "@/components/ActivityTracker";
 import { CreateModal } from "@/components/modals/CreateModal";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import FounderCelebration from "@/components/FounderCelebration";
@@ -122,6 +123,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthInitializer />
       <ServiceWorkerRegistrar />
+      <ActivityTracker />
       {children}
       <CreateModal />
       <FloatingActionButton />

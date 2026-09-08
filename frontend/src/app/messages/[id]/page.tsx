@@ -567,7 +567,7 @@ export default function ConversationPage() {
                             </a>
                           )}
                           {msg.content && (
-                            <p className="text-sm whitespace-pre-wrap break-words">
+                            <p className="text-sm whitespace-pre-wrap break-words rr-mask">
                               {msg.content}
                             </p>
                           )}

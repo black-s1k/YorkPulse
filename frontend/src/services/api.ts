@@ -1195,6 +1195,51 @@ class ApiClient {
         { content }
       ),
   };
+
+  // Activity tracking — see <ActivityTracker /> (providers.tsx) and the
+  // "Privacy & Activity" section of the profile page. No-ops server-side
+  // when settings.activity_tracking_enabled is False.
+  analytics = {
+    startSession: (data: { device_type?: string; browser?: string; landing_path?: string }) =>
+      this.post<{ session_id: string }>("/analytics/sessions", data),
+
+    trackEvents: (
+      sessionId: string,
+      events: Array<{
+        event_type: string;
+        category: string;
+        entity_type?: string;
+        entity_id?: string;
+        properties?: Record<string, unknown>;
+        occurred_at?: string;
+      }>
+    ) => this.post<{ accepted: number }>("/analytics/events", { session_id: sessionId, events }),
+
+    recordReplayChunk: (sessionId: string, chunkKey: string, byteSize: number) =>
+      this.post<{ recorded: boolean }>(`/analytics/sessions/${sessionId}/replay-chunk`, {
+        session_id: sessionId,
+        chunk_key: chunkKey,
+        byte_size: byteSize,
+      }),
+
+    setConsent: (data: { policy_version: string; consent_scope: string; action: "granted" | "withdrawn" }) =>
+      this.post<{ id: string; consent_scope: string; action: string; recorded_at: string }>(
+        "/analytics/consent",
+        data
+      ),
+
+    getConsentStatus: () =>
+      this.get<{ product_analytics: boolean; session_replay: boolean }>("/analytics/consent/status"),
+
+    // Admin
+    listActivityProfiles: (page = 1, perPage = 50, sortBy = "engagement_score") =>
+      this.get<{ items: unknown[]; total: number; page: number; per_page: number; has_more: boolean }>(
+        `/admin/activity/profiles?page=${page}&per_page=${perPage}&sort_by=${sortBy}`
+      ),
+
+    getActivityProfile: (userId: string) =>
+      this.get<{ profile: unknown; recent_events: unknown[] }>(`/admin/activity/profiles/${userId}`),
+  };
 }
 
 export const api = new ApiClient(API_URL);

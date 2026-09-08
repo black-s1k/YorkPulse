@@ -11,26 +11,64 @@ import {
   Camera,
   ArrowRight,
   AlertCircle,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useVerifyName, useVerifyId } from "@/hooks/useAuth";
 import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
+import { useConsentStore, CURRENT_POLICY_VERSION } from "@/stores/consent";
 
-type Step = "name" | "upload" | "verifying" | "success" | "notify";
+type Step = "name" | "upload" | "verifying" | "success" | "notify" | "activity-consent";
 
 export default function SetupProfilePage() {
   const [step, setStep] = useState<Step>("name");
   const [name, setName] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [productAnalyticsChecked, setProductAnalyticsChecked] = useState(false);
+  const [sessionReplayChecked, setSessionReplayChecked] = useState(false);
+  const [isSavingConsent, setIsSavingConsent] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
   const { subscribe, isSupported } = usePushNotifications();
+
+  const handleActivityConsentSubmit = async () => {
+    setIsSavingConsent(true);
+    try {
+      // Both scopes are recorded explicitly, even when declined — an
+      // auditable "asked and said no" entry is the point (see
+      // TrackingConsent's append-only-ledger design), not just silence.
+      await Promise.all([
+        api.analytics.setConsent({
+          policy_version: CURRENT_POLICY_VERSION,
+          consent_scope: "product_analytics",
+          action: productAnalyticsChecked ? "granted" : "withdrawn",
+        }),
+        api.analytics.setConsent({
+          policy_version: CURRENT_POLICY_VERSION,
+          consent_scope: "session_replay",
+          action: sessionReplayChecked ? "granted" : "withdrawn",
+        }),
+      ]);
+    } catch {
+      // Consent recording must never block onboarding — if it fails, the
+      // user still proceeds; server-side tracking simply stays off for
+      // them (activity_service.emit() is a no-op without a recorded grant).
+    } finally {
+      useConsentStore.getState().setConsent("product_analytics", productAnalyticsChecked);
+      useConsentStore.getState().setConsent("session_replay", sessionReplayChecked);
+      useConsentStore.getState().markAsked();
+      setIsSavingConsent(false);
+      setStep("success");
+      setTimeout(() => router.push("/auth/complete-profile"), 1200);
+    }
+  };
 
   const verifyNameMutation = useVerifyName();
   const verifyIdMutation = useVerifyId();
@@ -55,8 +93,7 @@ export default function SetupProfilePage() {
         if (isSupported && Notification.permission === "default") {
           setStep("notify");
         } else {
-          setStep("success");
-          setTimeout(() => router.push("/auth/complete-profile"), 2000);
+          setStep("activity-consent");
         }
       } else if (result.requires_id_upload) {
         // Need to upload ID for verification
@@ -126,8 +163,7 @@ export default function SetupProfilePage() {
         if (isSupported && Notification.permission === "default") {
           setStep("notify");
         } else {
-          setStep("success");
-          setTimeout(() => router.push("/auth/complete-profile"), 2000);
+          setStep("activity-consent");
         }
       } else {
         setStep("upload");
@@ -379,8 +415,7 @@ export default function SetupProfilePage() {
               <Button
                 onClick={async () => {
                   await subscribe();
-                  setStep("success");
-                  setTimeout(() => router.push("/auth/complete-profile"), 1500);
+                  setStep("activity-consent");
                 }}
                 className="bg-primary hover:bg-york-red-dark"
               >
@@ -388,14 +423,80 @@ export default function SetupProfilePage() {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => {
-                  setStep("success");
-                  setTimeout(() => router.push("/auth/complete-profile"), 500);
-                }}
+                onClick={() => setStep("activity-consent")}
               >
                 Skip
               </Button>
             </div>
+          </motion.div>
+        )}
+
+        {step === "activity-consent" && (
+          <motion.div
+            key="activity-consent"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="space-y-6"
+          >
+            <div className="text-center space-y-2">
+              <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+                <Shield className="w-8 h-8 text-primary" />
+              </div>
+              <h1 className="text-2xl font-bold">Your activity, your choice</h1>
+              <p className="text-gray-500 text-sm max-w-sm mx-auto">
+                YorkPulse uses basic security measures (like rate-limiting) on every account by
+                default. The two options below are entirely optional and off unless you turn
+                them on.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <label className="flex items-start gap-3 p-4 rounded-xl border border-gray-100 bg-white shadow-sm cursor-pointer">
+                <Checkbox
+                  checked={productAnalyticsChecked}
+                  onCheckedChange={(checked) => setProductAnalyticsChecked(checked === true)}
+                  className="mt-0.5"
+                />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Product analytics</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Helps us see which features get used — page visits, clicks, session length.
+                    Never includes what you write.
+                  </p>
+                </div>
+              </label>
+
+              <label className="flex items-start gap-3 p-4 rounded-xl border border-gray-100 bg-white shadow-sm cursor-pointer">
+                <Checkbox
+                  checked={sessionReplayChecked}
+                  onCheckedChange={(checked) => setSessionReplayChecked(checked === true)}
+                  className="mt-0.5"
+                />
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Session replay</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Records a video-like replay of your on-screen interactions to help us fix
+                    confusing UI. Text you type is never captured.
+                  </p>
+                </div>
+              </label>
+            </div>
+
+            <p className="text-xs text-gray-400 text-center">
+              Read the full details in our{" "}
+              <a href="/privacy" target="_blank" className="text-primary hover:underline">
+                Privacy Policy
+              </a>
+              . You can change these anytime from your profile.
+            </p>
+
+            <Button
+              onClick={handleActivityConsentSubmit}
+              disabled={isSavingConsent}
+              className="w-full bg-primary hover:bg-york-red-dark"
+            >
+              {isSavingConsent ? <Loader2 className="w-4 h-4 animate-spin" /> : "Continue"}
+            </Button>
           </motion.div>
         )}
       </AnimatePresence>

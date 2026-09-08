@@ -40,7 +40,7 @@ const landingFeatures = [
     href: "/vault",
     icon: Shield,
     title: "The Vault",
-    description: "Anonymous discussions. No tracking, no judgment.",
+    description: "Anonymous discussions. Your name is never shown to other users.",
     iconBg: "bg-primary/10",
     iconColor: "text-primary",
     accentBorder: "border-t-primary",

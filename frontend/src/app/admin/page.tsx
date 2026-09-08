@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Loader2, Shield, Users, ShoppingBag, FileText, MessageSquare, Flag, ChevronLeft, ChevronRight, BookOpen, Image, Search, Compass } from "lucide-react";
+import { Trash2, Loader2, Shield, Users, ShoppingBag, FileText, MessageSquare, Flag, ChevronLeft, ChevronRight, BookOpen, Image, Search, Compass, Activity } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -1025,6 +1025,125 @@ function QuestsTab() {
   );
 }
 
+// ─── Activity Tracking Tab ─────────────────────────────────────────────────────
+// Deliberately named "Activity", never "Personas" — that word already means
+// admin-seeded synthetic accounts elsewhere in this app (see the Side Quests
+// admin tools). Reads the periodically-refreshed Postgres aggregate, not a
+// live DynamoDB scan — see app/services/activity_profile_refresh.py.
+
+const ACTIVITY_LABEL_COLOR: Record<string, string> = {
+  power_user: "bg-green-500/20 text-green-700",
+  casual: "bg-blue-500/20 text-blue-700",
+  lurker: "bg-yellow-500/20 text-yellow-800",
+  dormant: "bg-zinc-500/20 text-gray-500",
+};
+
+interface ActivityProfileRow {
+  user_id: string;
+  name: string;
+  email: string;
+  total_sessions: number;
+  total_events: number;
+  total_page_views: number;
+  days_active_last_30: number;
+  vault_posts_count: number;
+  messages_sent_count: number;
+  engagement_score: number;
+  activity_label: string;
+  last_computed_at: string;
+}
+
+function ActivityTab() {
+  const [data, setData] = useState<PagedResult<ActivityProfileRow> | null>(null);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<"engagement_score" | "total_events" | "last_computed_at">("engagement_score");
+
+  const load = useCallback(async (p: number, sort: string) => {
+    setLoading(true);
+    try {
+      const result = await api.analytics.listActivityProfiles(p, 50, sort);
+      setData(result as PagedResult<ActivityProfileRow>);
+    } catch {
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(page, sortBy); }, [load, page, sortBy]);
+
+  return (
+    <div>
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-sm text-gray-400">
+          Excludes admin-seeded test accounts. Refreshed every 30 minutes, not live.
+        </p>
+        <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+          {(["engagement_score", "total_events", "last_computed_at"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => { setSortBy(s); setPage(1); }}
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${sortBy === s ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              {s === "engagement_score" ? "Engagement" : s === "total_events" ? "Events" : "Recent"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-12"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>
+      ) : !data || data.items.length === 0 ? (
+        <p className="text-gray-400 text-sm text-center py-8">
+          No activity data yet — tracking is currently disabled, or no users have opted in.
+        </p>
+      ) : (
+        <>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200 text-gray-400 text-left">
+                  <th className="pb-2 pr-4 font-medium">User</th>
+                  <th className="pb-2 pr-4 font-medium">Label</th>
+                  <th className="pb-2 pr-4 font-medium text-right">Sessions</th>
+                  <th className="pb-2 pr-4 font-medium text-right">Events</th>
+                  <th className="pb-2 pr-4 font-medium text-right">Days Active (30d)</th>
+                  <th className="pb-2 pr-4 font-medium text-right">Vault Posts</th>
+                  <th className="pb-2 pr-4 font-medium text-right">Messages</th>
+                  <th className="pb-2 pr-4 font-medium text-right">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.items.map((row) => (
+                  <tr key={row.user_id} className="border-b border-gray-200/50 hover:bg-gray-100/30">
+                    <td className="py-2 pr-4">
+                      <span className="font-medium">{row.name}</span>
+                      <span className="text-gray-400 text-xs block">{row.email}</span>
+                    </td>
+                    <td className="py-2 pr-4">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ACTIVITY_LABEL_COLOR[row.activity_label] ?? ACTIVITY_LABEL_COLOR.dormant}`}>
+                        {row.activity_label.replace("_", " ")}
+                      </span>
+                    </td>
+                    <td className="py-2 pr-4 text-right text-gray-500">{row.total_sessions}</td>
+                    <td className="py-2 pr-4 text-right text-gray-500">{row.total_events}</td>
+                    <td className="py-2 pr-4 text-right text-gray-500">{row.days_active_last_30}</td>
+                    <td className="py-2 pr-4 text-right text-gray-500">{row.vault_posts_count}</td>
+                    <td className="py-2 pr-4 text-right text-gray-500">{row.messages_sent_count}</td>
+                    <td className="py-2 text-right font-medium">{row.engagement_score.toFixed(1)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination page={page} hasMore={data.has_more} total={data.total} perPage={data.per_page} onPrev={() => setPage(p => p - 1)} onNext={() => setPage(p => p + 1)} />
+        </>
+      )}
+    </div>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 const ADMIN_EMAIL = "yorkpulse.app@gmail.com";
@@ -1091,6 +1210,9 @@ export default function AdminPage() {
           <TabsTrigger value="quests" className="flex items-center gap-1.5">
             <Compass className="w-4 h-4" /> Side Quests
           </TabsTrigger>
+          <TabsTrigger value="activity" className="flex items-center gap-1.5">
+            <Activity className="w-4 h-4" /> Activity
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="users"><UsersTab /></TabsContent>
@@ -1100,6 +1222,7 @@ export default function AdminPage() {
         <TabsContent value="reports"><ReportsTab /></TabsContent>
         <TabsContent value="courses"><CourseMonitorTab /></TabsContent>
         <TabsContent value="quests"><QuestsTab /></TabsContent>
+        <TabsContent value="activity"><ActivityTab /></TabsContent>
       </Tabs>
     </div>
   );

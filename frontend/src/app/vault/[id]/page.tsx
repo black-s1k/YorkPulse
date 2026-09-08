@@ -384,8 +384,8 @@ export default function VaultPostPage() {
         </div>
 
         {/* Content */}
-        <h1 className="text-xl font-bold mb-3">{post.title}</h1>
-        <p className="text-gray-700 whitespace-pre-wrap mb-4">{post.content}</p>
+        <h1 className="text-xl font-bold mb-3 rr-mask">{post.title}</h1>
+        <p className="text-gray-700 whitespace-pre-wrap mb-4 rr-mask">{post.content}</p>
 
         {/* Images */}
         {post.images && post.images.length > 0 && (
@@ -516,7 +516,7 @@ export default function VaultPostPage() {
                     {timeAgo(c.created_at)}
                   </span>
                 </div>
-                <p className="text-sm text-gray-700">{c.content}</p>
+                <p className="text-sm text-gray-700 rr-mask">{c.content}</p>
               </motion.div>
             ))}
 

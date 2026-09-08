@@ -42,6 +42,7 @@ import { api } from "@/services/api";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import FounderBadge from "@/components/FounderBadge";
+import { PrivacyActivitySection } from "@/components/PrivacyActivitySection";
 
 // Program suggestions from York University courses
 const PROGRAM_SUGGESTIONS = [
@@ -639,6 +640,8 @@ export default function ProfilePage() {
           )}
         </TabsContent>
       </Tabs>
+
+      <PrivacyActivitySection />
     </div>
   );
 }

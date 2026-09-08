@@ -82,10 +82,10 @@ function PostCard({ post }: { post: VaultPost }) {
                 </div>
 
                 {/* Title */}
-                <h3 className="font-semibold mb-1 line-clamp-2">{post.title}</h3>
+                <h3 className="font-semibold mb-1 line-clamp-2 rr-mask">{post.title}</h3>
 
                 {/* Content Preview */}
-                <p className="text-sm text-gray-500 line-clamp-2 mb-3">
+                <p className="text-sm text-gray-500 line-clamp-2 mb-3 rr-mask">
                   {post.content}
                 </p>
 
