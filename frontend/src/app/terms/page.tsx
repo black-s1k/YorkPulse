@@ -67,13 +67,13 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">10. Contact</h2>
-          <p>For questions about these terms, contact us at <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-700 hover:underline">yorkpulse.app@gmail.com</a>.</p>
+          <p>For questions about these terms, contact us at <a href="mailto:yorkpulse.app@gmail.com" className="text-primary hover:underline">yorkpulse.app@gmail.com</a>.</p>
         </section>
 
       </div>
 
       <div className="mt-12 pt-8 border-t border-gray-200 text-sm text-gray-400">
-        <Link href="/privacy" className="text-purple-700 hover:underline">Privacy Policy</Link>
+        <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
       </div>
     </div>
   );
