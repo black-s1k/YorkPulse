@@ -4,7 +4,7 @@ export default function PrivacyPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <div className="mb-8">
-        <Link href="/" className="text-sm text-purple-700 hover:underline">← Back to YorkPulse</Link>
+        <Link href="/" className="text-sm text-primary hover:underline">← Back to YorkPulse</Link>
       </div>
 
       <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
@@ -13,7 +13,7 @@ export default function PrivacyPage() {
       <div className="space-y-8 text-gray-700 leading-relaxed">
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">1. Information We Collect</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">1. Information We Collect</h2>
           <p className="mb-3">When you use YorkPulse, we collect:</p>
           <ul className="list-disc list-inside space-y-2 text-gray-500">
             <li><span className="text-gray-700">Account information</span> — your York email address and display name</li>
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">2. How We Use Your Information</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">2. How We Use Your Information</h2>
           <ul className="list-disc list-inside space-y-2 text-gray-500">
             <li>To verify your York University affiliation via email OTP</li>
             <li>To display your profile and content to other verified users</li>
@@ -36,12 +36,12 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">3. Anonymity in The Vault</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">3. Anonymity in The Vault</h2>
           <p>Posts marked as anonymous in The Vault are displayed without your name or profile to other users. However, your user ID is stored internally in our database and may be accessed by platform administrators in cases of serious policy violations, credible threats of harm, or legal obligations. We do not sell or share this information with third parties.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">4. Data Sharing</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">4. Data Sharing</h2>
           <p className="mb-3">We do not sell your personal data. We share data only with:</p>
           <ul className="list-disc list-inside space-y-2 text-gray-500">
             <li><span className="text-gray-700">Supabase</span> — our database and authentication provider</li>
@@ -52,12 +52,12 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">5. Data Retention</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">5. Data Retention</h2>
           <p>Your data is retained for as long as your account is active. When you delete your account, your profile and personally identifiable information are removed. Some anonymized activity data may be retained for platform analytics.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">6. Your Rights</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">6. Your Rights</h2>
           <p className="mb-3">You have the right to:</p>
           <ul className="list-disc list-inside space-y-2 text-gray-500">
             <li>Access the personal data we hold about you</li>
@@ -69,22 +69,22 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">7. Security</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">7. Security</h2>
           <p>We use industry-standard security practices including encrypted connections (HTTPS), hashed authentication tokens, and row-level security on our database. No system is completely secure — please use a unique email and report any suspicious activity immediately.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">8. Children's Privacy</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">8. Children's Privacy</h2>
           <p>YorkPulse is not intended for users under 17. As a university platform, all users are expected to be of post-secondary age.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">9. Changes to This Policy</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">9. Changes to This Policy</h2>
           <p>We may update this Privacy Policy as the platform evolves. We will notify users of significant changes via the platform. Continued use after changes constitutes acceptance.</p>
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-white mb-3">10. Contact</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-3">10. Contact</h2>
           <p>Privacy questions or requests: <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-700 hover:underline">yorkpulse.app@gmail.com</a></p>
         </section>
 

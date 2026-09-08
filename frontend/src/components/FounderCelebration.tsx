@@ -122,10 +122,10 @@ export default function FounderCelebration() {
               </span>
             </div>
 
-            <h2 className="text-xl font-bold text-white mb-1">You earned a badge!</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-1">You earned a badge!</h2>
             <p className="text-gray-500 text-sm leading-relaxed">
               Thanks for being one of the{" "}
-              <span className="text-violet-400 font-semibold">first members</span>{" "}
+              <span className="text-violet-700 font-semibold">first members</span>{" "}
               of YorkPulse. This badge is yours forever.
             </p>
 

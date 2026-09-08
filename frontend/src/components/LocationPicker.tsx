@@ -79,7 +79,7 @@ function RecenterControl({ position }: { position: [number, number] | null }) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleRecenter}
-          className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30 border border-white/20"
+          className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-red-300/40 border border-white/20"
           title="Recenter map"
         >
           <Navigation className="w-4 h-4 text-white" />
@@ -192,7 +192,7 @@ export function LocationPicker({ value, onChange, className }: LocationPickerPro
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute z-50 w-full mt-2 backdrop-blur-xl bg-white border border-gray-100 rounded-xl shadow-xl shadow-purple-500/10 overflow-hidden max-h-64 overflow-y-auto"
+              className="absolute z-50 w-full mt-2 backdrop-blur-xl bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden max-h-64 overflow-y-auto"
             >
               {YORK_LOCATIONS.map((loc) => (
                 <button
@@ -200,16 +200,16 @@ export function LocationPicker({ value, onChange, className }: LocationPickerPro
                   type="button"
                   onClick={() => handleQuickLocationSelect(loc)}
                   className={cn(
-                    "w-full px-4 py-3 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-3 border-b border-white/5 last:border-0",
-                    value.name === loc.name && "bg-purple-500/20"
+                    "w-full px-4 py-3 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-3 border-b border-gray-100 last:border-0",
+                    value.name === loc.name && "bg-primary/10"
                   )}
                 >
                   <div className={cn(
                     "w-2 h-2 rounded-full",
-                    value.name === loc.name ? "bg-purple-400" : "bg-zinc-600"
+                    value.name === loc.name ? "bg-primary" : "bg-gray-300"
                   )} />
                   <span className={cn(
-                    value.name === loc.name ? "text-purple-300" : "text-gray-700"
+                    value.name === loc.name ? "text-primary" : "text-gray-700"
                   )}>
                     {loc.name}
                   </span>

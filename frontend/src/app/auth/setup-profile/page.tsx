@@ -352,7 +352,7 @@ export default function SetupProfilePage() {
             <div className="space-y-2">
               <h1 className="text-2xl font-bold">Name Verified!</h1>
               <p className="text-gray-500">
-                Great, <span className="text-white font-medium">{name}</span>! Just one more step...
+                Great, <span className="text-gray-900 font-medium">{name}</span>! Just one more step...
               </p>
             </div>
             <p className="text-sm text-gray-400">Setting up your profile...</p>
