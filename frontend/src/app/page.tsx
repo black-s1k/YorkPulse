@@ -510,7 +510,6 @@ function DashboardView() {
           className="mb-8"
         >
           <h1 className="text-2xl font-semibold text-gray-900">Hi, {firstName}</h1>
-          <div className="w-10 h-1 bg-primary rounded-full mt-2" />
         </motion.div>
 
         {/* Top Row */}

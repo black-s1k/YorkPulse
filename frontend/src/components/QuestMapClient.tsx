@@ -204,8 +204,7 @@ function BuildingPolygonLayer({
         className="building-tooltip"
         permanent={false}
       >
-        <div className="flex items-center gap-2 px-2 py-1">
-          <span>{config.emoji}</span>
+        <div className="px-2 py-1">
           <span className="font-medium">{building.name}</span>
         </div>
       </Tooltip>
