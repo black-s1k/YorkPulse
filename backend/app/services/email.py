@@ -43,8 +43,8 @@ class EmailService:
         <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #333; margin-bottom: 20px;">Your YorkPulse verification code</h2>
             <p style="color: #666; margin-bottom: 20px;">Enter this code to verify your email:</p>
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px;">
-                <h1 style="font-size: 40px; letter-spacing: 10px; font-family: 'Courier New', monospace; color: #fff; margin: 0;">
+            <div style="background: linear-gradient(135deg, #E31837 0%, #C41230 100%); border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 20px;">
+                <h1 style="font-size: 40px; letter-spacing: 10px; font-family: 'Courier New', monospace; color: #ffffff; margin: 0;">
                     {otp_code}
                 </h1>
             </div>
@@ -52,7 +52,7 @@ class EmailService:
             <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
             <p style="color: #999; font-size: 12px;">If you didn't request this code, you can safely ignore this email.</p>
             <p style="color: #999; font-size: 12px;">- The YorkPulse Team</p>
-            <p style="color: #999; font-size: 12px;">Having issues? Contact us at <a href="mailto:yorkpulse.app@gmail.com" style="color: #667eea;">yorkpulse.app@gmail.com</a></p>
+            <p style="color: #999; font-size: 12px;">Having issues? Contact us at <a href="mailto:yorkpulse.app@gmail.com" style="color: #E31837;">yorkpulse.app@gmail.com</a></p>
         </div>
         """
         text_content = f"Your YorkPulse verification code is: {otp_code}\n\nThis code expires in 10 minutes."
