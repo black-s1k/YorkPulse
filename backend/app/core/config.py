@@ -16,6 +16,13 @@ class Settings(BaseSettings):
     allow_test_emails: bool = False  # Set to True to allow non-York emails for testing
     api_prefix: str = "/api/v1"
 
+    # DEV ONLY — skips JWT verification and injects the admin user for every
+    # request. Only ever set this in a local, gitignored .env; it is not read
+    # from any deployed secret store. Even so, get_current_user() additionally
+    # requires the request to originate from a loopback address, so flipping
+    # this by mistake in a shared environment still can't expose real user data.
+    disable_auth_localhost: bool = False
+
     # Database
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/yorkpulse"
     db_password: str = ""

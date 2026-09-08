@@ -85,6 +85,12 @@ if (typeof window !== "undefined") {
       if (state.isAuthenticated && isTokenExpired(state.accessToken) && !state.refreshToken) {
         state.logout();
       }
+      // DEV ONLY: on localhost with no persisted session, mark authenticated
+      // so useUser() fires. The backend only honors this for loopback requests
+      // (see Settings.disable_auth_localhost) — it's a no-op against a real API.
+      if (!state.isAuthenticated && window.location.hostname === "localhost") {
+        useAuthStore.setState({ isAuthenticated: true });
+      }
       state.setHydrated();
     };
 

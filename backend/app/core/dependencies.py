@@ -2,11 +2,12 @@
 
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.models.user import User
 from app.services.jwt import jwt_service
@@ -14,12 +15,38 @@ from app.services.jwt import jwt_service
 # Security scheme
 security = HTTPBearer(auto_error=False)
 
+_LOOPBACK_HOSTS = {"127.0.0.1", "::1", "testclient"}
+
+
+async def _dev_bypass_user(request: Request, db: AsyncSession) -> User | None:
+    """DEV ONLY: if enabled AND the request is from loopback, return the
+    admin user instead of enforcing JWT auth. See Settings.disable_auth_localhost."""
+    if not settings.disable_auth_localhost:
+        return None
+    client_host = request.client.host if request.client else None
+    if client_host not in _LOOPBACK_HOSTS:
+        return None
+
+    result = await db.execute(
+        select(User).where(User.email.in_(_admin_emails())).order_by(User.created_at.asc())
+    )
+    return result.scalars().first()
+
+
+def _admin_emails() -> list[str]:
+    return [e.strip().lower() for e in settings.admin_emails.split(",") if e.strip()]
+
 
 async def get_current_user_optional(
+    request: Request,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> User | None:
     """Get current user if authenticated, None otherwise."""
+    bypass_user = await _dev_bypass_user(request, db)
+    if bypass_user:
+        return bypass_user
+
     if not credentials:
         return None
 
@@ -43,10 +70,15 @@ async def get_current_user_optional(
 
 
 async def get_current_user(
+    request: Request,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> User:
     """Get current authenticated user. Raises 401 if not authenticated."""
+    bypass_user = await _dev_bypass_user(request, db)
+    if bypass_user:
+        return bypass_user
+
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
