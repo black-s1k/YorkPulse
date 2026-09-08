@@ -8,6 +8,7 @@ import { MapPin, Navigation, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { cartoTileUrl } from "@/lib/mapTiles";
 
 // York University campus center coordinates
 const YORK_CENTER: [number, number] = [43.7735, -79.5019];
@@ -230,7 +231,7 @@ export function LocationPicker({ value, onChange, className }: LocationPickerPro
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+            url={cartoTileUrl("light_all")}
           />
 
           <ClickHandler onLocationSelect={handleLocationSelect} />

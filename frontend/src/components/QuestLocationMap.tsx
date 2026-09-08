@@ -6,6 +6,7 @@ import L from "leaflet";
 import { motion } from "framer-motion";
 import { Navigation, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cartoTileUrl } from "@/lib/mapTiles";
 import type { QuestCategory } from "@/types";
 
 // Category config
@@ -102,7 +103,7 @@ export function QuestLocationMap({
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            url={cartoTileUrl("dark_all")}
           />
           <SetViewOnMount center={position} />
           <Marker position={position} icon={createMarkerIcon(category)} />
