@@ -1,8 +1,8 @@
 """FastAPI middleware for rate limiting and other cross-cutting concerns."""
 
 import json
-import time
 import logging
+import time
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -122,6 +122,58 @@ class TimingMiddleware(BaseHTTPMiddleware):
             )
 
         response.headers["X-Process-Time"] = f"{process_time:.3f}"
+        return response
+
+
+activity_logger = logging.getLogger("activity")
+
+# Endpoints excluded from the free request-level log layer — health checks
+# (constant ALB/monitoring noise, no user signal) and the analytics ingestion
+# routes themselves (would otherwise double-log: once here, once as the
+# actual tracked event).
+ACTIVITY_LOG_EXEMPT_PREFIXES = ("/api/v1/health", "/api/v1/analytics")
+
+
+class ActivityLogMiddleware(BaseHTTPMiddleware):
+    """Free request-level activity capture: one structured JSON line per
+    request via a dedicated "activity" logger. Zero new AWS calls, zero
+    added request latency on this path — Lambda already ships stdout to
+    CloudWatch Logs. A CloudWatch Logs subscription filter (see
+    multicloud/infra/aws/analytics-lambda.tf) pulls matching lines out
+    asynchronously into DynamoDB, fully decoupled from this request/response
+    cycle — there is no safe way to do that work synchronously here on
+    Lambda, which can freeze the execution environment the instant this
+    handler returns.
+
+    This is the "free"/"broad but shallow" half of the ingestion pipeline —
+    see app/services/activity.py's emit()/batch_emit() for the "rich"
+    explicit-event half called directly from route handlers.
+    """
+
+    async def dispatch(self, request: Request, call_next) -> Response:
+        if not settings.activity_tracking_enabled or request.url.path.startswith(ACTIVITY_LOG_EXEMPT_PREFIXES):
+            return await call_next(request)
+
+        start_time = time.time()
+        response = await call_next(request)
+        duration_ms = int((time.time() - start_time) * 1000)
+
+        real_ip = getattr(request.state, "real_ip", None) or _get_real_ip(request)
+        user_id = getattr(request.state, "user_id", None)  # set by routes that resolve auth themselves
+
+        activity_logger.info(json.dumps({
+            "logger": "activity",
+            "event_type": "request",
+            "category": "navigation",
+            "source": "backend_middleware",
+            "user_id": user_id,
+            "request_method": request.method,
+            "request_path": request.url.path,
+            "status_code": response.status_code,
+            "duration_ms": duration_ms,
+            "ip_address": real_ip,
+        }))
+
         return response
 
 

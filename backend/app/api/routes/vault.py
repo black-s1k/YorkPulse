@@ -4,27 +4,40 @@ import logging
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, Query, UploadFile, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
+)
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.database import get_db
-from app.core.dependencies import AdminUser, CurrentUser, CurrentUserOptional, VerifiedUser
-from app.models.vault import VaultPost, VaultComment, VaultPostStatus, VaultCategory
-from app.models.user import User
+from app.core.dependencies import (
+    AdminUser,
+    CurrentUser,
+    CurrentUserOptional,
+    VerifiedUser,
+)
+from app.models.vault import VaultCategory, VaultComment, VaultPost, VaultPostStatus
+from app.schemas.user import UserMinimal
 from app.schemas.vault import (
     FlagRequest,
     VaultCommentCreate,
     VaultCommentListResponse,
     VaultCommentResponse,
-    VaultCommentUpdate,
     VaultPostCreate,
     VaultPostListResponse,
     VaultPostResponse,
     VaultPostUpdate,
 )
-from app.schemas.user import UserMinimal
+from app.services.activity import activity_service
 from app.services.gemini import gemini_service
 from app.services.storage import storage_service
 
@@ -182,7 +195,7 @@ async def create_post(
     if has_pii:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Title contains personal information. Please remove it.",
+            detail="Title contains personal information. Please remove it.",
         )
 
     post = VaultPost(
@@ -198,6 +211,23 @@ async def create_post(
     db.add(post)
     await db.commit()
     await db.refresh(post, ["author"])
+
+    # Tracked like every other feature per the activity-tracking feature's
+    # scope decision — metadata only (category/length/anonymity flag), never
+    # the post content itself.
+    await activity_service.emit(
+        user_id=str(user.id),
+        session_id=None,
+        event_type="vault.post_created",
+        category="vault",
+        entity_type="vault_post",
+        entity_id=str(post.id),
+        properties={
+            "category": request.category,
+            "is_anonymous": request.is_anonymous,
+            "content_length": len(request.content),
+        },
+    )
 
     from app.services import push_service
 

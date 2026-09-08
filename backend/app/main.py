@@ -8,8 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
-from app.core.middleware import RateLimitMiddleware, TimingMiddleware
-from app.api.routes import admin_personas, auth, buddy, courses, dashboard, feedback, gigs, health, map, marketplace, messaging, push_notifications, reports, residences, reviews, transactions, vault
+from app.core.middleware import ActivityLogMiddleware, RateLimitMiddleware, TimingMiddleware
+from app.api.routes import admin_activity, admin_personas, analytics, auth, buddy, courses, dashboard, feedback, gigs, health, map, marketplace, messaging, push_notifications, reports, residences, reviews, transactions, vault
 from app.services.redis import redis_service
 
 
@@ -55,6 +55,10 @@ app.add_middleware(TimingMiddleware)
 # Rate limiting
 app.add_middleware(RateLimitMiddleware)
 
+# Activity tracking — free request-level capture. No-ops entirely when
+# settings.activity_tracking_enabled is False (the default).
+app.add_middleware(ActivityLogMiddleware)
+
 # Routes
 app.include_router(health.router, prefix=settings.api_prefix)
 app.include_router(auth.router, prefix=settings.api_prefix)
@@ -73,6 +77,8 @@ app.include_router(map.router, prefix=settings.api_prefix)
 app.include_router(residences.router, prefix=settings.api_prefix)
 app.include_router(push_notifications.router, prefix=settings.api_prefix)
 app.include_router(admin_personas.router, prefix=settings.api_prefix)
+app.include_router(analytics.router, prefix=settings.api_prefix)
+app.include_router(admin_activity.router, prefix=settings.api_prefix)
 
 
 @app.get("/")

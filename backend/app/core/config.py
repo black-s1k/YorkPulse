@@ -42,6 +42,15 @@ class Settings(BaseSettings):
     aws_region: str = "us-east-1"
     s3_bucket_name: str = "yorkpulse-uploads"
 
+    # Activity tracking — kill switch, default OFF. Do not set True against
+    # real users until the legal-review gate in the feature's implementation
+    # plan has actually happened; this flag alone doesn't verify that.
+    activity_tracking_enabled: bool = False
+    activity_events_table: str = "yorkpulse-prod-activity-events"
+    activity_sessions_table: str = "yorkpulse-prod-activity-sessions"
+    activity_events_ttl_days: int = 180
+    activity_sessions_ttl_days: int = 90  # shorter — replay data is the most invasive category tracked
+
     # Gemini AI
     gemini_api_key: str = ""
 

@@ -4,10 +4,19 @@ import logging
 import uuid
 
 logger = logging.getLogger(__name__)
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status, UploadFile, File
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
+)
 from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -31,6 +40,7 @@ from app.schemas.messaging import (
     ParticipantInfo,
     PendingRequestsResponse,
 )
+from app.services.activity import activity_service
 from app.services.storage import storage_service
 
 router = APIRouter(prefix="/messages", tags=["Messaging"])
@@ -548,7 +558,7 @@ async def send_message(
     db.add(message)
 
     # Update conversation timestamp
-    conversation.updated_at = datetime.now(timezone.utc)
+    conversation.updated_at = datetime.now(UTC)
 
     await db.commit()
 
@@ -559,6 +569,22 @@ async def send_message(
             select(Message).where(Message.id == message.reply_to_id)
         )
         message.reply_to = reply_result.scalar_one_or_none()
+
+    # Metadata only — length/has-attachment/conversation ID, never the
+    # message body itself.
+    await activity_service.emit(
+        user_id=str(user.id),
+        session_id=None,
+        event_type="messaging.message_sent",
+        category="messaging",
+        entity_type="conversation",
+        entity_id=str(conversation.id),
+        properties={
+            "content_length": len(request.content) if request.content else 0,
+            "has_image": bool(request.image_url),
+            "is_reply": bool(request.reply_to_id),
+        },
+    )
 
     # Push notification to recipient
     recipient_id = (
@@ -613,7 +639,7 @@ async def accept_conversation(
         raise HTTPException(status_code=400, detail="Cannot accept your own request")
 
     conversation.status = ConversationStatus.ACTIVE
-    conversation.updated_at = datetime.now(timezone.utc)
+    conversation.updated_at = datetime.now(UTC)
 
     await db.commit()
     await db.refresh(conversation)
@@ -678,7 +704,7 @@ async def block_conversation(
 
     conversation.status = ConversationStatus.BLOCKED
     conversation.blocked_by = user.id
-    conversation.updated_at = datetime.now(timezone.utc)
+    conversation.updated_at = datetime.now(UTC)
 
     await db.commit()
 
@@ -719,7 +745,7 @@ async def unblock_conversation(
 
     conversation.status = ConversationStatus.ACTIVE
     conversation.blocked_by = None
-    conversation.updated_at = datetime.now(timezone.utc)
+    conversation.updated_at = datetime.now(UTC)
 
     await db.commit()
     await db.refresh(conversation)
@@ -749,7 +775,7 @@ async def mark_messages_read(
     if not conv_result.scalar_one_or_none():
         raise HTTPException(status_code=404, detail="Conversation not found")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     if request and request.message_ids:
         # Mark specific messages

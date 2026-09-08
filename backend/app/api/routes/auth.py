@@ -2,10 +2,19 @@
 
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status, UploadFile, File
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+    status,
+)
 
 logger = logging.getLogger(__name__)
 from sqlalchemy import func, or_, select
@@ -14,6 +23,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import AdminUser, CurrentUser
+from app.models.signup_attempt import SignupAttempt
 from app.models.user import User
 from app.schemas.auth import (
     ADMIN_EMAILS,
@@ -40,7 +50,7 @@ from app.schemas.auth import (
     VerifyEmailResponse,
     VerifyOTPRequest,
 )
-from app.models.signup_attempt import SignupAttempt
+from app.services.activity import activity_service
 from app.services.email_validation import email_validation_service
 from app.services.gemini import gemini_service
 from app.services.jwt import jwt_service
@@ -53,6 +63,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 # In-process fallback for per-email OTP send rate limiting (when Redis is unavailable)
 # key: email → last send timestamp
 import time as _time
+
 _otp_send_times: dict[str, float] = {}
 OTP_SEND_COOLDOWN = 60  # seconds between OTP sends per email
 
@@ -296,7 +307,7 @@ async def admin_login(
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Admin account not found.")
 
-    user.last_login_at = datetime.now(timezone.utc)
+    user.last_login_at = datetime.now(UTC)
     user.last_login_ip = real_ip
     await db.commit()
 
@@ -359,10 +370,18 @@ async def verify_otp(
 
     # Track last login time and IP
     real_ip = getattr(http_request.state, "real_ip", http_request.client.host if http_request.client else None)
-    user.last_login_at = datetime.now(timezone.utc)
+    user.last_login_at = datetime.now(UTC)
     user.last_login_ip = real_ip
     logger.info("LOGIN success: email=%s ip=%s", user.email, real_ip)
     await db.commit()
+
+    await activity_service.emit(
+        user_id=str(user.id),
+        session_id=None,
+        event_type="auth.login",
+        category="auth",
+        ip_address=real_ip,
+    )
 
     # Generate our own JWT tokens (for API auth)
     access_token, refresh_token, expires_in = jwt_service.create_token_pair(
@@ -840,6 +859,13 @@ async def admin_delete_user(
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+
+    # Right-to-deletion for activity-tracking data: activity_events/
+    # activity_sessions have no FK to users by design (see
+    # app/models/activity.py), so deleting the user row does NOT cascade
+    # into DynamoDB — this must be explicit. tracking_consents/
+    # user_activity_profiles DO cascade via FK, so no action needed for those.
+    await activity_service.purge_user(str(target_uuid))
 
     await db.delete(user)
     await db.commit()
