@@ -45,6 +45,7 @@ export default function PrivacyPage() {
           <p className="mb-3">We do not sell your personal data. We share data only with:</p>
           <ul className="list-disc list-inside space-y-2 text-gray-500">
             <li><span className="text-gray-700">Supabase</span> — our database and authentication provider</li>
+            <li><span className="text-gray-700">Amazon Web Services (AWS)</span> — hosts our backend server and API</li>
             <li><span className="text-gray-700">Resend</span> — used to send OTP verification emails</li>
             <li><span className="text-gray-700">Vercel</span> — our frontend hosting provider</li>
             <li><span className="text-gray-700">Law enforcement</span> — only when legally required</li>
@@ -65,7 +66,7 @@ export default function PrivacyPage() {
             <li>Request deletion of your account and associated data</li>
             <li>Withdraw consent at any time by deleting your account</li>
           </ul>
-          <p className="mt-3">To exercise these rights, email us at <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-700 hover:underline">yorkpulse.app@gmail.com</a>.</p>
+          <p className="mt-3">To exercise these rights, email us at <a href="mailto:yorkpulse.app@gmail.com" className="text-primary hover:underline">yorkpulse.app@gmail.com</a>.</p>
         </section>
 
         <section>
@@ -85,13 +86,13 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">10. Contact</h2>
-          <p>Privacy questions or requests: <a href="mailto:yorkpulse.app@gmail.com" className="text-purple-700 hover:underline">yorkpulse.app@gmail.com</a></p>
+          <p>Privacy questions or requests: <a href="mailto:yorkpulse.app@gmail.com" className="text-primary hover:underline">yorkpulse.app@gmail.com</a></p>
         </section>
 
       </div>
 
       <div className="mt-12 pt-8 border-t border-gray-200 text-sm text-gray-400">
-        <Link href="/terms" className="text-purple-700 hover:underline">Terms of Service</Link>
+        <Link href="/terms" className="text-primary hover:underline">Terms of Service</Link>
       </div>
     </div>
   );
