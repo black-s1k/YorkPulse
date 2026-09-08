@@ -792,7 +792,7 @@ export default function CoursesPage() {
                     <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
                       <GraduationCap className="w-8 h-8 text-primary" />
                     </div>
-                    <h2 className="text-xl font-bold text-white mb-1">
+                    <h2 className="text-xl font-bold text-gray-900 mb-1">
                       Welcome to {selectedCourse?.code}
                     </h2>
                     <p className="text-gray-500 text-sm">{selectedCourse?.name}</p>
@@ -807,7 +807,7 @@ export default function CoursesPage() {
                           <Hash className="w-4 h-4 text-purple-700" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm text-white">General Channel</p>
+                          <p className="font-medium text-sm text-gray-900">General Channel</p>
                           <p className="text-xs text-gray-500 mt-1">
                             This is the main discussion channel for all students in {selectedCourse?.code}.
                             Ask questions, share resources, and connect with your classmates!
@@ -823,11 +823,11 @@ export default function CoursesPage() {
                           <Vote className="w-4 h-4 text-primary" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm text-white">Professor Channels</p>
+                          <p className="font-medium text-sm text-gray-900">Professor Channels</p>
                           <p className="text-xs text-gray-500 mt-1">
                             Want a dedicated channel for your professor's section? Use the
                             <span className="text-primary font-medium"> "Request Prof Channel" </span>
-                            button. When <span className="text-white font-medium">5 students</span> vote
+                            button. When <span className="text-gray-900 font-medium">5 students</span> vote
                             for the same professor, a channel is automatically created!
                           </p>
                         </div>

@@ -475,14 +475,14 @@ function MobileQuestSheet({
           className="absolute bottom-0 left-0 right-0 backdrop-blur-xl bg-white border-t border-gray-200 rounded-t-3xl p-6"
         >
           {/* Handle bar */}
-          <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mb-4" />
+          <div className="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
 
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"
+            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
           >
-            <X className="w-4 h-4 text-white" />
+            <X className="w-4 h-4 text-gray-500" />
           </button>
 
           {/* Category badge */}
@@ -495,7 +495,7 @@ function MobileQuestSheet({
           </div>
 
           {/* Title */}
-          <h3 className="text-xl font-bold text-white mb-3">{quest.activity}</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-3">{quest.activity}</h3>
 
           {/* Meta info */}
           <div className="flex flex-wrap gap-4 mb-4 text-sm text-gray-500">
@@ -518,14 +518,14 @@ function MobileQuestSheet({
           {/* Host & participants */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Avatar className="w-10 h-10 border-2 border-white/20">
+              <Avatar className="w-10 h-10 border-2 border-gray-100">
                 <AvatarImage src={quest.host.avatar_url || undefined} />
                 <AvatarFallback className="bg-primary text-white">
                   {quest.host.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-medium text-white">{quest.host.name}</p>
+                <p className="text-sm font-medium text-gray-900">{quest.host.name}</p>
                 <p className="text-xs text-gray-400">Host</p>
               </div>
             </div>

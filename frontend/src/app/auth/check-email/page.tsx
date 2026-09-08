@@ -27,7 +27,7 @@ function CheckEmailContent() {
         <h1 className="text-2xl font-bold">Check your email</h1>
         <p className="text-gray-500">
           We sent a magic link to{" "}
-          <span className="text-white font-medium">{email}</span>
+          <span className="text-gray-900 font-medium">{email}</span>
         </p>
       </div>
 

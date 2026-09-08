@@ -386,7 +386,7 @@ export default function ResidencesPage() {
                     <div className="w-16 h-16 mx-auto rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
                       <Building2 className="w-8 h-8 text-purple-700" />
                     </div>
-                    <h2 className="text-xl font-bold text-white mb-1">{selectedResidence?.name}</h2>
+                    <h2 className="text-xl font-bold text-gray-900 mb-1">{selectedResidence?.name}</h2>
                     <p className="text-gray-500 text-sm mb-6">{selectedResidence?.campus} Campus</p>
                     <div className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm text-left">
                       <p className="text-sm text-gray-500">

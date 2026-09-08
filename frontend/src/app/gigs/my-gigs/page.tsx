@@ -112,7 +112,7 @@ function GigCard({ gig }: { gig: Gig }) {
         </div>
 
         {/* Title */}
-        <h3 className="font-semibold text-white mb-2 line-clamp-2">{gig.title}</h3>
+        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{gig.title}</h3>
 
         {/* Meta */}
         <div className="flex items-center gap-3 text-xs text-gray-400">
