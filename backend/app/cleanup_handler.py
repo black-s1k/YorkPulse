@@ -9,6 +9,7 @@ import asyncio
 import logging
 
 from app.core.database import async_session_maker
+from app.services.activity import purge_old_activity_data
 from app.services.quest_cleanup import cleanup_quests
 
 logging.basicConfig(level=logging.INFO)
@@ -21,6 +22,13 @@ def handler(event, context):
 
 async def _run() -> dict:
     async with async_session_maker() as db:
-        result = await cleanup_quests(db)
-        logger.info("Quest cleanup completed: %s", result)
-        return result
+        quest_result = await cleanup_quests(db)
+        logger.info("Quest cleanup completed: %s", quest_result)
+
+        # Activity-tracking retention enforcement rides this same existing
+        # scheduled job rather than needing its own — see
+        # activity.py's purge_old_activity_data docstring.
+        activity_result = await purge_old_activity_data(db)
+        logger.info("Activity retention cleanup completed: %s", activity_result)
+
+        return {**quest_result, "activity": activity_result}

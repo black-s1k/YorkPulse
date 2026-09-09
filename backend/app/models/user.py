@@ -271,4 +271,4 @@ from app.models.course import CourseMember  # noqa: E402, F401
 from app.models.feedback import UserFeedback  # noqa: E402, F401
 from app.models.gig import Gig, GigResponse, GigTransaction, GigRating  # noqa: E402, F401
 from app.models.residence import ResidenceMember  # noqa: E402, F401
-from app.models.activity import TrackingConsent, UserActivityProfile  # noqa: E402, F401
+from app.models.activity import ActivityEvent, ActivitySession, TrackingConsent, UserActivityProfile  # noqa: E402, F401

@@ -13,9 +13,9 @@ import { api } from "@/services/api";
 
 const FLUSH_INTERVAL_MS = 10_000;
 const MAX_BUFFER_SIZE = 20;
-// rrweb chunk flush interval — kept short specifically to respect
-// DynamoDB's 400KB per-item limit (see analytics-dynamodb.tf); a long
-// buffering window risks a single chunk exceeding that limit.
+// rrweb chunk flush interval — kept short so replay data lands regularly
+// rather than being lost if a tab closes mid-session, and so each chunk
+// stays a reasonable size for a Postgres JSON column.
 const REPLAY_CHUNK_INTERVAL_MS = 15_000;
 
 export type TrackedEvent = {
@@ -140,15 +140,11 @@ class ActivityTrackerClient {
     this.replayEvents = [];
 
     try {
-      const payload = JSON.stringify(chunk);
-      const byteSize = new Blob([payload]).size;
-      // The chunk itself would be uploaded directly to a presigned
-      // destination in a full implementation (mirroring S3Service's
-      // presigned-upload pattern used elsewhere in this codebase); this
-      // records the metadata pointer. See the feature's implementation
-      // plan §"Session replay (rrweb)".
-      const chunkKey = `replay/${this.sessionId}/${Date.now()}.json`;
-      await api.analytics.recordReplayChunk(this.sessionId, chunkKey, byteSize);
+      const byteSize = new Blob([JSON.stringify(chunk)]).size;
+      // Sent inline — stored directly in the session's Postgres row (no
+      // object storage in this design; see the implementation plan for
+      // why that's a fine trade-off at this app's scale).
+      await api.analytics.recordReplayChunk(this.sessionId, chunk, byteSize);
     } catch {
       // Best-effort — never surfaces to the user.
     }

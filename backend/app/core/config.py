@@ -45,9 +45,13 @@ class Settings(BaseSettings):
     # Activity tracking — kill switch, default OFF. Do not set True against
     # real users until the legal-review gate in the feature's implementation
     # plan has actually happened; this flag alone doesn't verify that.
+    # Lives entirely in this app's existing Postgres database — no separate
+    # AWS store, no extra credentials to configure.
     activity_tracking_enabled: bool = False
-    activity_events_table: str = "yorkpulse-prod-activity-events"
-    activity_sessions_table: str = "yorkpulse-prod-activity-sessions"
+    # Retention windows are policy, not yet mechanically enforced — see
+    # cleanup_handler.py, which is the natural place to add a purge pass
+    # since it's the existing scheduled job in this codebase (no new
+    # infrastructure needed to wire that up when it's worth doing).
     activity_events_ttl_days: int = 180
     activity_sessions_ttl_days: int = 90  # shorter — replay data is the most invasive category tracked
 

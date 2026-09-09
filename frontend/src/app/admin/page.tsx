@@ -1028,8 +1028,8 @@ function QuestsTab() {
 // ─── Activity Tracking Tab ─────────────────────────────────────────────────────
 // Deliberately named "Activity", never "Personas" — that word already means
 // admin-seeded synthetic accounts elsewhere in this app (see the Side Quests
-// admin tools). Reads the periodically-refreshed Postgres aggregate, not a
-// live DynamoDB scan — see app/services/activity_profile_refresh.py.
+// admin tools). The backend recomputes this aggregate synchronously on every
+// call rather than reading a cache — see app/services/activity_profile.py.
 
 const ACTIVITY_LABEL_COLOR: Record<string, string> = {
   power_user: "bg-green-500/20 text-green-700",

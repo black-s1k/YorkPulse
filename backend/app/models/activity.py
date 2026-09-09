@@ -5,10 +5,12 @@ admin_personas.py already use that word for an unrelated concept (admin-seeded
 synthetic accounts used to bootstrap content). See the feature's implementation
 plan for the full reasoning.
 
-The high-volume raw event log and session-replay data live in DynamoDB, not
-here (see app/services/activity.py) — these two tables are the low-volume,
-FK-integrity-worth-having pieces: the consent audit trail and the per-user
-aggregate profile.
+Everything lives in the existing Supabase Postgres database — no separate
+AWS/NoSQL store. That was a deliberate pivot away from an earlier DynamoDB
+design: this feature doesn't need AWS's scale or its need-a-credit-card
+account, and this app's own admin-stats convention (dashboard.py etc.) is
+already "compute live from Postgres," not a cached/streamed pipeline.
+Performance is explicitly not a priority for this feature.
 """
 
 from datetime import datetime
@@ -19,6 +21,91 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
 from app.models.base import UUIDMixin
+
+
+class ActivityEvent(Base, UUIDMixin):
+    """Append-only raw event log — one row per tracked event, both the
+    "free" request-level capture (ActivityLogMiddleware) and explicit rich
+    domain events (activity_service.emit(), called from route handlers like
+    login/Vault-post/DM-send).
+
+    user_id has a real FK with ON DELETE CASCADE — unlike an earlier
+    DynamoDB-based design, which deliberately avoided FKs for a NoSQL store
+    with no built-in cascade. In Postgres, CASCADE is the simpler and more
+    correct choice: deleting a user automatically purges their activity
+    data too, with no separate manual purge step to maintain (see
+    admin_delete_user in api/routes/auth.py, which no longer needs any
+    activity-specific cleanup code as a result).
+    """
+
+    __tablename__ = "activity_events"
+
+    occurred_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+        index=True,
+    )
+    user_id: Mapped[UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+    )
+    session_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True, index=True)
+    event_type: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    category: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    # "backend_route" | "backend_middleware" | "frontend_explicit" | "frontend_pageview"
+    source: Mapped[str] = mapped_column(String(20), nullable=False)
+    entity_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    entity_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True, index=True)
+    request_method: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    request_path: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    status_code: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    ip_address: Mapped[str | None] = mapped_column(String(45), nullable=True)
+    # Flexible metadata bag — length/category/has-attachment flags, never
+    # raw message/post text. First JSON column in this codebase's models.
+    properties: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+
+    def __repr__(self) -> str:
+        return f"<ActivityEvent {self.event_type} user={self.user_id}>"
+
+
+class ActivitySession(Base, UUIDMixin):
+    """One mutable row per browser session — looked up and updated as rrweb
+    replay chunks arrive, unlike the append-only event log. Replay chunks
+    are stored inline as JSON (a list of rrweb event batches) rather than
+    in object storage, since there's no S3/blob store in this design and
+    the volume at this app's scale is small enough that it doesn't matter."""
+
+    __tablename__ = "activity_sessions"
+
+    user_id: Mapped[UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+    )
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+    )
+    product_analytics_consented: Mapped[bool] = mapped_column(default=False, nullable=False)
+    replay_consented: Mapped[bool] = mapped_column(default=False, nullable=False)
+    consent_version: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    device_type: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    browser: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    landing_path: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    ip_address: Mapped[str | None] = mapped_column(String(45), nullable=True)
+    event_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    # List of rrweb event-batch chunks, appended as they arrive.
+    replay_chunks: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    replay_byte_size: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+    def __repr__(self) -> str:
+        return f"<ActivitySession {self.id} user={self.user_id}>"
 
 
 class TrackingConsent(Base, UUIDMixin):
@@ -54,12 +141,13 @@ class TrackingConsent(Base, UUIDMixin):
 
 
 class UserActivityProfile(Base, UUIDMixin):
-    """Per-user aggregate — refreshed periodically by a scheduled Lambda
-    (activity_profile_refresh_handler), not computed live. Excludes
-    is_persona=True (admin-seeded synthetic) accounts.
+    """Per-user aggregate summary. Refreshed synchronously whenever the
+    admin "Activity" tab is opened (see admin_activity.py) rather than by a
+    scheduled job — this app's own admin-stats convention is already
+    "compute live," and at ~1,000 users a handful of grouped queries costs
+    a few hundred ms at most, which is a non-issue for an admin-only view.
 
-    This is the single most sensitive derived artifact this feature produces,
-    which is why it cascades on account deletion unlike the raw event log.
+    Excludes is_persona=True (admin-seeded synthetic) accounts.
     """
 
     __tablename__ = "user_activity_profiles"
@@ -86,9 +174,6 @@ class UserActivityProfile(Base, UUIDMixin):
     most_active_hour_of_day: Mapped[int | None] = mapped_column(Integer, nullable=True)
     most_active_day_of_week: Mapped[int | None] = mapped_column(Integer, nullable=True)  # 0=Monday
 
-    # Per-feature counts — kept as explicit typed columns (not folded into the
-    # JSONB breakdown below) because these specific counts are what the admin
-    # "Activity" tab's leaderboard/summary view sorts and filters on directly.
     vault_posts_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     messages_sent_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     course_messages_sent_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
@@ -96,16 +181,10 @@ class UserActivityProfile(Base, UUIDMixin):
     quests_joined_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     gigs_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
-    # Flexible bag for anything not worth its own column — first JSONB-style
-    # column in this codebase's Postgres models (mirrors the properties bag
-    # used in the DynamoDB event schema); plain JSON type here since this
-    # table is low-write/low-volume, so JSONB's indexing advantages aren't
-    # the deciding factor — consistency with Postgres's native JSON type is
-    # simpler for a column that's read as a whole blob, not queried into.
     feature_usage_breakdown: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
-    # Rule-based (not ML/black-box) — see activity_profile_refresh_handler
-    # for the exact thresholds. Documented and explainable is the point.
+    # Rule-based (not ML/black-box) — see activity_profile.py for the exact
+    # thresholds. Documented and explainable is the point.
     engagement_score: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     # "power_user" | "casual" | "lurker" | "dormant"
     activity_label: Mapped[str] = mapped_column(String(20), default="dormant", nullable=False)

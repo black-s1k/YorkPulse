@@ -15,9 +15,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.dependencies import AdminUser
-from app.models.activity import UserActivityProfile
+from app.models.activity import ActivityEvent, UserActivityProfile
 from app.models.user import User
-from app.services.activity import activity_service
+from app.services.activity_profile import refresh_all_profiles
 
 router = APIRouter(prefix="/admin/activity", tags=["Admin — Activity Tracking"])
 
@@ -33,7 +33,14 @@ async def admin_list_activity_profiles(
     """Paginated leaderboard-style list of per-user activity profiles,
     joined to the user's name/email for display. Excludes is_persona=True
     (admin-seeded synthetic) accounts — those exist to bootstrap content,
-    not to be counted as real engagement."""
+    not to be counted as real engagement.
+
+    Recomputes the aggregate synchronously on every call rather than
+    reading a periodically-refreshed cache — see activity_profile.py for
+    why that's the right trade-off here (an admin-only view, at a scale
+    where a few grouped queries cost a few hundred ms at most)."""
+    await refresh_all_profiles(db)
+
     sort_column = getattr(UserActivityProfile, sort_by)
     query = (
         select(UserActivityProfile, User.name, User.email)
@@ -79,10 +86,9 @@ async def admin_get_activity_profile(
     _: AdminUser,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
-    """Single user's full profile plus their recent raw event timeline
-    (queried live from DynamoDB, not the periodically-refreshed Postgres
-    aggregate) — the "fast path" described in the feature's implementation
-    plan."""
+    """Single user's full profile plus their recent raw event timeline —
+    the "fast path" described in the feature's implementation plan, now
+    entirely against the same Postgres database everything else uses."""
     result = await db.execute(
         select(UserActivityProfile, User.name, User.email)
         .join(User, User.id == UserActivityProfile.user_id)
@@ -93,7 +99,14 @@ async def admin_get_activity_profile(
         return {"profile": None, "recent_events": []}
 
     profile, name, email = row
-    recent_events = await activity_service.query_user_events(user_id, limit=100)
+
+    events_result = await db.execute(
+        select(ActivityEvent)
+        .where(ActivityEvent.user_id == user_id)
+        .order_by(ActivityEvent.occurred_at.desc())
+        .limit(100)
+    )
+    recent_events = events_result.scalars().all()
 
     return {
         "profile": {
@@ -118,11 +131,11 @@ async def admin_get_activity_profile(
         },
         "recent_events": [
             {
-                "event_type": e.get("event_type"),
-                "category": e.get("category"),
-                "occurred_at": e.get("occurred_at"),
-                "entity_type": e.get("entity_type"),
-                "source": e.get("source"),
+                "event_type": e.event_type,
+                "category": e.category,
+                "occurred_at": e.occurred_at.isoformat(),
+                "entity_type": e.entity_type,
+                "source": e.source,
             }
             for e in recent_events
         ],

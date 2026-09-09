@@ -3,19 +3,20 @@
 Uses CurrentUserOptional throughout — pre-auth page views (landing page,
 login/signup flow) must still be capturable, tied to a session_id rather
 than a user_id until the session is later "claimed" by a login.
+
+Writes go to the existing Supabase Postgres database, not a separate AWS
+store — see app/services/activity.py's module docstring for why.
 """
 
 import logging
-import time
 import uuid
 from datetime import UTC, datetime
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
 from app.core.database import get_db
 from app.core.dependencies import CurrentUserOptional
 from app.models.activity import TrackingConsent
@@ -39,6 +40,7 @@ async def start_session(
     request: StartSessionRequest,
     http_request: Request,
     user: CurrentUserOptional,
+    db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Start a new browser session. Called once per tab/session by the
     frontend's <ActivityTracker />, before any events are sent."""
@@ -46,6 +48,7 @@ async def start_session(
     session_id = str(uuid.uuid4())
 
     await activity_service.start_session(
+        db,
         session_id,
         user_id=str(user.id) if user else None,
         product_analytics_consented=False,  # set via /analytics/consent, not assumed here
@@ -63,47 +66,44 @@ async def start_session(
 async def track_events(
     request: TrackEventsRequest,
     user: CurrentUserOptional,
+    db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Batched event ingestion — the frontend flushes its buffer here
     (periodic timer + sendBeacon on pagehide), not one request per event."""
-    items = []
-    now = datetime.now(UTC).isoformat()
-    expires_at = int(time.time()) + settings.activity_events_ttl_days * 86400
+    now = datetime.now(UTC)
+    items: list[dict[str, Any]] = []
     for event in request.events:
-        event_id = str(uuid.uuid4())
-        occurred_at = event.occurred_at or now
-        pk = str(user.id) if user else request.session_id
-        item = {
-            "pk": pk,
-            "sk": f"{occurred_at}#{event_id}",
-            "event_id": event_id,
-            "occurred_at": occurred_at,
-            "user_id": str(user.id) if user else None,
-            "session_id": request.session_id,
+        item: dict[str, Any] = {
+            "id": uuid.uuid4(),
+            "occurred_at": now,
+            "user_id": user.id if user else None,
+            "session_id": uuid.UUID(request.session_id) if request.session_id else None,
             "event_type": event.event_type,
             "category": event.category,
             "source": "frontend_explicit",
-            "expires_at": expires_at,
         }
         if event.entity_type:
             item["entity_type"] = event.entity_type
         if event.entity_id:
-            item["entity_id"] = event.entity_id
+            item["entity_id"] = uuid.UUID(event.entity_id)
         if event.properties:
             item["properties"] = event.properties
         items.append(item)
 
-    await activity_service.batch_emit(items)
+    await activity_service.batch_emit(db, items)
     return {"accepted": len(items)}
 
 
 @router.post("/sessions/{session_id}/replay-chunk")
-async def record_replay_chunk(session_id: str, request: ReplayChunkRequest):
-    """Records that a replay chunk landed in DynamoDB — the chunk itself is
-    written directly by the client (see ActivitySessions in the DynamoDB
-    schema); this is just the metadata pointer, mirroring how S3Service's
-    presigned-upload flow works elsewhere in this codebase."""
-    await activity_service.record_replay_chunk(session_id, request.chunk_key, request.byte_size)
+async def record_replay_chunk(
+    session_id: str,
+    request: ReplayChunkRequest,
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    """Appends one rrweb replay chunk to the session — stored inline in
+    Postgres (no object storage in this design; see the implementation
+    plan for why that's an acceptable trade-off at this app's scale)."""
+    await activity_service.record_replay_chunk(db, session_id, request.chunk, request.byte_size)
     return {"recorded": True}
 
 
@@ -118,7 +118,6 @@ async def record_consent(
     there's always an audit trail of exactly what was agreed to and when.
     Requires an authenticated user (consent is tied to an account, not an
     anonymous session)."""
-
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 
@@ -152,7 +151,6 @@ async def get_consent_status(
     """Current consent state per scope — the *latest* action per
     consent_scope, derived from the append-only ledger. Used by the
     "Privacy & Activity" profile section to show what's currently granted."""
-
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 

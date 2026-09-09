@@ -135,15 +135,18 @@ ACTIVITY_LOG_EXEMPT_PREFIXES = ("/api/v1/health", "/api/v1/analytics")
 
 
 class ActivityLogMiddleware(BaseHTTPMiddleware):
-    """Free request-level activity capture: one structured JSON line per
-    request via a dedicated "activity" logger. Zero new AWS calls, zero
-    added request latency on this path — Lambda already ships stdout to
-    CloudWatch Logs. A CloudWatch Logs subscription filter (see
-    multicloud/infra/aws/analytics-lambda.tf) pulls matching lines out
-    asynchronously into DynamoDB, fully decoupled from this request/response
-    cycle — there is no safe way to do that work synchronously here on
-    Lambda, which can freeze the execution environment the instant this
-    handler returns.
+    """Free request-level activity capture: one row per request in the
+    (existing Supabase Postgres) activity_events table, written directly —
+    no separate pipeline. An earlier version of this middleware wrote to a
+    dedicated logger for an AWS CloudWatch-Logs-subscription-filter
+    pipeline to pick up asynchronously; that whole indirection existed only
+    because this app runs on Lambda, where a synchronous write inside the
+    request path was a real latency/reliability concern. Since this
+    feature explicitly doesn't prioritize latency and the destination is
+    now the same Postgres database every other write already goes through,
+    writing directly here is simpler and just as safe — see the
+    implementation plan for the full reasoning behind the pivot away from
+    the AWS-based design.
 
     This is the "free"/"broad but shallow" half of the ingestion pipeline —
     see app/services/activity.py's emit()/batch_emit() for the "rich"
@@ -161,18 +164,27 @@ class ActivityLogMiddleware(BaseHTTPMiddleware):
         real_ip = getattr(request.state, "real_ip", None) or _get_real_ip(request)
         user_id = getattr(request.state, "user_id", None)  # set by routes that resolve auth themselves
 
-        activity_logger.info(json.dumps({
-            "logger": "activity",
-            "event_type": "request",
-            "category": "navigation",
-            "source": "backend_middleware",
-            "user_id": user_id,
-            "request_method": request.method,
-            "request_path": request.url.path,
-            "status_code": response.status_code,
-            "duration_ms": duration_ms,
-            "ip_address": real_ip,
-        }))
+        try:
+            from app.core.database import async_session_maker
+            from app.services.activity import activity_service
+
+            async with async_session_maker() as db:
+                await activity_service.emit(
+                    db,
+                    user_id=user_id,
+                    session_id=None,
+                    event_type="request",
+                    category="navigation",
+                    source="backend_middleware",
+                    request_method=request.method,
+                    request_path=request.url.path,
+                    status_code=response.status_code,
+                    duration_ms=duration_ms,
+                    ip_address=real_ip,
+                )
+        except Exception as e:
+            # Tracking must never break the request it's attached to.
+            activity_logger.warning("ActivityLogMiddleware write failed: %s", e)
 
         return response
 

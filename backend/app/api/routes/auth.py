@@ -376,6 +376,7 @@ async def verify_otp(
     await db.commit()
 
     await activity_service.emit(
+        db,
         user_id=str(user.id),
         session_id=None,
         event_type="auth.login",
@@ -860,13 +861,11 @@ async def admin_delete_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Right-to-deletion for activity-tracking data: activity_events/
-    # activity_sessions have no FK to users by design (see
-    # app/models/activity.py), so deleting the user row does NOT cascade
-    # into DynamoDB — this must be explicit. tracking_consents/
-    # user_activity_profiles DO cascade via FK, so no action needed for those.
-    await activity_service.purge_user(str(target_uuid))
-
+    # Right-to-deletion for activity-tracking data: activity_events,
+    # activity_sessions, tracking_consents, and user_activity_profiles all
+    # have a real FK with ON DELETE CASCADE now (see app/models/activity.py)
+    # — deleting the user automatically purges everything, no separate
+    # cleanup call needed.
     await db.delete(user)
     await db.commit()
 

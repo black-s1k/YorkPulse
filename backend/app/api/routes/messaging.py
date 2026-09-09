@@ -573,6 +573,7 @@ async def send_message(
     # Metadata only — length/has-attachment/conversation ID, never the
     # message body itself.
     await activity_service.emit(
+        db,
         user_id=str(user.id),
         session_id=None,
         event_type="messaging.message_sent",

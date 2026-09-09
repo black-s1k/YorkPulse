@@ -35,8 +35,12 @@ class StartSessionResponse(BaseModel):
 
 
 class ReplayChunkRequest(BaseModel):
+    """rrweb replay chunk — one batch of recorded DOM/interaction events,
+    stored inline in the session's replay_chunks JSON column (no object
+    storage in this design)."""
+
     session_id: str
-    chunk_key: str
+    chunk: Any
     byte_size: int
 
 
@@ -58,8 +62,9 @@ class ConsentResponse(BaseModel):
 
 
 class UserActivityProfileResponse(BaseModel):
-    """Admin-facing per-user summary — read from the periodically-refreshed
-    Postgres aggregate, not computed live."""
+    """Admin-facing per-user summary — recomputed synchronously each time
+    the admin "Activity" tab is opened (see activity_profile.py), not by a
+    scheduled job."""
 
     user_id: str
     last_computed_at: str

@@ -216,6 +216,7 @@ async def create_post(
     # scope decision — metadata only (category/length/anonymity flag), never
     # the post content itself.
     await activity_service.emit(
+        db,
         user_id=str(user.id),
         session_id=None,
         event_type="vault.post_created",

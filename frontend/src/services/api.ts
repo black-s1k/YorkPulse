@@ -1215,10 +1215,10 @@ class ApiClient {
       }>
     ) => this.post<{ accepted: number }>("/analytics/events", { session_id: sessionId, events }),
 
-    recordReplayChunk: (sessionId: string, chunkKey: string, byteSize: number) =>
+    recordReplayChunk: (sessionId: string, chunk: unknown, byteSize: number) =>
       this.post<{ recorded: boolean }>(`/analytics/sessions/${sessionId}/replay-chunk`, {
         session_id: sessionId,
-        chunk_key: chunkKey,
+        chunk,
         byte_size: byteSize,
       }),
 
