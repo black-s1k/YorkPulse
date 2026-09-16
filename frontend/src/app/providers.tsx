@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { ActivityTracker } from "@/components/ActivityTracker";
 import { CreateModal } from "@/components/modals/CreateModal";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
-import FounderCelebration from "@/components/FounderCelebration";
 import { api } from "@/services/api";
 import { useAuthStore } from "@/stores/auth";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
@@ -127,7 +126,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
       {children}
       <CreateModal />
       <FloatingActionButton />
-      <FounderCelebration />
       <PushNotificationPrompt />
       <Toaster />
     </QueryClientProvider>
