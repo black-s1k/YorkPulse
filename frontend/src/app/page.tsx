@@ -41,36 +41,54 @@ const landingFeatures = [
     icon: Shield,
     title: "The Vault",
     description: "Anonymous discussions. Your name is never shown to other users.",
+    iconBg: "bg-primary/10",
+    iconColor: "text-primary",
+    accentBorder: "border-t-primary",
   },
   {
     href: "/marketplace",
     icon: ShoppingBag,
     title: "Marketplace",
     description: "Buy and sell with verified students only.",
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-600",
+    accentBorder: "border-t-blue-500",
   },
   {
     href: "/quests",
     icon: Users,
     title: "Side Quests",
     description: "Find gym partners, study buddies, and more.",
+    iconBg: "bg-emerald-50",
+    iconColor: "text-emerald-600",
+    accentBorder: "border-t-emerald-500",
   },
   {
     href: "/messages",
     icon: MessageCircle,
     title: "Messaging",
     description: "Request-based DMs. You control who can reach you.",
+    iconBg: "bg-cyan-50",
+    iconColor: "text-cyan-600",
+    accentBorder: "border-t-cyan-500",
   },
   {
     href: "/courses",
     icon: GraduationCap,
     title: "Link Up",
     description: "Join course chats and connect with classmates.",
+    iconBg: "bg-violet-50",
+    iconColor: "text-violet-600",
+    accentBorder: "border-t-violet-500",
   },
   {
     href: "/gigs",
     icon: Briefcase,
     title: "Quick Gigs",
     description: "Find or offer services within the York community.",
+    iconBg: "bg-amber-50",
+    iconColor: "text-amber-600",
+    accentBorder: "border-t-amber-500",
   },
 ];
 
@@ -82,6 +100,8 @@ const dashboardFeatures = [
     title: "The Vault",
     subtitle: "Anonymous Forum",
     description: "Share thoughts anonymously. Vent, confess, or discuss sensitive topics without judgment.",
+    iconBg: "bg-primary/10",
+    iconColor: "text-primary",
     statKey: "vault_posts_today" as const,
     statLabel: "posts today",
     statColor: "text-primary",
@@ -92,6 +112,8 @@ const dashboardFeatures = [
     title: "Marketplace",
     subtitle: "Buy & Sell",
     description: "Trade textbooks, furniture, and electronics with verified York students.",
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-600",
     statKey: "marketplace_listings" as const,
     statLabel: "active listings",
     statColor: "text-blue-600",
@@ -102,6 +124,8 @@ const dashboardFeatures = [
     title: "Side Quests",
     subtitle: "Find Partners",
     description: "Connect for gym sessions, study groups, coffee meetups, or campus events.",
+    iconBg: "bg-emerald-50",
+    iconColor: "text-emerald-600",
     statKey: "side_quests_active" as const,
     statLabel: "active quests",
     statColor: "text-emerald-600",
@@ -112,6 +136,8 @@ const dashboardFeatures = [
     title: "Link Up",
     subtitle: "Class & Residence Discussions",
     description: "Join course-specific rooms for study groups and Q&A, plus a dedicated chat for on-campus residence.",
+    iconBg: "bg-violet-50",
+    iconColor: "text-violet-600",
     statKey: "total_courses" as const,
     statLabel: "courses",
     statColor: "text-violet-600",
@@ -122,6 +148,8 @@ const dashboardFeatures = [
     title: "Messages",
     subtitle: "Direct Messages",
     description: "Private conversations with other students in your York community.",
+    iconBg: "bg-cyan-50",
+    iconColor: "text-cyan-600",
     statKey: "total_users" as const,
     statLabel: "students",
     statColor: "text-cyan-600",
@@ -132,6 +160,8 @@ const dashboardFeatures = [
     title: "Quick Gigs",
     subtitle: "Find or Offer Help",
     description: "Find help or offer your services to verified York University students.",
+    iconBg: "bg-amber-50",
+    iconColor: "text-amber-600",
     statKey: "active_gigs" as const,
     statLabel: "active gigs",
     statColor: "text-amber-600",
@@ -199,7 +229,9 @@ function FeatureCard({
       >
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
-          <Icon className="w-5 h-5 text-gray-500" />
+          <div className={cn("p-2.5 rounded-lg", feature.iconBg)}>
+            <Icon className={cn("w-5 h-5", feature.iconColor)} />
+          </div>
           {statValue !== undefined && (
             <div className="text-right">
               <p className={cn("text-xl font-bold", feature.statColor)}>
@@ -528,7 +560,9 @@ function DashboardView() {
                   key={feature.title}
                   className="rounded-xl p-6 text-center bg-white border border-gray-100 shadow-sm max-w-xs"
                 >
-                  <Icon className="w-5 h-5 mx-auto mb-3 text-gray-400" />
+                  <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-gray-50 flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-gray-400" />
+                  </div>
                   <h3 className="font-semibold text-gray-700 mb-1">{feature.title}</h3>
                   <p className="text-sm text-gray-400">{feature.description}</p>
                 </div>
@@ -721,9 +755,14 @@ function LandingView() {
                   <motion.div
                     whileHover={{ y: -2, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}
                     transition={{ duration: 0.2 }}
-                    className="bg-white p-6 h-full rounded-xl border border-gray-100 cursor-pointer transition-all duration-200 shadow-sm"
+                    className={cn(
+                      "bg-white p-6 h-full rounded-xl border-t-2 border border-gray-100 cursor-pointer transition-all duration-200 shadow-sm",
+                      feature.accentBorder
+                    )}
                   >
-                    <feature.icon className="mb-4 h-5 w-5 text-gray-500" />
+                    <div className={cn("mb-4 inline-flex rounded-lg p-2.5", feature.iconBg)}>
+                      <feature.icon className={cn("h-5 w-5", feature.iconColor)} />
+                    </div>
                     <h3 className="font-semibold text-gray-900">{feature.title}</h3>
                     <p className="mt-1.5 text-sm text-gray-500">{feature.description}</p>
                   </motion.div>
