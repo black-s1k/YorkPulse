@@ -6,7 +6,7 @@ import L from "leaflet";
 import { motion } from "framer-motion";
 import { Navigation, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cartoTileUrl } from "@/lib/mapTiles";
+import { grayCanvasBaseUrl, grayCanvasReferenceUrl, GRAY_CANVAS_MAX_ZOOM } from "@/lib/mapTiles";
 import type { QuestCategory } from "@/types";
 
 // Category config
@@ -102,9 +102,11 @@ export function QuestLocationMap({
           touchZoom={false}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url={cartoTileUrl("dark_all")}
+            attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
+            url={grayCanvasBaseUrl("dark")}
+            maxZoom={GRAY_CANVAS_MAX_ZOOM}
           />
+          <TileLayer url={grayCanvasReferenceUrl("dark")} maxZoom={GRAY_CANVAS_MAX_ZOOM} />
           <SetViewOnMount center={position} />
           <Marker position={position} icon={createMarkerIcon(category)} />
         </MapContainer>

@@ -8,7 +8,7 @@ import { MapPin, Navigation, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { cartoTileUrl } from "@/lib/mapTiles";
+import { grayCanvasBaseUrl, grayCanvasReferenceUrl, GRAY_CANVAS_MAX_ZOOM } from "@/lib/mapTiles";
 
 // York University campus center coordinates
 const YORK_CENTER: [number, number] = [43.7735, -79.5019];
@@ -230,9 +230,11 @@ export function LocationPicker({ value, onChange, className }: LocationPickerPro
           zoomControl={false}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url={cartoTileUrl("light_all")}
+            attribution='&copy; <a href="https://www.esri.com/">Esri</a>'
+            url={grayCanvasBaseUrl("light")}
+            maxZoom={GRAY_CANVAS_MAX_ZOOM}
           />
+          <TileLayer url={grayCanvasReferenceUrl("light")} maxZoom={GRAY_CANVAS_MAX_ZOOM} />
 
           <ClickHandler onLocationSelect={handleLocationSelect} />
           <RecenterControl position={position} />
