@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Clock, MapPin, Navigation, Locate, X, Building2, Eye, EyeOff, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { cartoTileUrl } from "@/lib/mapTiles";
+import { grayCanvasBaseUrl, grayCanvasReferenceUrl, GRAY_CANVAS_MAX_ZOOM, GRAY_CANVAS_ATTRIBUTION } from "@/lib/mapTiles";
 import { buildingCategoryConfig, type BuildingCategory } from "@/data/yorkBuildings";
 import { fetchBuildingPolygons, fallbackBuildings, type BuildingPolygon, getBuildingInfo } from "@/data/yorkBuildingPolygons";
 
@@ -700,10 +700,15 @@ export default function QuestMapClient({ quests, className }: QuestMapClientProp
         >
           {/* Light theme map tiles */}
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
-            url={cartoTileUrl("light_all")}
+            attribution={GRAY_CANVAS_ATTRIBUTION}
+            url={grayCanvasBaseUrl("light")}
             crossOrigin="anonymous"
-            maxZoom={19}
+            maxZoom={GRAY_CANVAS_MAX_ZOOM}
+          />
+          <TileLayer
+            url={grayCanvasReferenceUrl("light")}
+            crossOrigin="anonymous"
+            maxZoom={GRAY_CANVAS_MAX_ZOOM}
           />
 
           {/* Custom controls */}
