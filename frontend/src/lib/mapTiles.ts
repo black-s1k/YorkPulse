@@ -23,4 +23,4 @@ export function grayCanvasReferenceUrl(variant: "light" | "dark"): string {
 export const GRAY_CANVAS_MAX_ZOOM = 16;
 
 export const GRAY_CANVAS_ATTRIBUTION =
-  '&copy; <a href="https://www.esri.com/">Esri</a> — Esri, HERE, Garmin, FAO, NOAA, USGS, © OpenStreetMap contributors, GIS User Community';
+  '&copy; <a href="https://www.esri.com/">Esri</a>, HERE, Garmin, FAO, NOAA, USGS, © OpenStreetMap contributors, GIS User Community';
