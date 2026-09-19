@@ -1,6 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { ActivityTracker } from "@/components/ActivityTracker";
@@ -70,7 +71,7 @@ function PushNotificationPrompt() {
       <div className="pointer-events-auto w-full max-w-sm bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-4 flex flex-col gap-3">
         <div className="flex items-start gap-3">
           <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
-            <span className="text-lg">🔔</span>
+            <Bell className="w-5 h-5 text-primary" />
           </div>
           <div className="flex-1">
             <p className="text-sm font-semibold text-white">Stay in the loop</p>

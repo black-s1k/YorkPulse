@@ -4,23 +4,25 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
 import { motion } from "framer-motion";
-import { Navigation, ExternalLink } from "lucide-react";
+import { Navigation, ExternalLink, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { grayCanvasBaseUrl, grayCanvasReferenceUrl, GRAY_CANVAS_MAX_ZOOM } from "@/lib/mapTiles";
+import { iconMarkup } from "@/lib/iconMarkup";
+import { questCategoryIcons } from "@/lib/questIcons";
 import type { QuestCategory } from "@/types";
 
 // Category config
 const categoryConfig: Record<QuestCategory, {
-  emoji: string;
+  icon: LucideIcon;
   gradient: string;
   color: string;
 }> = {
-  gym: { emoji: "💪", gradient: "linear-gradient(135deg, #ef4444, #dc2626)", color: "#ef4444" },
-  food: { emoji: "🍜", gradient: "linear-gradient(135deg, #f97316, #ea580c)", color: "#f97316" },
-  study: { emoji: "📚", gradient: "linear-gradient(135deg, #3b82f6, #2563eb)", color: "#3b82f6" },
-  game: { emoji: "🎮", gradient: "linear-gradient(135deg, #22c55e, #16a34a)", color: "#22c55e" },
-  commute: { emoji: "🚗", gradient: "linear-gradient(135deg, #a855f7, #9333ea)", color: "#a855f7" },
-  custom: { emoji: "✨", gradient: "linear-gradient(135deg, #6b7280, #4b5563)", color: "#6b7280" },
+  gym: { icon: questCategoryIcons.gym, gradient: "linear-gradient(135deg, #ef4444, #dc2626)", color: "#ef4444" },
+  food: { icon: questCategoryIcons.food, gradient: "linear-gradient(135deg, #f97316, #ea580c)", color: "#f97316" },
+  study: { icon: questCategoryIcons.study, gradient: "linear-gradient(135deg, #3b82f6, #2563eb)", color: "#3b82f6" },
+  game: { icon: questCategoryIcons.game, gradient: "linear-gradient(135deg, #22c55e, #16a34a)", color: "#22c55e" },
+  commute: { icon: questCategoryIcons.commute, gradient: "linear-gradient(135deg, #a855f7, #9333ea)", color: "#a855f7" },
+  custom: { icon: questCategoryIcons.custom, gradient: "linear-gradient(135deg, #6b7280, #4b5563)", color: "#6b7280" },
 };
 
 const createMarkerIcon = (category: QuestCategory) => {
@@ -31,7 +33,7 @@ const createMarkerIcon = (category: QuestCategory) => {
       <div class="detail-marker-container">
         <div class="detail-marker-pulse" style="background: ${config.color}"></div>
         <div class="detail-marker-inner" style="background: ${config.gradient}">
-          <span class="detail-marker-emoji">${config.emoji}</span>
+          <span class="detail-marker-icon">${iconMarkup(config.icon, 20)}</span>
         </div>
       </div>
     `,
@@ -176,9 +178,9 @@ export function QuestLocationMap({
           border: 2px solid rgba(255, 255, 255, 0.4);
         }
 
-        .detail-marker-emoji {
+        .detail-marker-icon {
           transform: rotate(45deg);
-          font-size: 14px;
+          display: flex;
         }
 
         @keyframes detail-pulse {

@@ -29,6 +29,7 @@ import {
   Send,
   Reply,
   X,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -62,6 +63,7 @@ import { useUIStore } from "@/stores/ui";
 import { useAuthStore } from "@/stores/auth";
 import { cn } from "@/lib/utils";
 import { QuestMapWrapper } from "@/components/QuestMapWrapper";
+import { vibeLevelIcons } from "@/lib/questIcons";
 import type { SideQuest, QuestCategory, QuestStatus, VibeLevel } from "@/types";
 
 const categoryConfig: Record<QuestCategory, { label: string; icon: typeof Dumbbell; color: string }> = {
@@ -73,12 +75,12 @@ const categoryConfig: Record<QuestCategory, { label: string; icon: typeof Dumbbe
   custom: { label: "Custom", icon: Sparkles, color: "bg-zinc-500/20 text-gray-500" },
 };
 
-const vibeLevelLabels: Record<VibeLevel, { label: string; emoji: string }> = {
-  chill: { label: "Chill", emoji: "😌" },
-  intermediate: { label: "Intermediate", emoji: "👍" },
-  high_energy: { label: "High Energy", emoji: "⚡" },
-  intense: { label: "Intense", emoji: "🔥" },
-  custom: { label: "Custom", emoji: "✨" },
+const vibeLevelLabels: Record<VibeLevel, { label: string; icon: LucideIcon }> = {
+  chill: { label: "Chill", icon: vibeLevelIcons.chill },
+  intermediate: { label: "Intermediate", icon: vibeLevelIcons.intermediate },
+  high_energy: { label: "High Energy", icon: vibeLevelIcons.high_energy },
+  intense: { label: "Intense", icon: vibeLevelIcons.intense },
+  custom: { label: "Custom", icon: vibeLevelIcons.custom },
 };
 
 const statusLabels: Record<QuestStatus, { label: string; color: string }> = {
@@ -164,7 +166,8 @@ function QuestCard({ quest, joinedQuestIds, pendingQuestIds }: { quest: SideQues
                 : catConfig.label}
             </Badge>
             <Badge variant="outline" className="text-xs border-gray-200">
-              {vibeInfo.emoji} {quest.vibe_level === "custom" && quest.custom_vibe_level
+              <vibeInfo.icon className="w-3 h-3 mr-1" />
+              {quest.vibe_level === "custom" && quest.custom_vibe_level
                 ? quest.custom_vibe_level
                 : vibeInfo.label}
             </Badge>

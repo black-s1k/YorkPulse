@@ -19,6 +19,7 @@ import {
   Clock,
   Loader2,
   ChevronDown,
+  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,13 +44,13 @@ import { useAuthStore } from "@/stores/auth";
 import { cn } from "@/lib/utils";
 import type { GigType, GigCategory, GigLocation, Gig } from "@/types";
 
-const categoryConfig: Record<GigCategory, { label: string; icon: typeof GraduationCap; emoji: string }> = {
-  academic: { label: "Academic", icon: GraduationCap, emoji: "🎓" },
-  moving: { label: "Moving", icon: Package, emoji: "📦" },
-  tech_help: { label: "Tech Help", icon: Monitor, emoji: "💻" },
-  errands: { label: "Errands", icon: ShoppingBag, emoji: "🏃" },
-  creative: { label: "Creative", icon: Palette, emoji: "🎨" },
-  other: { label: "Other", icon: MoreHorizontal, emoji: "🔧" },
+const categoryConfig: Record<GigCategory, { label: string; icon: typeof GraduationCap }> = {
+  academic: { label: "Academic", icon: GraduationCap },
+  moving: { label: "Moving", icon: Package },
+  tech_help: { label: "Tech Help", icon: Monitor },
+  errands: { label: "Errands", icon: ShoppingBag },
+  creative: { label: "Creative", icon: Palette },
+  other: { label: "Other", icon: MoreHorizontal },
 };
 
 const locationLabels: Record<GigLocation, string> = {
@@ -58,9 +59,12 @@ const locationLabels: Record<GigLocation, string> = {
   online: "Online",
 };
 
+function isNegotiable(gig: Gig): boolean {
+  return gig.price_type === "negotiable" || (!gig.price_min && !gig.price_max);
+}
+
 function formatPrice(gig: Gig): string {
-  if (gig.price_type === "negotiable") return "💬 Negotiable";
-  if (!gig.price_min && !gig.price_max) return "💬 Negotiable";
+  if (isNegotiable(gig)) return "Negotiable";
 
   const suffix = gig.price_type === "hourly" ? "/hr" : "";
 
@@ -108,9 +112,10 @@ function GigCard({ gig }: { gig: Gig }) {
             {cat.label}
           </Badge>
           <span className={cn(
-            "font-semibold text-sm",
+            "inline-flex items-center gap-1 font-semibold text-sm",
             isOffering ? "text-green-700" : "text-orange-700"
           )}>
+            {isNegotiable(gig) && <MessageCircle className="w-3.5 h-3.5" />}
             {formatPrice(gig)}
           </span>
         </div>

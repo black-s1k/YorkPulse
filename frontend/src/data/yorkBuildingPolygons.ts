@@ -2,6 +2,7 @@
 // Fetches from backend API with Redis caching (shared across all users)
 
 import { api } from "@/services/api";
+import type { LucideIcon } from "lucide-react";
 import { BuildingCategory, buildingCategoryConfig } from "./yorkBuildings";
 
 export interface BuildingPolygon {
@@ -592,7 +593,7 @@ export function getBuildingInfo(building: BuildingPolygon): {
   name: string;
   category: BuildingCategory;
   color: string;
-  emoji: string;
+  icon: LucideIcon;
   label: string;
 } {
   const config = buildingCategoryConfig[building.category];
@@ -600,7 +601,7 @@ export function getBuildingInfo(building: BuildingPolygon): {
     name: building.name,
     category: building.category,
     color: config.color,
-    emoji: config.emoji,
+    icon: config.icon,
     label: config.label,
   };
 }

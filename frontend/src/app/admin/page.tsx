@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Loader2, Shield, Users, ShoppingBag, FileText, MessageSquare, Flag, ChevronLeft, ChevronRight, BookOpen, Image, Search, Compass, Activity } from "lucide-react";
+import { Trash2, Loader2, Shield, Users, ShoppingBag, FileText, MessageSquare, Flag, ChevronLeft, ChevronRight, BookOpen, Image, Search, Compass, Activity, Check } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -685,7 +685,8 @@ function FeedbackTab() {
                     className="text-green-700 hover:text-green-800 hover:bg-green-500/10 text-xs"
                     onClick={() => handleResolve(f.id)}
                   >
-                    ✓ Resolve
+                    <Check className="w-3.5 h-3.5 mr-1" />
+                    Resolve
                   </Button>
                 )}
                 <Button
