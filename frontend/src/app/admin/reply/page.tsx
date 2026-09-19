@@ -14,6 +14,7 @@ import {
   Plus,
   ChevronRight,
 } from "lucide-react";
+import { questCategoryIcons, vibeLevelIcons } from "@/lib/questIcons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -245,19 +246,19 @@ function PersonasTab({
 // ─── Post Quest Tab ──────────────────────────────────────────────────────────
 
 const CATEGORIES = [
-  { value: "gym", label: "💪 Gym" },
-  { value: "food", label: "🍔 Food" },
-  { value: "study", label: "📚 Study" },
-  { value: "game", label: "🎮 Game" },
-  { value: "commute", label: "🚇 Commute" },
-  { value: "custom", label: "✨ Custom" },
+  { value: "gym", label: "Gym", icon: questCategoryIcons.gym },
+  { value: "food", label: "Food", icon: questCategoryIcons.food },
+  { value: "study", label: "Study", icon: questCategoryIcons.study },
+  { value: "game", label: "Game", icon: questCategoryIcons.game },
+  { value: "commute", label: "Commute", icon: questCategoryIcons.commute },
+  { value: "custom", label: "Custom", icon: questCategoryIcons.custom },
 ];
 
 const VIBES = [
-  { value: "chill", label: "😌 Chill" },
-  { value: "intermediate", label: "👍 Intermediate" },
-  { value: "high_energy", label: "⚡ High Energy" },
-  { value: "intense", label: "🔥 Intense" },
+  { value: "chill", label: "Chill", icon: vibeLevelIcons.chill },
+  { value: "intermediate", label: "Intermediate", icon: vibeLevelIcons.intermediate },
+  { value: "high_energy", label: "High Energy", icon: vibeLevelIcons.high_energy },
+  { value: "intense", label: "Intense", icon: vibeLevelIcons.intense },
 ];
 
 function PostQuestTab({
@@ -344,12 +345,13 @@ function PostQuestTab({
               key={c.value}
               type="button"
               onClick={() => setCategory(c.value)}
-              className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors ${
                 category === c.value
                   ? "bg-primary text-white border-primary"
                   : "bg-white text-gray-600 border-gray-200 hover:border-primary/40"
               }`}
             >
+              <c.icon className="w-3.5 h-3.5" />
               {c.label}
             </button>
           ))}
@@ -420,12 +422,13 @@ function PostQuestTab({
               key={v.value}
               type="button"
               onClick={() => setVibe(v.value)}
-              className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors ${
                 vibe === v.value
                   ? "bg-primary text-white border-primary"
                   : "bg-white text-gray-600 border-gray-200 hover:border-primary/40"
               }`}
             >
+              <v.icon className="w-3.5 h-3.5" />
               {v.label}
             </button>
           ))}

@@ -18,6 +18,7 @@ import {
   Users,
   Zap,
   Save,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ import { useQuest, useUpdateQuest } from "@/hooks/useQuests";
 import { useAuthStore } from "@/stores/auth";
 import { cn } from "@/lib/utils";
 import { LocationPickerWrapper } from "@/components/LocationPickerWrapper";
+import { vibeLevelIcons } from "@/lib/questIcons";
 import type { QuestCategory, VibeLevel } from "@/types";
 
 const categories: { value: QuestCategory; label: string; icon: typeof Dumbbell; color: string }[] = [
@@ -41,12 +43,12 @@ const categories: { value: QuestCategory; label: string; icon: typeof Dumbbell; 
   { value: "custom", label: "Custom", icon: Plus, color: "bg-zinc-500/20 text-gray-500 border-zinc-500/30" },
 ];
 
-const vibeLevels: { value: VibeLevel; label: string; emoji: string }[] = [
-  { value: "chill", label: "Chill", emoji: "😌" },
-  { value: "intermediate", label: "Intermediate", emoji: "👍" },
-  { value: "high_energy", label: "High Energy", emoji: "⚡" },
-  { value: "intense", label: "Intense", emoji: "🔥" },
-  { value: "custom", label: "Custom", emoji: "✨" },
+const vibeLevels: { value: VibeLevel; label: string; icon: LucideIcon }[] = [
+  { value: "chill", label: "Chill", icon: vibeLevelIcons.chill },
+  { value: "intermediate", label: "Intermediate", icon: vibeLevelIcons.intermediate },
+  { value: "high_energy", label: "High Energy", icon: vibeLevelIcons.high_energy },
+  { value: "intense", label: "Intense", icon: vibeLevelIcons.intense },
+  { value: "custom", label: "Custom", icon: vibeLevelIcons.custom },
 ];
 
 export default function EditQuestPage() {
@@ -359,7 +361,7 @@ export default function EditQuestPage() {
                     : "border-gray-200 bg-gray-50 hover:border-gray-300"
                 )}
               >
-                <span className="text-lg">{vibe.emoji}</span>
+                <vibe.icon className="w-5 h-5 mx-auto text-gray-600" />
                 <p className="text-[10px] text-gray-500 mt-1">{vibe.label}</p>
               </button>
             ))}

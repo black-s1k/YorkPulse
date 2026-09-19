@@ -16,6 +16,7 @@ import {
   Users,
   Zap,
   Shield,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useUser } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 import { LocationPickerWrapper } from "@/components/LocationPickerWrapper";
+import { vibeLevelIcons } from "@/lib/questIcons";
 import type { QuestCategory, VibeLevel, PersonaUser } from "@/types";
 
 const categories: { value: QuestCategory; label: string; icon: typeof Dumbbell; color: string }[] = [
@@ -41,12 +43,12 @@ const categories: { value: QuestCategory; label: string; icon: typeof Dumbbell; 
   { value: "custom", label: "Custom", icon: Plus, color: "bg-zinc-500/20 text-gray-500 border-zinc-500/30" },
 ];
 
-const vibeLevels: { value: VibeLevel; label: string; emoji: string }[] = [
-  { value: "chill", label: "Chill", emoji: "😌" },
-  { value: "intermediate", label: "Intermediate", emoji: "👍" },
-  { value: "high_energy", label: "High Energy", emoji: "⚡" },
-  { value: "intense", label: "Intense", emoji: "🔥" },
-  { value: "custom", label: "Custom", emoji: "✨" },
+const vibeLevels: { value: VibeLevel; label: string; icon: LucideIcon }[] = [
+  { value: "chill", label: "Chill", icon: vibeLevelIcons.chill },
+  { value: "intermediate", label: "Intermediate", icon: vibeLevelIcons.intermediate },
+  { value: "high_energy", label: "High Energy", icon: vibeLevelIcons.high_energy },
+  { value: "intense", label: "Intense", icon: vibeLevelIcons.intense },
+  { value: "custom", label: "Custom", icon: vibeLevelIcons.custom },
 ];
 
 const timeQuickOptions = [
@@ -432,7 +434,7 @@ export function CreateQuestModal() {
                           : "bg-white/5 text-gray-500 border-gray-200 hover:bg-white/10"
                       )}
                     >
-                      <span>{level.emoji}</span>
+                      <level.icon className="w-3.5 h-3.5" />
                       {level.label}
                     </button>
                   ))}

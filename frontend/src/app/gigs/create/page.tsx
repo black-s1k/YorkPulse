@@ -34,13 +34,13 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import type { GigType, GigCategory, GigPriceType, GigLocation } from "@/types";
 
-const categoryConfig: Record<GigCategory, { label: string; icon: typeof GraduationCap; emoji: string }> = {
-  academic: { label: "Academic", icon: GraduationCap, emoji: "🎓" },
-  moving: { label: "Moving", icon: Package, emoji: "📦" },
-  tech_help: { label: "Tech Help", icon: Monitor, emoji: "💻" },
-  errands: { label: "Errands", icon: ShoppingBag, emoji: "🏃" },
-  creative: { label: "Creative", icon: Palette, emoji: "🎨" },
-  other: { label: "Other", icon: MoreHorizontal, emoji: "🔧" },
+const categoryConfig: Record<GigCategory, { label: string; icon: typeof GraduationCap }> = {
+  academic: { label: "Academic", icon: GraduationCap },
+  moving: { label: "Moving", icon: Package },
+  tech_help: { label: "Tech Help", icon: Monitor },
+  errands: { label: "Errands", icon: ShoppingBag },
+  creative: { label: "Creative", icon: Palette },
+  other: { label: "Other", icon: MoreHorizontal },
 };
 
 export default function CreateGigPage() {

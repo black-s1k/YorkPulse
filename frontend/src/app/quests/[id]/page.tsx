@@ -17,7 +17,6 @@ import {
   Check,
   X,
   Loader2,
-  Zap,
   Edit,
   CheckCircle2,
   Dumbbell,
@@ -29,6 +28,7 @@ import {
   MessageCircle,
   Send,
   Reply,
+  type LucideIcon,
 } from "lucide-react";
 import { QuestLocationMapWrapper } from "@/components/QuestLocationMapWrapper";
 import { Button } from "@/components/ui/button";
@@ -60,6 +60,7 @@ import { useStartConversation } from "@/hooks/useMessaging";
 import { useAuthStore } from "@/stores/auth";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { vibeLevelIcons } from "@/lib/questIcons";
 import type { QuestCategory, VibeLevel, ParticipantStatus, QuestMessage } from "@/types";
 
 const categoryConfig: Record<QuestCategory, { label: string; icon: typeof Dumbbell; color: string }> = {
@@ -71,12 +72,12 @@ const categoryConfig: Record<QuestCategory, { label: string; icon: typeof Dumbbe
   custom: { label: "Custom", icon: Sparkles, color: "bg-zinc-500/20 text-gray-500" },
 };
 
-const vibeLevelLabels: Record<VibeLevel, { label: string; emoji: string }> = {
-  chill: { label: "Chill", emoji: "😌" },
-  intermediate: { label: "Intermediate", emoji: "👍" },
-  high_energy: { label: "High Energy", emoji: "⚡" },
-  intense: { label: "Intense", emoji: "🔥" },
-  custom: { label: "Custom", emoji: "✨" },
+const vibeLevelLabels: Record<VibeLevel, { label: string; icon: LucideIcon }> = {
+  chill: { label: "Chill", icon: vibeLevelIcons.chill },
+  intermediate: { label: "Intermediate", icon: vibeLevelIcons.intermediate },
+  high_energy: { label: "High Energy", icon: vibeLevelIcons.high_energy },
+  intense: { label: "Intense", icon: vibeLevelIcons.intense },
+  custom: { label: "Custom", icon: vibeLevelIcons.custom },
 };
 
 export default function QuestDetailPage() {
@@ -382,7 +383,8 @@ export default function QuestDetailPage() {
                   : catConfig.label}
               </Badge>
               <Badge variant="outline" className="text-sm border-gray-200">
-                {vibeInfo.emoji} {quest.vibe_level === "custom" && quest.custom_vibe_level
+                <vibeInfo.icon className="w-3.5 h-3.5 mr-1" />
+                {quest.vibe_level === "custom" && quest.custom_vibe_level
                   ? quest.custom_vibe_level
                   : vibeInfo.label}
               </Badge>
@@ -470,8 +472,8 @@ export default function QuestDetailPage() {
             </div>
           )}
           <div className="flex items-center gap-3">
-            <Zap className="w-5 h-5 text-green-700" />
-            <span>{vibeInfo.emoji} {quest.vibe_level === "custom" && quest.custom_vibe_level
+            <vibeInfo.icon className="w-5 h-5 text-green-700" />
+            <span>{quest.vibe_level === "custom" && quest.custom_vibe_level
               ? quest.custom_vibe_level
               : vibeInfo.label} vibe</span>
           </div>

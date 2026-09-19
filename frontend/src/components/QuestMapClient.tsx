@@ -8,8 +8,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SideQuest, QuestCategory } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users, Clock, MapPin, Navigation, Locate, X, Building2, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Users, Clock, MapPin, Navigation, Locate, X, Building2, Eye, EyeOff, Loader2, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { iconMarkup } from "@/lib/iconMarkup";
+import { questCategoryIcons } from "@/lib/questIcons";
 import { grayCanvasBaseUrl, grayCanvasReferenceUrl, GRAY_CANVAS_MAX_ZOOM, GRAY_CANVAS_ATTRIBUTION } from "@/lib/mapTiles";
 import { buildingCategoryConfig, type BuildingCategory } from "@/data/yorkBuildings";
 import { fetchBuildingPolygons, fallbackBuildings, type BuildingPolygon, getBuildingInfo } from "@/data/yorkBuildingPolygons";
@@ -18,45 +20,45 @@ import { fetchBuildingPolygons, fallbackBuildings, type BuildingPolygon, getBuil
 const YORK_CENTER: [number, number] = [43.7735, -79.5019];
 const DEFAULT_ZOOM = 16;
 
-// Category config with gradients and emojis
+// Category config with gradients and icons
 const categoryConfig: Record<QuestCategory, {
-  emoji: string;
+  icon: LucideIcon;
   gradient: string;
   color: string;
   label: string;
 }> = {
   gym: {
-    emoji: "💪",
+    icon: questCategoryIcons.gym,
     gradient: "linear-gradient(135deg, #ef4444, #dc2626)",
     color: "#ef4444",
     label: "Gym"
   },
   food: {
-    emoji: "🍜",
+    icon: questCategoryIcons.food,
     gradient: "linear-gradient(135deg, #f97316, #ea580c)",
     color: "#f97316",
     label: "Food"
   },
   study: {
-    emoji: "📚",
+    icon: questCategoryIcons.study,
     gradient: "linear-gradient(135deg, #3b82f6, #2563eb)",
     color: "#3b82f6",
     label: "Study"
   },
   game: {
-    emoji: "🎮",
+    icon: questCategoryIcons.game,
     gradient: "linear-gradient(135deg, #22c55e, #16a34a)",
     color: "#22c55e",
     label: "Game"
   },
   commute: {
-    emoji: "🚗",
+    icon: questCategoryIcons.commute,
     gradient: "linear-gradient(135deg, #a855f7, #9333ea)",
     color: "#a855f7",
     label: "Commute"
   },
   custom: {
-    emoji: "✨",
+    icon: questCategoryIcons.custom,
     gradient: "linear-gradient(135deg, #6b7280, #4b5563)",
     color: "#6b7280",
     label: "Custom"
@@ -72,7 +74,7 @@ const createMarkerIcon = (category: QuestCategory) => {
       <div class="marker-container">
         <div class="marker-pulse" style="background: ${config.color}"></div>
         <div class="marker-inner" style="background: ${config.gradient}">
-          <span class="marker-emoji">${config.emoji}</span>
+          <span class="marker-icon">${iconMarkup(config.icon, 18)}</span>
         </div>
       </div>
     `,
@@ -287,7 +289,7 @@ function BuildingPopupContent({
         className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-white text-xs font-medium mb-2"
         style={{ background: info.color }}
       >
-        <span>{info.emoji}</span>
+        <info.icon className="w-3 h-3" />
         <span>{info.label}</span>
       </div>
 
@@ -309,8 +311,9 @@ function BuildingPopupContent({
 
       {/* Category indicator */}
       <div className="mt-2 pt-2 border-t border-zinc-200">
-        <span className="text-xs text-gray-400">
-          {info.emoji} {info.label} Building
+        <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+          <info.icon className="w-3 h-3" />
+          {info.label} Building
         </span>
       </div>
     </div>
@@ -490,7 +493,7 @@ function MobileQuestSheet({
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-white text-sm mb-3"
             style={{ background: config.gradient }}
           >
-            <span>{config.emoji}</span>
+            <config.icon className="w-4 h-4" />
             <span>{config.label}</span>
           </div>
 
@@ -568,7 +571,7 @@ function QuestPopupContent({
         className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-white text-xs font-medium mb-2"
         style={{ background: config.gradient }}
       >
-        <span>{config.emoji}</span>
+        <config.icon className="w-3 h-3" />
         <span>{config.label}</span>
       </div>
 
@@ -806,9 +809,9 @@ export default function QuestMapClient({ quests, className }: QuestMapClientProp
           border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
-        .marker-emoji {
+        .marker-icon {
           transform: rotate(45deg);
-          font-size: 14px;
+          display: flex;
           filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
         }
 

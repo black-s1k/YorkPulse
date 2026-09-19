@@ -1,6 +1,8 @@
 // York University Campus Building Data
 // Organized by category with coordinates and metadata
 
+import { BookOpen, Dumbbell, GraduationCap, Home, TrainFront, Utensils, type LucideIcon } from "lucide-react";
+
 export type BuildingCategory =
   | "gym"
   | "food"
@@ -22,14 +24,14 @@ export interface YorkBuilding {
 export const buildingCategoryConfig: Record<BuildingCategory, {
   color: string;
   label: string;
-  emoji: string;
+  icon: LucideIcon;
 }> = {
-  gym: { color: "#EF4444", label: "Gym/Fitness", emoji: "💪" },
-  food: { color: "#F97316", label: "Food/Dining", emoji: "🍜" },
-  study: { color: "#3B82F6", label: "Study Spaces", emoji: "📚" },
-  academic: { color: "#6B7280", label: "Academic", emoji: "🎓" },
-  transit: { color: "#A855F7", label: "Transit", emoji: "🚇" },
-  residence: { color: "#EAB308", label: "Residences", emoji: "🏠" },
+  gym: { color: "#EF4444", label: "Gym/Fitness", icon: Dumbbell },
+  food: { color: "#F97316", label: "Food/Dining", icon: Utensils },
+  study: { color: "#3B82F6", label: "Study Spaces", icon: BookOpen },
+  academic: { color: "#6B7280", label: "Academic", icon: GraduationCap },
+  transit: { color: "#A855F7", label: "Transit", icon: TrainFront },
+  residence: { color: "#EAB308", label: "Residences", icon: Home },
 };
 
 export const yorkBuildings: YorkBuilding[] = [
