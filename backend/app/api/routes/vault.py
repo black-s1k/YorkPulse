@@ -25,6 +25,7 @@ from app.core.dependencies import (
     CurrentUserOptional,
     VerifiedUser,
 )
+from app.models.user import User
 from app.models.vault import VaultCategory, VaultComment, VaultPost, VaultPostStatus
 from app.schemas.user import UserMinimal
 from app.schemas.vault import (
@@ -156,8 +157,10 @@ async def list_posts(
     count_query = select(func.count()).select_from(query.subquery())
     total = (await db.execute(count_query)).scalar() or 0
 
-    # Paginate
-    query = query.order_by(VaultPost.created_at.desc())
+    # Paginate — real users' threads first, admin-seeded persona threads after
+    query = query.join(User, VaultPost.user_id == User.id).order_by(
+        User.is_persona.asc(), VaultPost.created_at.desc()
+    )
     query = query.offset((page - 1) * per_page).limit(per_page)
 
     result = await db.execute(query)
