@@ -49,8 +49,8 @@ PERSONAS = [
         "quests": [
             {
                 "category": BuddyCategory.FOOD,
-                "activity": "Grabbing lunch at the Student Centre food court after my 12pm class — anyone want to join? Great way to take a break mid-week ☕",
-                "description": "Just a casual lunch run, nothing planned. Happy to chat about anything — courses, co-op, life in general.",
+                "activity": "Grabbing lunch at the Student Centre food court after my 12pm class, anyone want to join? Great way to take a break mid-week",
+                "description": "Just a casual lunch run, nothing planned. Happy to chat about courses, co-op, life in general, anything really.",
                 "location": "Student Centre Food Court",
                 "start_time": d(2, hour=12, minute=30),
                 "vibe_level": VibeLevel.CHILL,
@@ -58,7 +58,7 @@ PERSONAS = [
             },
             {
                 "category": BuddyCategory.COMMUTE,
-                "activity": "Heading to Keele TTC after my 5pm lecture every Tuesday — anyone commuting toward Finch or Sheppard? Makes the ride less boring 🚇",
+                "activity": "Heading to Keele TTC after my 5pm lecture every Tuesday. Anyone commuting toward Finch or Sheppard? Makes the ride less boring",
                 "description": "Usually leave from Vari Hall around 5:10pm. Happy to chat or just exist in silence, no pressure.",
                 "location": "Keele TTC Station",
                 "start_time": d(5, hour=17, minute=10),
@@ -75,8 +75,8 @@ PERSONAS = [
         "quests": [
             {
                 "category": BuddyCategory.STUDY,
-                "activity": "Pulling a study session at Scott Library tonight for the EECS midterm — come suffer together 😭 Floor 4 quiet zone",
-                "description": "Mostly going through past exams and lecture slides. Probably staying until 11pm. Bring snacks.",
+                "activity": "Pulling a study session at Scott Library tonight to catch up on EECS lectures, come suffer together. Floor 4 quiet zone",
+                "description": "Mostly going over the first couple of lectures and the slides. Probably staying until 11pm. Bring snacks.",
                 "location": "Scott Library, Floor 4",
                 "start_time": d(1, hour=19, minute=0),
                 "vibe_level": VibeLevel.INTERMEDIATE,
@@ -84,7 +84,7 @@ PERSONAS = [
             },
             {
                 "category": BuddyCategory.GYM,
-                "activity": "Early morning lift at Tait before 9am class — nothing intense, just upper body. Who else is trying to stay consistent this semester? 💪",
+                "activity": "Early morning lift at Tait before 9am class, nothing intense, just upper body. Who else is trying to stay consistent this semester?",
                 "description": "I usually hit chest/shoulders on Tuesdays. Casual pace, not trying to PR anything. Just staying active.",
                 "location": "Tait McKenzie Centre",
                 "start_time": d(3, hour=7, minute=30),
@@ -101,7 +101,7 @@ PERSONAS = [
         "quests": [
             {
                 "category": BuddyCategory.STUDY,
-                "activity": "Nursing pathophysiology study group — going through cardiovascular unit. Looking for 2-3 people who actually want to learn this stuff 📚",
+                "activity": "Nursing study group, going over the first couple of lectures. Looking for 2 or 3 people who actually want to learn this stuff",
                 "description": "I make summary sheets and quiz cards. Come prepared with your notes. Accolade West study rooms are usually quiet.",
                 "location": "Accolade West Building, Study Room 102",
                 "start_time": d(4, hour=14, minute=0),
@@ -110,8 +110,8 @@ PERSONAS = [
             },
             {
                 "category": BuddyCategory.FOOD,
-                "activity": "Coffee run to Founders Café between lectures — need a break from the library lol. Anyone want to come?",
-                "description": "Just 30-40 mins. Good chance to actually touch grass and talk to a human being.",
+                "activity": "Coffee run to Founders Café between lectures, need a break from the library lol. Anyone want to come?",
+                "description": "Just 30 to 40 mins. Good chance to actually touch grass and talk to a human being.",
                 "location": "Founders College Café",
                 "start_time": d(6, hour=11, minute=15),
                 "vibe_level": VibeLevel.CHILL,
@@ -127,7 +127,7 @@ PERSONAS = [
         "quests": [
             {
                 "category": BuddyCategory.GYM,
-                "activity": "Looking for a gym buddy at Tait — going 3x a week, just started. Would be nice to have someone to go with so I actually show up 😅",
+                "activity": "Looking for a gym buddy at Tait, going 3x a week, just started. Would be nice to have someone to go with so I actually show up",
                 "description": "I'm still learning the equipment so I'm not super experienced. Just want someone to go with consistently. Evenings work best for me.",
                 "location": "Tait McKenzie Centre",
                 "start_time": d(2, hour=17, minute=0),
@@ -136,8 +136,8 @@ PERSONAS = [
             },
             {
                 "category": BuddyCategory.STUDY,
-                "activity": "MATH 1300 study session — calculus is already wrecking me and it's week 4. Anyone else struggling? Let's figure it out together",
-                "description": "Going through derivative rules and optimization problems. Scott Library or somewhere quiet. Bring your textbook.",
+                "activity": "MATH 1300 study session, the first couple of lectures are already wrecking me. Anyone else struggling? Let's figure it out together",
+                "description": "Going over the lecture notes so far. Scott Library or somewhere quiet. Bring your textbook.",
                 "location": "Scott Library, Floor 3",
                 "start_time": d(7, hour=13, minute=0),
                 "vibe_level": VibeLevel.CHILL,
@@ -153,8 +153,8 @@ PERSONAS = [
         "quests": [
             {
                 "category": BuddyCategory.STUDY,
-                "activity": "Weekly psych study group — we go through lecture slides and old exams. Low key, no stress, just prep together 🧠",
-                "description": "We've been doing this all semester and it's been really helpful. Open to anyone in PSYC courses. Vari Hall atrium has good tables.",
+                "activity": "Weekly psych study group, we go through the lecture slides together. Low key, no stress, just prep together",
+                "description": "We started this last year and it was really helpful. Open to anyone in PSYC courses. Vari Hall atrium has good tables.",
                 "location": "Vari Hall Atrium",
                 "start_time": d(3, hour=16, minute=0),
                 "vibe_level": VibeLevel.CHILL,
@@ -180,7 +180,7 @@ PERSONAS = [
         "quests": [
             {
                 "category": BuddyCategory.GYM,
-                "activity": "Morning lift at Tait — 7:30am, hitting legs today. If you're trying to build a morning routine, come join. It gets easier after week 2 I promise 🏋️",
+                "activity": "Morning lift at Tait, 7:30am, hitting legs today. If you're trying to build a morning routine, come join. It gets easier after the first couple weeks I promise",
                 "description": "I'm there Mon/Wed/Fri mornings. Super welcoming if you're new, I can show you the equipment. Bring water.",
                 "location": "Tait McKenzie Centre",
                 "start_time": d(1, hour=7, minute=30),
@@ -189,7 +189,7 @@ PERSONAS = [
             },
             {
                 "category": BuddyCategory.FOOD,
-                "activity": "Post-workout smoothie run — heading to the juice bar near Tait after my lift. Anyone want to grab something and chill for a bit?",
+                "activity": "Post-workout smoothie run, heading to the juice bar near Tait after my lift. Anyone want to grab something and chill for a bit?",
                 "description": "Usually done by 9am. Good way to recover and actually have a conversation instead of just staring at your phone.",
                 "location": "Tait McKenzie Centre, main entrance",
                 "start_time": d(8, hour=9, minute=0),
@@ -206,7 +206,7 @@ PERSONAS = [
         "quests": [
             {
                 "category": BuddyCategory.GAME,
-                "activity": "Movie night in the Accolade screening room — we got access Friday evening. Voting on what to watch, probably something from the 70s or 80s 🎬",
+                "activity": "Movie night in the Accolade screening room, we got access Friday evening. Voting on what to watch, probably something from the 70s or 80s",
                 "description": "Bring snacks. We'll take a vote on the film. Open to anyone, doesn't have to be a film student. Just appreciate good cinema.",
                 "location": "Accolade East Building, Screening Room",
                 "start_time": d(4, hour=19, minute=30),
@@ -215,7 +215,7 @@ PERSONAS = [
             },
             {
                 "category": BuddyCategory.FOOD,
-                "activity": "Late lunch at Vari Hall after my 1pm critique — need to decompress. Anyone free around 3pm on Thursday?",
+                "activity": "Late lunch at Vari Hall after my 1pm critique, need to decompress. Anyone free around 3pm on Thursday?",
                 "description": "Film critiques are stressful, food helps. Good conversation and venting welcome.",
                 "location": "Vari Hall Atrium",
                 "start_time": d(10, hour=15, minute=0),
@@ -232,7 +232,7 @@ PERSONAS = [
         "quests": [
             {
                 "category": BuddyCategory.COMMUTE,
-                "activity": "Anyone commuting from Finch West area? I take the 36A bus to Keele station every morning around 8:30 — would be nice to have someone to talk to",
+                "activity": "Anyone commuting from Finch West area? I take the 36A bus to Keele station every morning around 8:30, would be nice to have someone to talk to",
                 "description": "The commute is 25 min and I've been listening to the same podcast for 3 weeks. Open to literally any conversation.",
                 "location": "Finch West / Keele Station",
                 "start_time": d(1, hour=8, minute=30),
@@ -241,8 +241,8 @@ PERSONAS = [
             },
             {
                 "category": BuddyCategory.GAME,
-                "activity": "Smash Bros session in the games room at Bethune — looking for people to play with Wednesday evening. All skill levels welcome",
-                "description": "I have a switch and extra controllers. Usually play for 2-3 hours. We can do friendlies or tournament bracket, whatever people prefer.",
+                "activity": "Smash Bros session in the games room at Bethune, looking for people to play with Wednesday evening. All skill levels welcome",
+                "description": "I have a switch and extra controllers. Usually play for 2 or 3 hours. We can do friendlies or tournament bracket, whatever people prefer.",
                 "location": "Bethune College Common Room",
                 "start_time": d(6, hour=18, minute=0),
                 "vibe_level": VibeLevel.INTERMEDIATE,
