@@ -36,6 +36,7 @@ AUTH_ENDPOINTS = {
     "/api/v1/auth/resend-otp",
     "/api/v1/auth/verify-otp",
     "/api/v1/auth/admin-login",
+    "/api/v1/auth/sandbox-login",
 }
 
 # Endpoints that trigger an outbound email (Gmail SMTP) or Supabase Auth

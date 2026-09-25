@@ -5,6 +5,7 @@ import { Bell } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { ActivityTracker } from "@/components/ActivityTracker";
+import { SandboxGate } from "@/components/sandbox/SandboxGate";
 import { CreateModal } from "@/components/modals/CreateModal";
 import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { api } from "@/services/api";
@@ -123,12 +124,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthInitializer />
       <ServiceWorkerRegistrar />
-      <ActivityTracker />
-      {children}
-      <CreateModal />
-      <FloatingActionButton />
-      <PushNotificationPrompt />
-      <Toaster />
+      <SandboxGate>
+        <ActivityTracker />
+        {children}
+        <CreateModal />
+        <FloatingActionButton />
+        <PushNotificationPrompt />
+        <Toaster />
+      </SandboxGate>
     </QueryClientProvider>
   );
 }

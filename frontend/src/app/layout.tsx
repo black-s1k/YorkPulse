@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import { AppShell } from "@/components/layout";
 import { NameSetupGuard } from "@/components/NameSetupGuard";
+import { SANDBOX_EMAILS } from "@/lib/sandbox";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
 
@@ -44,7 +45,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Hide the app before hydration for sandbox accounts (see SandboxGate) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=JSON.parse(localStorage.getItem("yorkpulse-auth")||"{}").state.accessToken;var e=JSON.parse(atob(t.split(".")[1])).email.toLowerCase();if(${JSON.stringify(SANDBOX_EMAILS)}.indexOf(e)>-1)document.documentElement.dataset.sandbox="1"}catch(_){}`,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >

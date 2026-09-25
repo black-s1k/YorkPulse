@@ -2,11 +2,12 @@
 
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.models.user import User
 from app.services.jwt import jwt_service
@@ -14,8 +15,24 @@ from app.services.jwt import jwt_service
 # Security scheme
 security = HTTPBearer(auto_error=False)
 
+# The only authenticated endpoints a sandbox account may call
+SANDBOX_ALLOWED_PATHS = {"/auth/me"}
+
+
+def is_sandbox_user(user: User) -> bool:
+    return user.email.lower() in settings.sandbox_email_set
+
+
+def _sandbox_path_allowed(request: Request) -> bool:
+    path = request.url.path
+    prefix = settings.api_prefix
+    if prefix and path.startswith(prefix):
+        path = path[len(prefix):]
+    return path.rstrip("/") in SANDBOX_ALLOWED_PATHS
+
 
 async def get_current_user_optional(
+    request: Request,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> User | None:
@@ -37,12 +54,15 @@ async def get_current_user_optional(
     user = result.scalar_one_or_none()
 
     if user and user.is_active and not user.is_banned:
+        if is_sandbox_user(user) and not _sandbox_path_allowed(request):
+            return None
         return user
 
     return None
 
 
 async def get_current_user(
+    request: Request,
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> User:
@@ -92,6 +112,12 @@ async def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Account is banned",
+        )
+
+    if is_sandbox_user(user) and not _sandbox_path_allowed(request):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not available for this account",
         )
 
     return user

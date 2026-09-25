@@ -1,5 +1,7 @@
 """Authentication API routes."""
 
+import hashlib
+import hmac
 import logging
 import uuid
 from datetime import UTC, datetime
@@ -319,6 +321,78 @@ async def admin_login(
         refresh_token=refresh_token,
         expires_in=expires_in,
         requires_name_verification=not user.name_verified,
+    )
+
+
+def _verify_sandbox_password(password: str) -> bool:
+    try:
+        algo, iterations, salt_hex, hash_hex = settings.sandbox_password_hash.split("$")
+    except ValueError:
+        return False
+    if algo != "pbkdf2_sha256":
+        return False
+    candidate = hashlib.pbkdf2_hmac(
+        "sha256", password.encode(), bytes.fromhex(salt_hex), int(iterations)
+    ).hex()
+    return hmac.compare_digest(candidate, hash_hex)
+
+
+@router.post("/sandbox-login", response_model=VerifyEmailResponse)
+async def sandbox_login(
+    request: AdminLoginRequest,
+    http_request: Request,
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    """
+    Password login for sandbox accounts. These accounts get a blank frontend
+    and are blocked from every other API route (see core.dependencies).
+    """
+    real_ip = getattr(http_request.state, "real_ip", http_request.client.host if http_request.client else "unknown")
+    email = request.email.lower()
+
+    try:
+        failures = await redis_service.get("sandbox_login:failures")
+    except Exception:
+        failures = None
+    if failures and int(failures) >= settings.sandbox_login_max_failed_attempts:
+        logger.warning("SANDBOX LOGIN: locked out, ip=%s", real_ip)
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account locked due to repeated failed attempts.",
+        )
+
+    if email not in settings.sandbox_email_set or not _verify_sandbox_password(request.password):
+        try:
+            await redis_service.incr("sandbox_login:failures")
+        except Exception:
+            pass
+        logger.warning("SANDBOX LOGIN: failed, email=%s ip=%s", email, real_ip)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password.")
+
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    if not user:
+        user = User(
+            email=email,
+            email_verified=True,
+            name="AI Ignite",
+            name_verified=True,
+        )
+        db.add(user)
+
+    user.last_login_at = datetime.now(UTC)
+    user.last_login_ip = real_ip
+    await db.commit()
+    await db.refresh(user)
+
+    access_token, refresh_token, expires_in = jwt_service.create_token_pair(str(user.id), user.email)
+    logger.info("SANDBOX LOGIN success: email=%s ip=%s", email, real_ip)
+
+    return VerifyEmailResponse(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        expires_in=expires_in,
+        requires_name_verification=False,
     )
 
 

@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLogin, useVerifyOTP, useResendOTP } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/auth";
 import { api } from "@/services/api";
+import { isSandboxEmail } from "@/lib/sandbox";
 
 const ADMIN_EMAIL = "yorkpulse.app@gmail.com";
 
@@ -47,7 +48,7 @@ export default function LoginPage() {
   // Validate York email
   const validateEmail = useCallback((value: string): boolean => {
     const emailLower = value.toLowerCase();
-    const isYorkEmail = emailLower.endsWith("@yorku.ca") || emailLower.endsWith("@my.yorku.ca") || emailLower === "yorkpulse.app@gmail.com";
+    const isYorkEmail = emailLower.endsWith("@yorku.ca") || emailLower.endsWith("@my.yorku.ca") || emailLower === "yorkpulse.app@gmail.com" || isSandboxEmail(emailLower);
 
     if (!isYorkEmail) {
       setEmailError("Please use your @yorku.ca or @my.yorku.ca email");
@@ -66,7 +67,7 @@ export default function LoginPage() {
     }
 
     // Admin account uses password — no OTP sent
-    if (email.toLowerCase() === ADMIN_EMAIL) {
+    if (email.toLowerCase() === ADMIN_EMAIL || isSandboxEmail(email)) {
       setStep("password");
       return;
     }
@@ -94,6 +95,12 @@ export default function LoginPage() {
     e.preventDefault();
     setPasswordLoading(true);
     try {
+      if (isSandboxEmail(email)) {
+        const data = await api.auth.sandboxLogin(email, password);
+        setTokens(data.access_token, data.refresh_token);
+        router.push("/");
+        return;
+      }
       const data = await api.auth.adminLogin(email, password);
       setTokens(data.access_token, data.refresh_token);
       router.push("/auth/setup");
@@ -376,7 +383,7 @@ export default function LoginPage() {
             <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
               <Lock className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Admin login</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{isSandboxEmail(email) ? "Sign in" : "Admin login"}</h1>
             <p className="text-primary font-medium">{email}</p>
           </div>
 
@@ -386,7 +393,7 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter admin password"
+                placeholder={isSandboxEmail(email) ? "Enter password" : "Enter admin password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoFocus

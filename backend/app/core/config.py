@@ -71,6 +71,20 @@ class Settings(BaseSettings):
     admin_emails: str = "yorkpulse.app@gmail.com"  # Comma-separated emails that bypass York validation
     admin_password: str = ""  # Password for admin account (bypasses OTP)
 
+    # Sandbox accounts: password login, but locked out of every YorkPulse
+    # feature (frontend renders a blank page, API returns 403 outside /auth/me).
+    sandbox_emails: str = "aiignite.yorku@gmail.com"  # Comma-separated
+    # PBKDF2 hash (pbkdf2_sha256$iterations$salt_hex$hash_hex), never plaintext
+    sandbox_password_hash: str = (
+        "pbkdf2_sha256$600000$a0855c17c0ddddeb0de0ea86a397fd5b$"
+        "f0d86ed1fa71e54277c9c7bd7b9ec0b27814a4aef3598a1ce388f4d4a02538d3"
+    )
+    sandbox_login_max_failed_attempts: int = 10
+
+    @property
+    def sandbox_email_set(self) -> set[str]:
+        return {e.strip().lower() for e in self.sandbox_emails.split(",") if e.strip()}
+
     # CORS
     cors_origins: list[str] = [
         "http://localhost:3000",

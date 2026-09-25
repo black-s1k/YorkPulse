@@ -255,6 +255,9 @@ class ApiClient {
     adminLogin: (email: string, password: string) =>
       this.post<VerifyEmailResponse>("/auth/admin-login", { email, password }),
 
+    sandboxLogin: (email: string, password: string) =>
+      this.post<VerifyEmailResponse>("/auth/sandbox-login", { email, password }),
+
     verifyEmail: (token: string) =>
       this.post<VerifyEmailResponse>("/auth/verify-email", { token }),
 

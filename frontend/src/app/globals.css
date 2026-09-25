@@ -325,3 +325,12 @@
   border-color: #e5e7eb !important;
   color: #6b7280 !important;
 }
+
+/* Sandbox accounts: hide everything until SandboxGate swaps in its own root */
+html[data-sandbox] body * {
+  visibility: hidden;
+}
+html[data-sandbox] [data-sandbox-root],
+html[data-sandbox] [data-sandbox-root] * {
+  visibility: visible;
+}
