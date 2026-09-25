@@ -48,7 +48,9 @@ function TaskForm({ onOpenChange, task, defaultTeam }: TaskDialogProps) {
   const [priority, setPriority] = useState<TaskPriority>(task?.priority ?? "medium");
   const [dueDate, setDueDate] = useState(task?.due_date ?? "");
   const [assigneeIds, setAssigneeIds] = useState<string[]>(task?.assignees.map((m) => m.id) ?? []);
+  const [actorId, setActorId] = useState(""); // "Created by" on new tasks, "Updated by" on edits
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
 
   const saving = create.isPending || update.isPending;
 
@@ -68,17 +70,34 @@ function TaskForm({ onOpenChange, task, defaultTeam }: TaskDialogProps) {
   // Active members, plus anyone inactive who is still on this task
   const selectable = members.filter((m) => m.is_active || assigneeIds.includes(m.id));
 
+  const actor = members.find((m) => m.id === actorId);
+
+  // Every field is required (the backend enforces this too)
+  const errors: Partial<Record<"title" | "description" | "dueDate" | "assignees" | "actor", string>> = {};
+  if (!title.trim()) errors.title = "Add a title";
+  if (!description.trim()) errors.description = "Add some details";
+  if (!dueDate) errors.dueDate = "Pick a due date";
+  if (assigneeIds.length === 0) errors.assignees = "Assign at least one person";
+  if (!actor) errors.actor = task ? "Pick your name" : "Pick who is creating this";
+  const err = (k: keyof typeof errors) =>
+    showErrors && errors[k] ? <p className="text-xs text-red-600">{errors[k]}</p> : null;
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (Object.keys(errors).length > 0 || !actor) {
+      setShowErrors(true);
+      return;
+    }
     const data = {
       title,
-      description: description.trim() || null,
+      description,
       team,
       status,
       progress,
       priority,
-      due_date: dueDate || null,
+      due_date: dueDate,
       assignee_ids: assigneeIds,
+      actor: actor.name,
     };
     try {
       if (task) await update.mutateAsync({ id: task.id, data });
@@ -111,12 +130,14 @@ function TaskForm({ onOpenChange, task, defaultTeam }: TaskDialogProps) {
 
       <div className="space-y-1.5">
         <Label htmlFor="task-title">Title</Label>
-        <Input id="task-title" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} required autoFocus={!task} />
+        <Input id="task-title" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={200} autoFocus={!task} />
+        {err("title")}
       </div>
 
       <div className="space-y-1.5">
         <Label htmlFor="task-desc">Details</Label>
         <Textarea id="task-desc" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={5000} />
+        {err("description")}
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -156,6 +177,7 @@ function TaskForm({ onOpenChange, task, defaultTeam }: TaskDialogProps) {
         <div className="space-y-1.5">
           <Label htmlFor="task-due">Due date</Label>
           <Input id="task-due" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+          {err("dueDate")}
         </div>
       </div>
 
@@ -184,6 +206,22 @@ function TaskForm({ onOpenChange, task, defaultTeam }: TaskDialogProps) {
         ) : (
           <AssigneePicker members={selectable} team={team} selected={assigneeIds} onChange={setAssigneeIds} />
         )}
+        {err("assignees")}
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>{task ? "Updated by" : "Created by"}</Label>
+        <Select value={actorId} onValueChange={setActorId}>
+          <SelectTrigger className="w-full"><SelectValue placeholder="Select your name" /></SelectTrigger>
+          <SelectContent>
+            {members
+              .filter((m) => m.is_active)
+              .map((m) => (
+                <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+        {err("actor")}
       </div>
 
       {task && (task.created_by || task.updated_by) && (
@@ -204,7 +242,7 @@ function TaskForm({ onOpenChange, task, defaultTeam }: TaskDialogProps) {
         )}
         <div className="flex gap-2">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button type="submit" disabled={saving || !title.trim()} className="bg-gray-900 text-white hover:bg-gray-800">
+          <Button type="submit" disabled={saving} className="bg-gray-900 text-white hover:bg-gray-800">
             {saving && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
             {task ? "Save" : "Create task"}
           </Button>

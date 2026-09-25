@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MEMBER_GROUPS, teamLabel, type MemberGroup, type TeamSlug } from "./teams";
+import { getTeam, MEMBER_GROUPS, type MemberGroup, type TeamSlug } from "./teams";
 import type { IgniteMember } from "./types";
 
 interface AssigneePickerProps {
@@ -33,7 +33,7 @@ export function AssigneePicker({ members, team, selected, onChange }: AssigneePi
     <div className="space-y-2">
       <div className="grid grid-cols-2 gap-2">
         <MemberDropdown
-          label={`${teamLabel(team)} team`}
+          label={`${getTeam(team).name} team`}
           empty="No one on this team yet"
           groups={[{ label: null, members: inTeam }]}
           selected={selected}

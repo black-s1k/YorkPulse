@@ -62,6 +62,7 @@ export function TaskCard({ task, showTeam, onOpen }: { task: IgniteTask; showTea
           </span>
         )}
       </div>
+      {task.created_by && <p className="mt-2 text-xs text-gray-400">Created by {task.created_by}</p>}
     </button>
   );
 }

@@ -3,7 +3,7 @@
 from datetime import date, datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 Team = Literal["marketing", "spark", "forge", "support", "finance"]
 MemberGroup = Literal["exec", "marketing", "spark", "forge", "support", "finance"]
@@ -52,31 +52,41 @@ class MemberResponse(BaseModel):
 
 
 class TaskCreate(BaseModel):
+    # Every field is required: the club wants complete tasks, not stubs
     title: str = Field(min_length=1, max_length=200)
-    description: str | None = Field(default=None, max_length=5000)
+    description: str = Field(min_length=1, max_length=5000)
     team: Team
-    status: Status = "not_started"
-    progress: int = Field(default=0, ge=0, le=100)
-    priority: Priority = "medium"
-    due_date: date | None = None
-    assignee_ids: list[str] = Field(default_factory=list, max_length=20)
-    actor: str | None = Field(default=None, max_length=100)
+    status: Status
+    progress: int = Field(ge=0, le=100)
+    priority: Priority
+    due_date: date
+    assignee_ids: list[str] = Field(min_length=1, max_length=20)
+    actor: str = Field(min_length=1, max_length=100)  # "Created by"
 
     _clean = field_validator("title", "description", "actor", mode="before")(classmethod(lambda cls, v: _strip(v)))
 
 
 class TaskUpdate(BaseModel):
+    # Fields are optional to send, but none can be cleared, and the person
+    # making the change must say who they are
     title: str | None = Field(default=None, min_length=1, max_length=200)
-    description: str | None = Field(default=None, max_length=5000)
+    description: str | None = Field(default=None, min_length=1, max_length=5000)
     team: Team | None = None
     status: Status | None = None
     progress: int | None = Field(default=None, ge=0, le=100)
     priority: Priority | None = None
     due_date: date | None = None
-    assignee_ids: list[str] | None = Field(default=None, max_length=20)
-    actor: str | None = Field(default=None, max_length=100)
+    assignee_ids: list[str] | None = Field(default=None, min_length=1, max_length=20)
+    actor: str = Field(min_length=1, max_length=100)  # "Updated by"
 
     _clean = field_validator("title", "description", "actor", mode="before")(classmethod(lambda cls, v: _strip(v)))
+
+    @model_validator(mode="after")
+    def no_clearing(self):
+        for field in ("title", "description", "team", "status", "progress", "priority", "due_date", "assignee_ids"):
+            if field in self.model_fields_set and getattr(self, field) is None:
+                raise ValueError(f"{field} is required")
+        return self
 
 
 class TaskResponse(BaseModel):

@@ -6,21 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { useActingAs, useIgniteMembers, useIgniteTasks } from "./hooks";
+import { useIgniteMembers, useIgniteTasks } from "./hooks";
 import { TaskCard } from "./TaskCard";
 import { TaskDialog } from "./TaskDialog";
 import { IGNITE_TEAMS, teamLabel, type TeamSlug } from "./teams";
 import { isOverdue, PRIORITIES, STATUSES, type IgniteTask } from "./types";
 
 const ALL = "all";
-const ME = "me";
 
 // Kanban board of tasks by status. With `team` it shows that team only;
 // without it, it's the club-wide view with a team filter.
 export function TaskBoard({ team }: { team?: TeamSlug }) {
   const { data: tasks = [], isLoading, isError } = useIgniteTasks();
   const { data: members = [] } = useIgniteMembers();
-  const { actingAs } = useActingAs();
 
   const [search, setSearch] = useState("");
   const [teamFilter, setTeamFilter] = useState<string>(ALL);
@@ -31,17 +29,16 @@ export function TaskBoard({ team }: { team?: TeamSlug }) {
 
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
-    const assigneeId = assignee === ME ? actingAs?.id : assignee;
     return tasks.filter((t) => {
       if (team && t.team !== team) return false;
       if (!team && teamFilter !== ALL && t.team !== teamFilter) return false;
-      if (assignee !== ALL && !t.assignees.some((m) => m.id === assigneeId)) return false;
+      if (assignee !== ALL && !t.assignees.some((m) => m.id === assignee)) return false;
       if (priority !== ALL && t.priority !== priority) return false;
       if (overdueOnly && !isOverdue(t)) return false;
       if (q && !`${t.title} ${t.description ?? ""}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [tasks, team, teamFilter, assignee, priority, overdueOnly, search, actingAs]);
+  }, [tasks, team, teamFilter, assignee, priority, overdueOnly, search]);
 
   const activeMembers = members.filter((m) => m.is_active);
 
@@ -67,7 +64,6 @@ export function TaskBoard({ team }: { team?: TeamSlug }) {
           <SelectTrigger className="w-[160px]"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value={ALL}>Anyone</SelectItem>
-            {actingAs && <SelectItem value={ME}>My tasks</SelectItem>}
             {activeMembers.map((m) => (
               <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
             ))}

@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { useLogout } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
-import { ActingAsPicker } from "./ActingAsPicker";
 import { IGNITE_TEAMS, teamLabel } from "./teams";
 
 const NAV = [
@@ -25,7 +24,6 @@ export function IgniteHeader() {
           AI Ignite
         </Link>
         <div className="flex items-center gap-3">
-          <ActingAsPicker />
           <button
             onClick={logout}
             className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900"

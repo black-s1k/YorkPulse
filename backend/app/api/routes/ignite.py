@@ -182,7 +182,8 @@ async def create_task(body: TaskCreate, _: IgniteUser, db: DB):
         updated_by=body.actor,
     )
     task.assignees = await _load_members(db, body.assignee_ids)
-    _sync_status_progress(task, status_set=body.status != "not_started", progress_set=body.progress > 0)
+    # the form always sends both; an explicit Finished/Not started wins
+    _sync_status_progress(task, status_set=body.status in ("done", "not_started"), progress_set=True)
     db.add(task)
     await db.commit()
     return _task_out(await _get_task(db, str(task.id)))
@@ -195,10 +196,7 @@ async def update_task(task_id: str, body: TaskUpdate, _: IgniteUser, db: DB):
     actor = data.pop("actor", None)
     assignee_ids = data.pop("assignee_ids", None)
 
-    nullable = {"description", "due_date"}
     for field, value in data.items():
-        if value is None and field not in nullable:
-            continue
         setattr(task, field, value)
     if assignee_ids is not None:
         task.assignees = await _load_members(db, assignee_ids)
