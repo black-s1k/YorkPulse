@@ -8,6 +8,9 @@ from jose import JWTError, jwt
 from app.core.config import settings
 
 
+SANDBOX_REFRESH_TOKEN_DAYS = 36500  # effectively never expires
+
+
 class TokenType:
     ACCESS = "access"
     REFRESH = "refresh"
@@ -37,8 +40,20 @@ class JWTService:
         return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
 
     def create_refresh_token(self, user_id: str, email: str) -> str:
-        """Create a long-lived refresh token."""
-        expire = datetime.now(timezone.utc) + timedelta(days=self.refresh_token_expire_days)
+        """Create a long-lived refresh token.
+
+        Sandbox accounts (the shared AI Ignite club login) stay signed in
+        indefinitely: their refresh token is valid for 100 years instead of
+        refresh_token_expire_days. Signing out on a device still ends that
+        device's session; to cut off every device, deactivate the user (the
+        refresh endpoint rejects inactive users).
+        """
+        days = (
+            SANDBOX_REFRESH_TOKEN_DAYS
+            if email.lower() in settings.sandbox_email_set
+            else self.refresh_token_expire_days
+        )
+        expire = datetime.now(timezone.utc) + timedelta(days=days)
         payload = {
             "sub": user_id,
             "email": email,
