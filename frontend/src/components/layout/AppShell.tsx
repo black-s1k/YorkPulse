@@ -8,6 +8,7 @@ import { CreateQuestModal } from "@/components/CreateQuestModal";
 import { CreateModal } from "@/components/modals/CreateModal";
 import { ProfileCompletionGuard } from "@/components/ProfileCompletionGuard";
 import { cn } from "@/lib/utils";
+import { isIgnitePath } from "@/lib/sandbox";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -17,6 +18,9 @@ export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const isAuthPage = pathname.startsWith("/auth");
   const isLandingPage = pathname === "/";
+
+  // AI Ignite has its own layout and none of the YorkPulse chrome or guards
+  if (isIgnitePath(pathname)) return <>{children}</>;
 
   return (
     <ProfileCompletionGuard>

@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLogin, useVerifyOTP, useResendOTP } from "@/hooks/useAuth";
 import { useAuthStore } from "@/stores/auth";
 import { api } from "@/services/api";
-import { isSandboxEmail } from "@/lib/sandbox";
+import { IGNITE_BASE, isSandboxEmail } from "@/lib/sandbox";
 
 const ADMIN_EMAIL = "yorkpulse.app@gmail.com";
 
@@ -98,7 +98,7 @@ export default function LoginPage() {
       if (isSandboxEmail(email)) {
         const data = await api.auth.sandboxLogin(email, password);
         setTokens(data.access_token, data.refresh_token);
-        router.push("/");
+        router.push(IGNITE_BASE);
         return;
       }
       const data = await api.auth.adminLogin(email, password);

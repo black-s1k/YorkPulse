@@ -17,3 +17,10 @@ export function isSandboxToken(token: string | null | undefined): boolean {
     return false;
   }
 }
+
+// Sandbox accounts are confined to this section; everyone else is kept out of it.
+export const IGNITE_BASE = "/ignite";
+
+export function isIgnitePath(pathname: string): boolean {
+  return pathname === IGNITE_BASE || pathname.startsWith(IGNITE_BASE + "/");
+}
