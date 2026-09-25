@@ -17,6 +17,7 @@ security = HTTPBearer(auto_error=False)
 
 # The only authenticated endpoints a sandbox account may call
 SANDBOX_ALLOWED_PATHS = {"/auth/me"}
+SANDBOX_ALLOWED_PREFIXES = ("/ignite/",)
 
 
 def is_sandbox_user(user: User) -> bool:
@@ -28,7 +29,7 @@ def _sandbox_path_allowed(request: Request) -> bool:
     prefix = settings.api_prefix
     if prefix and path.startswith(prefix):
         path = path[len(prefix):]
-    return path.rstrip("/") in SANDBOX_ALLOWED_PATHS
+    return path.rstrip("/") in SANDBOX_ALLOWED_PATHS or path.startswith(SANDBOX_ALLOWED_PREFIXES)
 
 
 async def get_current_user_optional(

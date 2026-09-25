@@ -1,3 +1,5 @@
+import type { IgniteMember, IgniteTask, TaskInput } from "@/components/ignite/types";
+import type { TeamSlug } from "@/components/ignite/teams";
 import type {
   User,
   VaultPost,
@@ -1242,6 +1244,20 @@ class ApiClient {
 
     getActivityProfile: (userId: string) =>
       this.get<{ profile: unknown; recent_events: unknown[] }>(`/admin/activity/profiles/${userId}`),
+  };
+
+  // AI Ignite club tracker (sandbox account only)
+  ignite = {
+    listMembers: (includeInactive = false) =>
+      this.get<IgniteMember[]>(`/ignite/members?include_inactive=${includeInactive}`),
+    createMember: (data: { name: string; team: TeamSlug }) =>
+      this.post<IgniteMember>("/ignite/members", data),
+    updateMember: (id: string, data: Partial<Pick<IgniteMember, "name" | "team" | "is_active">>) =>
+      this.patch<IgniteMember>(`/ignite/members/${id}`, data),
+    listTasks: () => this.get<IgniteTask[]>("/ignite/tasks"),
+    createTask: (data: TaskInput) => this.post<IgniteTask>("/ignite/tasks", data),
+    updateTask: (id: string, data: TaskInput) => this.patch<IgniteTask>(`/ignite/tasks/${id}`, data),
+    deleteTask: (id: string) => this.delete<void>(`/ignite/tasks/${id}`),
   };
 }
 

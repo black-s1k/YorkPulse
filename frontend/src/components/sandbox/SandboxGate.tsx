@@ -19,11 +19,13 @@ export function SandboxGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const onIgnite = isIgnitePath(pathname);
 
-  // Keep the pre-hydration flag (set in layout.tsx) in sync, e.g. after logout
+  // The CSS flag set in layout.tsx only covers the moment before hydration.
+  // Once React is in control this gate does the hiding, and the flag must go:
+  // it would otherwise hide portals (dialogs, dropdowns, toasts) outside the
+  // sandbox root.
   useEffect(() => {
-    if (sandbox) document.documentElement.dataset.sandbox = "1";
-    else delete document.documentElement.dataset.sandbox;
-  }, [sandbox]);
+    if (isHydrated) delete document.documentElement.dataset.sandbox;
+  }, [isHydrated]);
 
   useEffect(() => {
     if (!isHydrated) return;

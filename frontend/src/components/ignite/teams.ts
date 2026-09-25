@@ -3,8 +3,10 @@ import { Hammer, LifeBuoy, Megaphone, Sparkles, Wallet, type LucideIcon } from "
 // AI Ignite club teams. Each team owns its own route folder under
 // src/app/ignite/<slug>; put team-specific code in that folder
 // (e.g. src/app/ignite/marketing/_components) so teams never touch each other's files.
+export type TeamSlug = "marketing" | "spark" | "forge" | "support" | "finance";
+
 export interface IgniteTeam {
-  slug: string;
+  slug: TeamSlug;
   name: string;
   group?: string;
   href: string;
@@ -52,7 +54,12 @@ export const IGNITE_TEAMS: IgniteTeam[] = [
   },
 ];
 
-export function getTeam(slug: string): IgniteTeam {
+export function teamLabel(slug: TeamSlug): string {
+  const team = getTeam(slug);
+  return team.group ? `${team.group} · ${team.name}` : team.name;
+}
+
+export function getTeam(slug: TeamSlug): IgniteTeam {
   const team = IGNITE_TEAMS.find((t) => t.slug === slug);
   if (!team) throw new Error(`Unknown AI Ignite team: ${slug}`);
   return team;

@@ -9,7 +9,7 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 from app.core.middleware import ActivityLogMiddleware, RateLimitMiddleware, TimingMiddleware
-from app.api.routes import admin_activity, admin_personas, analytics, auth, buddy, courses, dashboard, feedback, gigs, health, map, marketplace, messaging, push_notifications, reports, residences, reviews, transactions, vault
+from app.api.routes import admin_activity, admin_personas, analytics, auth, buddy, courses, dashboard, feedback, gigs, health, ignite, map, marketplace, messaging, push_notifications, reports, residences, reviews, transactions, vault
 from app.services.redis import redis_service
 
 
@@ -79,6 +79,7 @@ app.include_router(push_notifications.router, prefix=settings.api_prefix)
 app.include_router(admin_personas.router, prefix=settings.api_prefix)
 app.include_router(analytics.router, prefix=settings.api_prefix)
 app.include_router(admin_activity.router, prefix=settings.api_prefix)
+app.include_router(ignite.router, prefix=settings.api_prefix)
 
 
 @app.get("/")

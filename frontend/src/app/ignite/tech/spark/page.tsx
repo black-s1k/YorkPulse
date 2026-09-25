@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import { TaskBoard } from "@/components/ignite/TaskBoard";
 import { TeamPage } from "@/components/ignite/TeamPage";
 import { getTeam } from "@/components/ignite/teams";
 
 export const metadata: Metadata = { title: "Spark" };
 
 export default function SparkPage() {
-  return <TeamPage team={getTeam("spark")} />;
+  return (
+    <TeamPage team={getTeam("spark")}>
+      <TaskBoard team="spark" />
+    </TeamPage>
+  );
 }

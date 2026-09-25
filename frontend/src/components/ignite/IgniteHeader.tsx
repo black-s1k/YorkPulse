@@ -5,7 +5,14 @@ import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { useLogout } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
-import { IGNITE_TEAMS } from "./teams";
+import { ActingAsPicker } from "./ActingAsPicker";
+import { IGNITE_TEAMS, teamLabel } from "./teams";
+
+const NAV = [
+  { href: "/ignite", label: "Overview", exact: true },
+  ...IGNITE_TEAMS.map((t) => ({ href: t.href, label: teamLabel(t.slug), exact: false })),
+  { href: "/ignite/members", label: "Members", exact: false },
+];
 
 export function IgniteHeader() {
   const pathname = usePathname();
@@ -13,31 +20,35 @@ export function IgniteHeader() {
 
   return (
     <header className="border-b border-gray-200 bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         <Link href="/ignite" className="text-lg font-bold text-gray-900">
           AI Ignite
         </Link>
-        <button
-          onClick={logout}
-          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900"
-        >
-          <LogOut className="h-4 w-4" />
-          Sign out
-        </button>
+        <div className="flex items-center gap-3">
+          <ActingAsPicker />
+          <button
+            onClick={logout}
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900"
+            aria-label="Sign out"
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Sign out</span>
+          </button>
+        </div>
       </div>
-      <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 pb-2">
-        {IGNITE_TEAMS.map((team) => {
-          const active = pathname === team.href || pathname.startsWith(team.href + "/");
+      <nav className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 pb-2">
+        {NAV.map((item) => {
+          const active = item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link
-              key={team.slug}
-              href={team.href}
+              key={item.href}
+              href={item.href}
               className={cn(
                 "whitespace-nowrap rounded-md px-3 py-1.5 text-sm transition-colors",
                 active ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-100"
               )}
             >
-              {team.group ? `${team.group} · ${team.name}` : team.name}
+              {item.label}
             </Link>
           );
         })}
