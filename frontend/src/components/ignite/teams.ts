@@ -64,3 +64,15 @@ export function getTeam(slug: TeamSlug): IgniteTeam {
   if (!team) throw new Error(`Unknown AI Ignite team: ${slug}`);
   return team;
 }
+
+// Groups a member can belong to: every team, plus Executive (no team page).
+export type MemberGroup = TeamSlug | "exec";
+
+export const MEMBER_GROUPS: { slug: MemberGroup; label: string }[] = [
+  { slug: "exec", label: "Executive" },
+  ...IGNITE_TEAMS.map((t) => ({ slug: t.slug as MemberGroup, label: teamLabel(t.slug) })),
+];
+
+export function groupLabel(slug: MemberGroup): string {
+  return MEMBER_GROUPS.find((g) => g.slug === slug)?.label ?? slug;
+}

@@ -8,13 +8,15 @@ import uuid
 from datetime import date
 
 from sqlalchemy import Boolean, Column, Date, ForeignKey, Integer, String, Table, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 from app.models.base import TimestampMixin, UUIDMixin
 
 IGNITE_TEAMS = ("marketing", "spark", "forge", "support", "finance")
+# Members can also be executives, who belong to no single team
+IGNITE_MEMBER_GROUPS = ("exec", *IGNITE_TEAMS)
 IGNITE_STATUSES = ("not_started", "in_progress", "blocked", "done")
 IGNITE_PRIORITIES = ("low", "medium", "high")
 
@@ -30,7 +32,8 @@ class IgniteMember(Base, UUIDMixin, TimestampMixin):
     __tablename__ = "ignite_members"
 
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    team: Mapped[str] = mapped_column(String(20), nullable=False, index=True)
+    role: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    teams: Mapped[list[str]] = mapped_column(ARRAY(String(20)), nullable=False, default=list)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
 

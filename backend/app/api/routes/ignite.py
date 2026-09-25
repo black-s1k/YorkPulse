@@ -42,7 +42,7 @@ DB = Annotated[AsyncSession, Depends(get_db)]
 
 
 def _member_out(m: IgniteMember) -> MemberResponse:
-    return MemberResponse(id=str(m.id), name=m.name, team=m.team, is_active=m.is_active)
+    return MemberResponse(id=str(m.id), name=m.name, role=m.role, teams=m.teams, is_active=m.is_active)
 
 
 def _task_out(t: IgniteTask) -> TaskResponse:
@@ -121,7 +121,7 @@ async def list_members(_: IgniteUser, db: DB, include_inactive: bool = False):
 
 @router.post("/members", response_model=MemberResponse, status_code=status.HTTP_201_CREATED)
 async def create_member(body: MemberCreate, _: IgniteUser, db: DB):
-    member = IgniteMember(name=body.name, team=body.team)
+    member = IgniteMember(name=body.name, role=body.role, teams=body.teams)
     db.add(member)
     await db.commit()
     await db.refresh(member)
@@ -134,7 +134,8 @@ async def update_member(member_id: str, body: MemberUpdate, _: IgniteUser, db: D
     if not member:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Member not found")
     for field, value in body.model_dump(exclude_unset=True).items():
-        if value is not None:
+        # role can be cleared; name, teams and is_active can't be null
+        if value is not None or field == "role":
             setattr(member, field, value)
     await db.commit()
     await db.refresh(member)

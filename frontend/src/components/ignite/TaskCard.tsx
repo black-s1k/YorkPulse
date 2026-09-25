@@ -3,7 +3,7 @@
 import { CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProgressBar } from "./ProgressBar";
-import { teamLabel } from "./teams";
+import { groupLabel, teamLabel } from "./teams";
 import { formatDue, isOverdue, priorityMeta, statusMeta, type IgniteTask } from "./types";
 
 export function TaskCard({ task, showTeam, onOpen }: { task: IgniteTask; showTeam?: boolean; onOpen: () => void }) {
@@ -36,14 +36,22 @@ export function TaskCard({ task, showTeam, onOpen }: { task: IgniteTask; showTea
           {task.assignees.length === 0 ? (
             <span className="text-gray-400">Unassigned</span>
           ) : (
-            task.assignees.map((m) => (
-              <span
-                key={m.id}
-                className={cn("rounded-full bg-gray-100 px-2 py-0.5 text-gray-700", !m.is_active && "line-through opacity-60")}
-              >
-                {m.name}
-              </span>
-            ))
+            task.assignees.map((m) => {
+              const outside = !m.teams.includes(task.team);
+              return (
+                <span
+                  key={m.id}
+                  title={outside ? `${m.name} (${m.teams.map(groupLabel).join(", ")})` : m.name}
+                  className={cn(
+                    "rounded-full px-2 py-0.5 text-gray-700",
+                    outside ? "border border-dashed border-gray-400" : "bg-gray-100",
+                    !m.is_active && "line-through opacity-60"
+                  )}
+                >
+                  {m.name}
+                </span>
+              );
+            })
           )}
         </div>
         {task.due_date && (

@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { AssigneePicker } from "./AssigneePicker";
 import { useIgniteMembers, useTaskMutations } from "./hooks";
 import { ProgressBar } from "./ProgressBar";
 import { IGNITE_TEAMS, teamLabel, type TeamSlug } from "./teams";
@@ -64,9 +64,6 @@ function TaskForm({ onOpenChange, task, defaultTeam }: TaskDialogProps) {
     if (p === 100) setStatus("done");
     else if (status === "done" || (status === "not_started" && p > 0)) setStatus("in_progress");
   };
-
-  const toggleAssignee = (id: string) =>
-    setAssigneeIds((ids) => (ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]));
 
   // Active members, plus anyone inactive who is still on this task
   const selectable = members.filter((m) => m.is_active || assigneeIds.includes(m.id));
@@ -185,25 +182,7 @@ function TaskForm({ onOpenChange, task, defaultTeam }: TaskDialogProps) {
         {selectable.length === 0 ? (
           <p className="text-sm text-gray-500">No members yet. Add people on the Members page.</p>
         ) : (
-          <div className="max-h-48 space-y-3 overflow-y-auto rounded-md border border-gray-200 p-3">
-            {IGNITE_TEAMS.map((t) => {
-              const group = selectable.filter((m) => m.team === t.slug);
-              if (group.length === 0) return null;
-              return (
-                <div key={t.slug}>
-                  <p className="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">{teamLabel(t.slug)}</p>
-                  <div className="grid grid-cols-2 gap-1">
-                    {group.map((m) => (
-                      <label key={m.id} className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 text-sm hover:bg-gray-50">
-                        <Checkbox checked={assigneeIds.includes(m.id)} onCheckedChange={() => toggleAssignee(m.id)} />
-                        <span className="truncate">{m.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          <AssigneePicker members={selectable} team={team} selected={assigneeIds} onChange={setAssigneeIds} />
         )}
       </div>
 

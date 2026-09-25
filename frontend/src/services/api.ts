@@ -1,5 +1,4 @@
-import type { IgniteMember, IgniteTask, TaskInput } from "@/components/ignite/types";
-import type { TeamSlug } from "@/components/ignite/teams";
+import type { IgniteMember, IgniteTask, MemberInput, TaskInput } from "@/components/ignite/types";
 import type {
   User,
   VaultPost,
@@ -1250,9 +1249,8 @@ class ApiClient {
   ignite = {
     listMembers: (includeInactive = false) =>
       this.get<IgniteMember[]>(`/ignite/members?include_inactive=${includeInactive}`),
-    createMember: (data: { name: string; team: TeamSlug }) =>
-      this.post<IgniteMember>("/ignite/members", data),
-    updateMember: (id: string, data: Partial<Pick<IgniteMember, "name" | "team" | "is_active">>) =>
+    createMember: (data: MemberInput) => this.post<IgniteMember>("/ignite/members", data),
+    updateMember: (id: string, data: MemberInput) =>
       this.patch<IgniteMember>(`/ignite/members/${id}`, data),
     listTasks: () => this.get<IgniteTask[]>("/ignite/tasks"),
     createTask: (data: TaskInput) => this.post<IgniteTask>("/ignite/tasks", data),

@@ -6,7 +6,7 @@ Create Date: 2026-09-25
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 
 revision = 'add_ignite_tracker'
 down_revision = 'add_activity_tracking'
@@ -19,12 +19,12 @@ def upgrade() -> None:
         'ignite_members',
         sa.Column('id', UUID(as_uuid=True), primary_key=True),
         sa.Column('name', sa.String(100), nullable=False),
-        sa.Column('team', sa.String(20), nullable=False),
+        sa.Column('role', sa.String(100), nullable=True),
+        sa.Column('teams', ARRAY(sa.String(20)), nullable=False, server_default='{}'),
         sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
         sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
     )
-    op.create_index('ix_ignite_members_team', 'ignite_members', ['team'])
 
     op.create_table(
         'ignite_tasks',

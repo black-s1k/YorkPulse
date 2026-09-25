@@ -1,4 +1,4 @@
-import type { TeamSlug } from "./teams";
+import type { MemberGroup, TeamSlug } from "./teams";
 
 export type TaskStatus = "not_started" | "in_progress" | "blocked" | "done";
 export type TaskPriority = "low" | "medium" | "high";
@@ -6,8 +6,16 @@ export type TaskPriority = "low" | "medium" | "high";
 export interface IgniteMember {
   id: string;
   name: string;
-  team: TeamSlug;
+  role: string | null;
+  teams: MemberGroup[];
   is_active: boolean;
+}
+
+export interface MemberInput {
+  name?: string;
+  role?: string | null;
+  teams?: MemberGroup[];
+  is_active?: boolean;
 }
 
 export interface IgniteTask {

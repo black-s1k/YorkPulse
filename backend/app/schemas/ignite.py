@@ -6,6 +6,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, field_validator
 
 Team = Literal["marketing", "spark", "forge", "support", "finance"]
+MemberGroup = Literal["exec", "marketing", "spark", "forge", "support", "finance"]
 Status = Literal["not_started", "in_progress", "blocked", "done"]
 Priority = Literal["low", "medium", "high"]
 
@@ -18,25 +19,35 @@ def _strip(v):
     return v
 
 
+def _dedupe(v):
+    return list(dict.fromkeys(v)) if isinstance(v, list) else v
+
+
 class MemberCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
-    team: Team
+    role: str | None = Field(default=None, max_length=100)
+    teams: list[MemberGroup] = Field(min_length=1, max_length=6)
 
-    _clean = field_validator("name", mode="before")(classmethod(lambda cls, v: _strip(v)))
+    _dedupe = field_validator("teams", mode="before")(classmethod(lambda cls, v: _dedupe(v)))
+
+    _clean = field_validator("name", "role", mode="before")(classmethod(lambda cls, v: _strip(v)))
 
 
 class MemberUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=100)
-    team: Team | None = None
+    role: str | None = Field(default=None, max_length=100)
+    teams: list[MemberGroup] | None = Field(default=None, min_length=1, max_length=6)
     is_active: bool | None = None
 
-    _clean = field_validator("name", mode="before")(classmethod(lambda cls, v: _strip(v)))
+    _clean = field_validator("name", "role", mode="before")(classmethod(lambda cls, v: _strip(v)))
+    _dedupe = field_validator("teams", mode="before")(classmethod(lambda cls, v: _dedupe(v)))
 
 
 class MemberResponse(BaseModel):
     id: str
     name: str
-    team: Team
+    role: str | None
+    teams: list[MemberGroup]
     is_active: bool
 
 

@@ -4,8 +4,7 @@ import { useCallback, useSyncExternalStore } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { useToast } from "@/hooks/use-toast";
-import type { IgniteMember, TaskInput } from "./types";
-import type { TeamSlug } from "./teams";
+import type { MemberInput, TaskInput } from "./types";
 
 const TASKS_KEY = ["ignite", "tasks"];
 const MEMBERS_KEY = ["ignite", "members"];
@@ -74,13 +73,12 @@ export function useMemberMutations() {
   };
   return {
     create: useMutation({
-      mutationFn: (data: { name: string; team: TeamSlug }) => api.ignite.createMember(data),
+      mutationFn: (data: MemberInput) => api.ignite.createMember(data),
       onSuccess,
       onError,
     }),
     update: useMutation({
-      mutationFn: ({ id, data }: { id: string; data: Partial<Pick<IgniteMember, "name" | "team" | "is_active">> }) =>
-        api.ignite.updateMember(id, data),
+      mutationFn: ({ id, data }: { id: string; data: MemberInput }) => api.ignite.updateMember(id, data),
       onSuccess,
       onError,
     }),
