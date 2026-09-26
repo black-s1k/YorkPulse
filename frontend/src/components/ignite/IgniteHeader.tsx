@@ -11,6 +11,7 @@ const NAV = [
   { href: "/ignite", label: "Overview", exact: true },
   ...IGNITE_TEAMS.map((t) => ({ href: t.href, label: teamLabel(t.slug), exact: false })),
   { href: "/ignite/members", label: "Members", exact: false },
+  { href: "/ignite/files", label: "Files", exact: false },
 ];
 
 export function IgniteHeader() {
