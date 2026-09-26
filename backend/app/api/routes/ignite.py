@@ -12,14 +12,18 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db
+from app.core.passwords import verify_pbkdf2
 from app.core.dependencies import CurrentUser, is_sandbox_user
 from app.models.ignite import IgniteMember, IgniteTask, ignite_task_assignees
 from app.models.user import User
+from app.services.redis import redis_service
 from app.schemas.ignite import (
     MemberCreate,
     MemberResponse,
     MemberUpdate,
+    PasscodeRequest,
     Priority,
     Status,
     TaskCreate,
@@ -101,6 +105,33 @@ def _sync_status_progress(task: IgniteTask, status_set: bool, progress_set: bool
             task.status = "in_progress"
 
 
+PASSCODE_FAILURES_KEY = "ignite_passcode:failures"
+PASSCODE_WINDOW_SECONDS = 15 * 60
+
+
+async def _check_members_passcode(passcode: str) -> None:
+    """Editing the roster needs the members passcode. Wrong guesses are
+    capped per 15-minute window; Redis being down fails open, like the rest
+    of the rate limiting."""
+    try:
+        failures = await redis_service.get(PASSCODE_FAILURES_KEY)
+    except Exception:
+        failures = None
+    if failures and int(failures) >= settings.ignite_passcode_max_failed_attempts:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many wrong passcodes. Try again in 15 minutes.",
+        )
+    if not verify_pbkdf2(passcode, settings.ignite_members_passcode_hash):
+        try:
+            count = await redis_service.incr(PASSCODE_FAILURES_KEY)
+            if count == 1:
+                await redis_service.expire(PASSCODE_FAILURES_KEY, PASSCODE_WINDOW_SECONDS)
+        except Exception:
+            pass
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Wrong passcode")
+
+
 async def _get_task(db: AsyncSession, task_id: str) -> IgniteTask:
     task = await db.get(IgniteTask, _parse_uuid(task_id, "Task"))
     if not task:
@@ -119,8 +150,16 @@ async def list_members(_: IgniteUser, db: DB, include_inactive: bool = False):
     return [_member_out(m) for m in (await db.execute(q)).scalars().all()]
 
 
+@router.post("/members/unlock", status_code=status.HTTP_204_NO_CONTENT)
+async def unlock_members(body: PasscodeRequest, _: IgniteUser):
+    """Check the passcode so the Members page can switch to edit mode."""
+    await _check_members_passcode(body.passcode)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 @router.post("/members", response_model=MemberResponse, status_code=status.HTTP_201_CREATED)
 async def create_member(body: MemberCreate, _: IgniteUser, db: DB):
+    await _check_members_passcode(body.passcode)
     member = IgniteMember(name=body.name, role=body.role, teams=body.teams)
     db.add(member)
     await db.commit()
@@ -130,10 +169,11 @@ async def create_member(body: MemberCreate, _: IgniteUser, db: DB):
 
 @router.patch("/members/{member_id}", response_model=MemberResponse)
 async def update_member(member_id: str, body: MemberUpdate, _: IgniteUser, db: DB):
+    await _check_members_passcode(body.passcode)
     member = await db.get(IgniteMember, _parse_uuid(member_id, "Member"))
     if not member:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Member not found")
-    for field, value in body.model_dump(exclude_unset=True).items():
+    for field, value in body.model_dump(exclude_unset=True, exclude={"passcode"}).items():
         # role can be cleared; name, teams and is_active can't be null
         if value is not None or field == "role":
             setattr(member, field, value)

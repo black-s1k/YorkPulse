@@ -1,7 +1,5 @@
 """Authentication API routes."""
 
-import hashlib
-import hmac
 import logging
 import uuid
 from datetime import UTC, datetime
@@ -23,6 +21,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+from app.core.passwords import verify_pbkdf2
 from app.core.database import get_db
 from app.core.dependencies import AdminUser, CurrentUser
 from app.models.signup_attempt import SignupAttempt
@@ -324,19 +323,6 @@ async def admin_login(
     )
 
 
-def _verify_sandbox_password(password: str) -> bool:
-    try:
-        algo, iterations, salt_hex, hash_hex = settings.sandbox_password_hash.split("$")
-    except ValueError:
-        return False
-    if algo != "pbkdf2_sha256":
-        return False
-    candidate = hashlib.pbkdf2_hmac(
-        "sha256", password.encode(), bytes.fromhex(salt_hex), int(iterations)
-    ).hex()
-    return hmac.compare_digest(candidate, hash_hex)
-
-
 @router.post("/sandbox-login", response_model=VerifyEmailResponse)
 async def sandbox_login(
     request: AdminLoginRequest,
@@ -361,7 +347,7 @@ async def sandbox_login(
             detail="Account locked due to repeated failed attempts.",
         )
 
-    if email not in settings.sandbox_email_set or not _verify_sandbox_password(request.password):
+    if email not in settings.sandbox_email_set or not verify_pbkdf2(request.password, settings.sandbox_password_hash):
         try:
             await redis_service.incr("sandbox_login:failures")
         except Exception:

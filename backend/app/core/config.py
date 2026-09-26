@@ -80,6 +80,12 @@ class Settings(BaseSettings):
         "f0d86ed1fa71e54277c9c7bd7b9ec0b27814a4aef3598a1ce388f4d4a02538d3"
     )
     sandbox_login_max_failed_attempts: int = 10
+    # Passcode required to edit the AI Ignite member roster (PBKDF2 hash)
+    ignite_members_passcode_hash: str = (
+        "pbkdf2_sha256$600000$241be8dfcd92644f0e8a022cb3b30a5d$"
+        "4f265fdf85ee133eee0db95751e4566ba907aca18bfeff4d6cf2580d0353beb6"
+    )
+    ignite_passcode_max_failed_attempts: int = 10  # per 15 minutes
 
     @property
     def sandbox_email_set(self) -> set[str]:

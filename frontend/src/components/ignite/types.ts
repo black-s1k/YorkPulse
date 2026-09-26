@@ -12,6 +12,7 @@ export interface IgniteMember {
 }
 
 export interface MemberInput {
+  passcode: string; // editing the roster is passcode-protected
   name?: string;
   role?: string | null;
   teams?: MemberGroup[];

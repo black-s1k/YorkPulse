@@ -23,7 +23,12 @@ def _dedupe(v):
     return list(dict.fromkeys(v)) if isinstance(v, list) else v
 
 
+class PasscodeRequest(BaseModel):
+    passcode: str = Field(min_length=1, max_length=100)
+
+
 class MemberCreate(BaseModel):
+    passcode: str = Field(min_length=1, max_length=100)
     name: str = Field(min_length=1, max_length=100)
     role: str | None = Field(default=None, max_length=100)
     teams: list[MemberGroup] = Field(min_length=1, max_length=6)
@@ -34,6 +39,7 @@ class MemberCreate(BaseModel):
 
 
 class MemberUpdate(BaseModel):
+    passcode: str = Field(min_length=1, max_length=100)
     name: str | None = Field(default=None, min_length=1, max_length=100)
     role: str | None = Field(default=None, max_length=100)
     teams: list[MemberGroup] | None = Field(default=None, min_length=1, max_length=6)

@@ -1249,6 +1249,7 @@ class ApiClient {
   ignite = {
     listMembers: (includeInactive = false) =>
       this.get<IgniteMember[]>(`/ignite/members?include_inactive=${includeInactive}`),
+    unlockMembers: (passcode: string) => this.post<void>("/ignite/members/unlock", { passcode }),
     createMember: (data: MemberInput) => this.post<IgniteMember>("/ignite/members", data),
     updateMember: (id: string, data: MemberInput) =>
       this.patch<IgniteMember>(`/ignite/members/${id}`, data),
