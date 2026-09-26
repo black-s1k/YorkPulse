@@ -1,3 +1,4 @@
+import { BackToDashboard } from "./BackToDashboard";
 import type { IgniteTeam } from "./teams";
 
 // Shared page frame only. Anything team-specific belongs in that team's route folder.
@@ -5,6 +6,7 @@ export function TeamPage({ team, children }: { team: IgniteTeam; children?: Reac
   const Icon = team.icon;
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
+      <BackToDashboard />
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
           <Icon className="h-5 w-5 text-gray-700" />

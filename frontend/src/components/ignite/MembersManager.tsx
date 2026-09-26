@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { api } from "@/services/api";
+import { BackToDashboard } from "./BackToDashboard";
 import { useIgniteMembers, useIgniteTasks, useMemberMutations } from "./hooks";
 import { MEMBER_GROUPS, type MemberGroup } from "./teams";
 import type { IgniteMember } from "./types";
@@ -60,6 +61,7 @@ export function MembersManager() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
+      <BackToDashboard />
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Members</h1>
